@@ -1,4 +1,4 @@
-package com.JustAlo;
+package com.JustAlo.Security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +22,7 @@ public class SecurityConfig {
 
         http.csrf(csrf -> csrf.disable())
                 .authorizeRequests().
-                requestMatchers("/test").authenticated().requestMatchers("/auth/login" , "/registerNewUser", "/authenticate").permitAll()
+                requestMatchers("/test").authenticated().requestMatchers("/add","/send-otp","/validate-otp","/verify","/registerNewVendor","/registerAdmin","/auth/login" , "/registerNewUser", "/authenticate").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and().exceptionHandling(ex -> ex.authenticationEntryPoint(point))

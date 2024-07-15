@@ -1,4 +1,4 @@
-package com.JustAlo;
+package com.JustAlo.Security;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

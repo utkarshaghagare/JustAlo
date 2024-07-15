@@ -1,9 +1,9 @@
 package com.JustAlo.Service;
 
-import com.JustAlo.Entity.JwtRequest;
-import com.JustAlo.Entity.JwtResponse;
-import com.JustAlo.Entity.User;
-import com.JustAlo.JwtHelper;
+import com.JustAlo.Entity.*;
+import com.JustAlo.Repo.DriverDao;
+import com.JustAlo.Repo.VendorDao;
+import com.JustAlo.Security.JwtHelper;
 import com.JustAlo.Repo.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
+
 
 @Service
 public class JwtService implements UserDetailsService {
@@ -28,51 +30,56 @@ public class JwtService implements UserDetailsService {
 
     @Autowired
     private UserDao userDao;
-//
-//    @Autowired
-//    private VendorDao vendorDao;
+
+    @Autowired
+    private VendorDao vendorDao;
+
+    @Autowired
+    private DriverDao driverDao;
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
     public JwtResponse createJwtToken(JwtRequest jwtRequest) throws Exception {
-        String username = jwtRequest.getUsername();
+        String email = jwtRequest.getEmail();
         String password = jwtRequest.getPassword();
-        authenticate(username, password);
+        String otp = jwtRequest.getOtp();
 
-        UserDetails userDetails = loadUserByUsername(username);
+        authenticate(email, password,otp);
+
+        UserDetails userDetails = loadUserByUsername(email);
         String newGeneratedToken = jwtUtil.generateToken(userDetails);
 
-        // Determine if the authenticated entity is a user or a vendor
-        User user = userDao.findByUsername(username);
+        // Determine if the authenticated entity is a user, vendor, or driver
+        User user = userDao.findByEmail(email);
         if (user != null) {
-            return new JwtResponse(username, newGeneratedToken);
-        }
-//        else {
-//            Vendor vendor = vendorDao.findByUsername(username).orElse(null);
-//            if (vendor != null) {
-//                return new JwtResponse(username, newGeneratedToken);
-//            }
-            else {
-                throw new Exception("User or Vendor not found with username: " + username);
+            return new JwtResponse(email, newGeneratedToken);
+        } else {
+            Vendor vendor = vendorDao.findByEmail(email);
+            if (vendor != null) {
+                return new JwtResponse(email, newGeneratedToken);
+            } else {
+                Driver driver= driverDao.findByEmail(email).orElse(null);
+                if (driver !=null) {
+                    return new JwtResponse(email, newGeneratedToken);
+                } else {
+                    throw new Exception("User, Vendor, or Driver not found with email: " + email);
+                }
             }
         }
-
-
+    }
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Attempt to find the user
-        User user = userDao.findByUsername(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        // Attempt to find the vendor if user is not found
-       // Vendor vendor = vendorDao.findByUsername(username).orElse(null);
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be null or empty");
+        }
 
-        // If both are null, throw exception
-        if (user == null
-                //&&
-              //  vendor == null
-        ) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
+        User user = userDao.findByEmail(email);
+        Vendor vendor = vendorDao.findByEmail(email);
+        Optional<Driver> driverOptional = driverDao.findByEmail(email);
+        if (user == null && vendor == null && driverOptional == null) {
+            throw new UsernameNotFoundException("User not found with email: " + email);
         }
 
         Collection<GrantedAuthority> authorities = new HashSet<>();
@@ -81,24 +88,33 @@ public class JwtService implements UserDetailsService {
             user.getRole().forEach(role -> {
                 authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
             });
-            password = user.getPassword();
-//        } else {
-//            vendor.getRole().forEach(role -> {
-//                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
-//            });
-//            password = vendor.getPassword();
+            password = user.getOtp();
+        } else if (vendor != null) {
+            vendor.getRole().forEach(role -> {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
+            });
+            password = vendor.getPassword();
+
+        } else if (driverOptional.isPresent()) {
+            Driver driver = driverOptional.get();
+            driver.getRole().forEach(role -> {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
+            });
+            password = driver.getPassword();
+
         }
 
-        return new org.springframework.security.core.userdetails.User(username, password, authorities);
+        return new org.springframework.security.core.userdetails.User(email, password, authorities);
+
     }
 
-    private void authenticate(String username, String password) throws Exception {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
-        }
-    }
-}
+    private void authenticate(String email, String password, String otp) throws Exception {
+            try {
+                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            } catch (DisabledException e) {
+                throw new Exception("USER_DISABLED", e);
+            } catch (BadCredentialsException e) {
+                throw new Exception("INVALID_CREDENTIALS", e);
+            }
+        }}
+

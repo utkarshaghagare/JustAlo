@@ -1,4 +1,4 @@
-package com.JustAlo;
+package com.JustAlo.Security;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -20,6 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    public static String CURRENT_USER="";
 
     private Logger logger = LoggerFactory.getLogger(OncePerRequestFilter.class);
     @Autowired
@@ -50,6 +51,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
 
                 username = this.jwtHelper.getUsernameFromToken(token);
+                CURRENT_USER=username;
+
 
             } catch (IllegalArgumentException e) {
                 logger.info("Illegal Argument while fetching the username !!");

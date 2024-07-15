@@ -1,9 +1,11 @@
 package com.JustAlo.Service;
 
 
+import com.JustAlo.Entity.JwtResponse;
 import com.JustAlo.Entity.Role;
 import com.JustAlo.Entity.User;
-import com.JustAlo.JwtHelper;
+import com.JustAlo.Exception.InvalidOtpException;
+import com.JustAlo.Security.JwtHelper;
 import com.JustAlo.Repo.RoleDao;
 import com.JustAlo.Repo.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class UserService {
 
 	    @Autowired
 	    private PasswordEncoder passwordEncoder;
+		@Autowired
+		private OtpService otpService;
+
 
 	@Autowired
 	private JwtHelper jwtHelper;
@@ -47,9 +52,16 @@ public class UserService {
 	        roleDao.save(userRole);
 
 			Role vendorRole = new Role();
-			userRole.setRoleName("Vendor");
-			userRole.setRoleDescription("Default role for newly created vendor");
+			vendorRole.setRoleName("Vendor");
+			vendorRole.setRoleDescription("Default role for newly created vendor");
 			roleDao.save(userRole);
+
+			Role driverRole = new Role();
+			driverRole.setRoleName("Driver");
+			driverRole.setRoleDescription("Default role for newly created Driver");
+			roleDao.save(driverRole);
+
+
 
 	    }
 
@@ -91,4 +103,40 @@ public class UserService {
 	}
 
 
+
+
+	public User findByEmail(String email) {
+
+			return  userDao.findByEmail(email);
+	}
+	public void save(User user) {
+		userDao.save(user);
+	}
+
+	public JwtResponse validateOtp(String email, String otp) {
+		if (!otpService.validateOtp(email, otp)) {
+			throw new InvalidOtpException("Invalid OTP");
+		}
+
+		User user = userDao.findByEmail(email);
+		if (user == null) {
+			user = new User();
+			user.setEmail(email);
+
+			// Assign a default role
+
+           User user1 =new User();
+			Role role = roleDao.findById("User")
+					.orElseThrow(() -> new RuntimeException("Role not found"));
+			Set<Role> userRoles = new HashSet<>();
+			userRoles.add(role);
+			user1.setRole(userRoles);
+			userDao.save(user);
+		}
+
+		// Generate JWT token
+		String token = jwtHelper.generateToken(email);
+	    String username = jwtHelper.getEmailFromToken(token);
+		return new JwtResponse(token, username);
+	}
 }

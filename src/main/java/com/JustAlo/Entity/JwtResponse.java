@@ -2,22 +2,22 @@ package com.JustAlo.Entity;
 
 public class JwtResponse {
 
-	private String username;
+	private String email;
 
 	//private Vendor vendor;
 	private String jwtToken;
 
-	public JwtResponse(String username, String jwtToken) {
-		this.username = username;
+	public JwtResponse(String email, String jwtToken) {
+		this.email = email;
 		this.jwtToken = jwtToken;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getJwtToken() {

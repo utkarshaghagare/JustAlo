@@ -27,7 +27,7 @@ public class Vendor {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "USER_ROLE", joinColumns = {
-            @JoinColumn(name = "USER_ID", referencedColumnName = "username")
+            @JoinColumn(name = "USER_ID", referencedColumnName = "email")
     },
             inverseJoinColumns = {
                     @JoinColumn(name = "ROLE_ID")
