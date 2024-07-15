@@ -3,7 +3,9 @@ package com.JustAlo.Service;
 import com.JustAlo.Entity.JwtRequest;
 import com.JustAlo.Entity.JwtResponse;
 import com.JustAlo.Entity.User;
-import com.JustAlo.JwtHelper;
+import com.JustAlo.Entity.Vendor;
+import com.JustAlo.Repo.VendorDao;
+import com.JustAlo.Security.JwtHelper;
 import com.JustAlo.Repo.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 
 @Service
 public class JwtService implements UserDetailsService {
@@ -29,8 +32,8 @@ public class JwtService implements UserDetailsService {
     @Autowired
     private UserDao userDao;
 //
-//    @Autowired
-//    private VendorDao vendorDao;
+    @Autowired
+    private VendorDao vendorDao;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -44,33 +47,30 @@ public class JwtService implements UserDetailsService {
         String newGeneratedToken = jwtUtil.generateToken(userDetails);
 
         // Determine if the authenticated entity is a user or a vendor
-        User user = userDao.findByUsername(username);
-        if (user != null) {
+        Optional<User> user = userDao.findByUsername(username);
+        if (user.isPresent()) {
             return new JwtResponse(username, newGeneratedToken);
-        }
-//        else {
-//            Vendor vendor = vendorDao.findByUsername(username).orElse(null);
-//            if (vendor != null) {
-//                return new JwtResponse(username, newGeneratedToken);
-//            }
-            else {
+        } else {
+            Vendor vendor = vendorDao.findByUsername(username).orElse(null);
+            if (vendor != null) {
+                return new JwtResponse(username, newGeneratedToken);
+            } else {
                 throw new Exception("User or Vendor not found with username: " + username);
             }
         }
+    }
 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // Attempt to find the user
-        User user = userDao.findByUsername(username);
+        User user = userDao.findByUsername(username).orElse(null);
 
         // Attempt to find the vendor if user is not found
-       // Vendor vendor = vendorDao.findByUsername(username).orElse(null);
+       Vendor vendor = vendorDao.findByUsername(username).orElse(null);
 
         // If both are null, throw exception
-        if (user == null
-                //&&
-              //  vendor == null
+        if (user == null && vendor == null
         ) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
@@ -82,11 +82,11 @@ public class JwtService implements UserDetailsService {
                 authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
             });
             password = user.getPassword();
-//        } else {
-//            vendor.getRole().forEach(role -> {
-//                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
-//            });
-//            password = vendor.getPassword();
+        } else {
+            vendor.getRole().forEach(role -> {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
+            });
+            password = vendor.getPassword();
         }
 
         return new org.springframework.security.core.userdetails.User(username, password, authorities);

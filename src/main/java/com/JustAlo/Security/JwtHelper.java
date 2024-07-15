@@ -1,4 +1,4 @@
-package com.JustAlo;
+package com.JustAlo.Security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

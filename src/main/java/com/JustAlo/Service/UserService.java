@@ -3,7 +3,7 @@ package com.JustAlo.Service;
 
 import com.JustAlo.Entity.Role;
 import com.JustAlo.Entity.User;
-import com.JustAlo.JwtHelper;
+import com.JustAlo.Security.JwtHelper;
 import com.JustAlo.Repo.RoleDao;
 import com.JustAlo.Repo.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
