@@ -22,7 +22,7 @@ public class SecurityConfig {
 
         http.csrf(csrf -> csrf.disable())
                 .authorizeRequests().
-                requestMatchers("/test").authenticated().requestMatchers("/add","/send-otp","/validate-otp","/verify","/registerNewVendor","/registerAdmin","/auth/login" , "/registerNewUser", "/authenticate").permitAll()
+                requestMatchers("/test").authenticated().requestMatchers("/registerNewVendor","/registerAdmin","/auth/login" , "/registerNewUser", "/authenticate").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and().exceptionHandling(ex -> ex.authenticationEntryPoint(point))
