@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -29,6 +30,11 @@ public class DriverService {
     private AmazonS3Config s3Service;
     @Autowired
     private RoleDao roleDao;
+
+    public static List<DriverModel> getAllDriver(DriverModel driverModel) {
+        return driverDao.findAll();
+    }
+
 
     public Driver addDriver(DriverModel driverDTO) {
         Driver driver = new Driver();
@@ -51,4 +57,5 @@ public class DriverService {
 
         return driverDao.save(driver);
     }
+
 }
