@@ -25,6 +25,11 @@ public class BusController {
     }
 //1. admin api toget unverifies buses and
 // 2.mark bus verified
+    @GetMapping("/verified")
+    public ResponseEntity<List<Bus>> getAllVerifiedBuses() {
+        List<Bus> buses = busService.getAllVerifiedBuses();
+        return ResponseEntity.ok(buses);
+    }
     @GetMapping("/{id}")
     public ResponseEntity<Bus> getBusById(@PathVariable Long id) {
         Optional<Bus> bus = busService.getBusById(id);

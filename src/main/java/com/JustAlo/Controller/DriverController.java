@@ -63,9 +63,14 @@ public class DriverController {
 
 
     @GetMapping("/getAllDriver")
-    public List<DriverModel> getAllDriver(@RequestBody DriverModel driverModel){
-        return DriverService.getAllDriver(driverModel);
+    public List<Driver> getAllDriver(@RequestBody DriverModel driverModel){
+        return driverService.getAllDriver(driverModel);
 
     }
 
+    @GetMapping("/verified")
+    public ResponseEntity<List<Driver>> getAllVerifiedDriver(@RequestBody DriverModel driverModel){
+        List<Driver> drivers= driverService.getAllVerifiedDriver(driverModel);
+        return ResponseEntity.ok(drivers);
+    }
 }

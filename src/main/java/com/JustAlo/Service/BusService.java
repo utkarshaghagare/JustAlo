@@ -28,6 +28,11 @@ public class BusService {
         return busRepository.findById(id);
     }
 
+
+    public List<Bus> getAllVerifiedBuses() {
+        return busRepository.findByVerifiedTrue();
+    }
+
     public List<Bus> getAllBuses() {
         return busRepository.findAll();
     }

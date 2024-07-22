@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -31,7 +32,7 @@ public class DriverService {
     @Autowired
     private RoleDao roleDao;
 
-    public static List<DriverModel> getAllDriver(DriverModel driverModel) {
+    public List<Driver> getAllDriver(DriverModel driverModel) {
         return driverDao.findAll();
     }
 
@@ -58,4 +59,11 @@ public class DriverService {
         return driverDao.save(driver);
     }
 
+    public Optional<Driver> getDriverById(Long driverId) {
+        return driverDao.findById(driverId);
+    }
+
+    public List<Driver> getAllVerifiedDriver(DriverModel driverModel) {
+        return driverDao.findByVerificationStatus(true);
+    }
 }
