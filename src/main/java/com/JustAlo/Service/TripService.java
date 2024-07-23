@@ -3,8 +3,10 @@ package com.JustAlo.Service;
 import com.JustAlo.Entity.*;
 import com.JustAlo.Model.LuxuryTripModel;
 import com.JustAlo.Model.OrdinaryTripModel;
+import com.JustAlo.Model.ScheduleTripModel;
 import com.JustAlo.Repo.LuxuryTripRepository;
 import com.JustAlo.Repo.OrdinaryTripRepository;
+import com.JustAlo.Repo.ScheduledTripRepository;
 import com.JustAlo.Repo.TripRepository;
 import com.JustAlo.Security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class TripService {
 
     @Autowired
     private VendorService vendorService;
+
+    @Autowired
+    private ScheduledTripRepository scheduledTripRepository;
     public List<Trip> findAll() {
         return tripRepository.findAll();
     }
@@ -81,5 +86,13 @@ public class TripService {
     }
     public void deleteById(Long id) {
         tripRepository.deleteById(id);
+    }
+
+    public ScheduledTrip scheduleTrip(ScheduleTripModel trip) throws Exception {
+        Trip trip1= tripRepository.findById(trip.trip_id).orElse(null);
+        if(trip1!=null){
+          return scheduledTripRepository.save(new ScheduledTrip(trip1,trip.date,trip.time));
+        }
+        throw new Exception("Trip not found");
     }
 }

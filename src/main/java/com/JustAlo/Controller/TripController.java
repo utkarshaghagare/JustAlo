@@ -1,9 +1,11 @@
 package com.JustAlo.Controller;
 
 import com.JustAlo.Entity.LuxuryTrip;
+import com.JustAlo.Entity.ScheduledTrip;
 import com.JustAlo.Entity.Trip;
 import com.JustAlo.Model.LuxuryTripModel;
 import com.JustAlo.Model.OrdinaryTripModel;
+import com.JustAlo.Model.ScheduleTripModel;
 import com.JustAlo.Service.TripService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +42,23 @@ public class TripController {
     public LuxuryTrip createTrip(@RequestBody LuxuryTripModel trip) {
         return tripService.save(trip);
     }
+
+    @PostMapping
+    @PreAuthorize("hasRole('Vendor')")
+    public ScheduledTrip ScheduleTrip(@RequestBody ScheduleTripModel trip) throws Exception {
+        return tripService.scheduleTrip(trip);
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('Vendor')")
+    public ScheduledTrip updateScheduledTrip(@RequestBody ScheduleTripModel trip) throws Exception {
+        return tripService.scheduleTrip(trip);
+    }
+//    @PostMapping
+//    @PreAuthorize("hasRole('Vendor')")
+//    public ScheduledTrip updateTrip(@RequestBody ScheduleTripModel trip) throws Exception {
+//        return tripService.scheduleTrip(trip);
+//    }
 
 //    @PutMapping("/{id}")
 //    public ResponseEntity<Trip> updateTrip(@PathVariable Long id, @RequestBody Trip tripDetails) {
