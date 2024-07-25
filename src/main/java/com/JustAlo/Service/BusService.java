@@ -53,4 +53,15 @@ public class BusService {
     public void deleteBus(Long id) {
         busRepository.deleteById(id);
     }
+
+    public Bus getVerfiedBusById(Long id) throws Exception {
+         Bus bus=busRepository.findById(id).orElse(null);
+         if(bus!=null){
+             if(bus.getVerified()){
+                 return bus;
+             }
+             throw new Exception("bus unverified");
+         }
+         throw new Exception("bus not found");
+    }
 }

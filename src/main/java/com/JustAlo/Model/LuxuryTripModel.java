@@ -1,5 +1,7 @@
 package com.JustAlo.Model;
 
+import java.sql.Date;
+import java.sql.Time;
 import java.util.List;
 
 public class LuxuryTripModel {
@@ -8,6 +10,8 @@ public class LuxuryTripModel {
     public Long route_id;
     public List<String> pickupPoints;
     public List<String> dropDownPoints;
+    public Date date;
+    public Time time;
 
     // Getters and Setters
 }

@@ -1,7 +1,6 @@
 package com.JustAlo.Controller;
 
 import com.JustAlo.Entity.LuxuryTrip;
-import com.JustAlo.Entity.ScheduledTrip;
 import com.JustAlo.Entity.Trip;
 import com.JustAlo.Model.LuxuryTripModel;
 import com.JustAlo.Model.OrdinaryTripModel;
@@ -12,7 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/trips")
@@ -24,58 +24,69 @@ public class TripController {
 //    public List<Trip> getAllTrips() {
 //        return tripService.findAll();
 //    }
-//
-//    @GetMapping("/{id}")
-//    public ResponseEntity<Trip> getTripById(@PathVariable Long id) {
-//        Optional<Trip> trip = tripService.findById(id);
-//        return trip.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-//    }
 
+
+//Should we get trip as ordinary and luxury differently
+    @GetMapping("/{id}")
+    public List<Trip> getTripById(@PathVariable Long id) {
+        return tripService.findById(id);
+        // trip.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+
+
+    //Creating Trip
     @PostMapping("/ordinary")
     @PreAuthorize("hasRole('Vendor')")
-    public Trip createTrip(@RequestBody OrdinaryTripModel trip) {
+    public Trip createTrip(@RequestBody OrdinaryTripModel trip) throws Exception {
         return tripService.save(trip);
     }
 
     @PostMapping("/luxury")
     @PreAuthorize("hasRole('Vendor')")
-    public LuxuryTrip createTrip(@RequestBody LuxuryTripModel trip) {
+    public LuxuryTrip createTrip(@RequestBody LuxuryTripModel trip) throws Exception {
         return tripService.save(trip);
     }
 
+
+    //Scheduling if not already
     @PostMapping
     @PreAuthorize("hasRole('Vendor')")
-    public ScheduledTrip ScheduleTrip(@RequestBody ScheduleTripModel trip) throws Exception {
+    public Trip ScheduleTrip(@RequestBody ScheduleTripModel trip) throws Exception {
         return tripService.scheduleTrip(trip);
     }
 
-    @PostMapping
+
+    //Updating Already Scheduled
+    @PutMapping("/update/ordinary/{id}")
     @PreAuthorize("hasRole('Vendor')")
-    public ScheduledTrip updateScheduledTrip(@RequestBody ScheduleTripModel trip) throws Exception {
-        return tripService.scheduleTrip(trip);
+    public Trip updateTrip(@RequestBody OrdinaryTripModel trip,@PathVariable long id) {
+        return tripService.update(trip,id);
     }
-//    @PostMapping
-//    @PreAuthorize("hasRole('Vendor')")
-//    public ScheduledTrip updateTrip(@RequestBody ScheduleTripModel trip) throws Exception {
-//        return tripService.scheduleTrip(trip);
-//    }
 
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Trip> updateTrip(@PathVariable Long id, @RequestBody Trip tripDetails) {
-//        Optional<Trip> trip = tripService.findById(id);
-//        if (trip.isPresent()) {
-//            Trip updatedTrip = trip.get();
-//            updatedTrip.setBusId(tripDetails.getBusId());
-//            updatedTrip.setDriverId(tripDetails.getDriverId());
-//            updatedTrip.setRouteId(tripDetails.getRouteId());
-//            updatedTrip.setType(tripDetails.getType());
-//            updatedTrip.setVendorId(tripDetails.getVendorId());
-//            return ResponseEntity.ok(tripService.save(updatedTrip));
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
+    @PutMapping("/update/Luxury/{id}")
+    @PreAuthorize("hasRole('Vendor')")
+    public LuxuryTrip updateTrip(@RequestBody LuxuryTripModel trip,@PathVariable long id) {
+        return tripService.update(trip,id);
+    }
 
+
+
+    //RESCHEDULING -Scheduling Again
+    @PutMapping("/reschedule/ordinary")
+    @PreAuthorize("hasRole('Vendor')")
+    public Trip reScheduleTrip(@RequestBody OrdinaryTripModel trip) throws Exception {
+        return tripService.save(trip);
+    }
+
+    @PutMapping("/reschedule/Luxury")
+    @PreAuthorize("hasRole('Vendor')")
+    public LuxuryTrip reScheduleTrip(@RequestBody LuxuryTripModel trip) throws Exception {
+        return tripService.save(trip);
+    }
+
+
+//DELETING
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTrip(@PathVariable Long id) {
         tripService.deleteById(id);

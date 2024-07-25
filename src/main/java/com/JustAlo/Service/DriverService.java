@@ -66,4 +66,18 @@ public class DriverService {
     public List<Driver> getAllVerifiedDriver(DriverModel driverModel) {
         return driverDao.findByVerificationStatus(true);
     }
+
+    public Driver getVerifiedDriverById(Long driverId) throws Exception {
+
+        Driver driver=driverDao.findById(driverId).orElse(null);
+        if(driver!=null){
+            if(driverDao.isDriverVerified(driverId)){
+                return driver ;
+            }
+            else{
+                throw new Exception("Driver Unverified");
+            }
+        }
+        throw new Exception("Driver not found");
+    }
 }

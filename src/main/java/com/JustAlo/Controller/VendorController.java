@@ -40,5 +40,7 @@ public class VendorController {
     public Vendor markVerified(@PathVariable("id") Long id) throws Exception {
         return vendorService.markVerified(id);
     }
-
+//get trips
+    //get trips from date to date
+    
 }
