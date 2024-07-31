@@ -93,6 +93,10 @@ public class VendorService {
     public Vendor findByUsername(String currentUser) {
         return vendorDao.findByEmail(currentUser);
     }
+
+    public Vendor findById(Long id) {
+        return vendorDao.findById(id).orElse(null);
+    }
 }
 
 
