@@ -1,15 +1,19 @@
 package com.JustAlo.Controller;
 
 import com.JustAlo.Entity.LuxuryTrip;
+import com.JustAlo.Entity.OrdinaryTrip;
+import com.JustAlo.Entity.Route;
 import com.JustAlo.Entity.Trip;
 import com.JustAlo.Model.LuxuryTripModel;
 import com.JustAlo.Model.OrdinaryTripModel;
+import com.JustAlo.Service.RouteService;
 import com.JustAlo.Service.TripService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -17,6 +21,9 @@ import java.util.Optional;
 public class TripController {
     @Autowired
     private TripService tripService;
+
+    @Autowired
+    private RouteService routeService;
 
 //    @GetMapping
 //    public List<Trip> getAllTrips() {
@@ -62,4 +69,21 @@ public class TripController {
         tripService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+   @PostMapping("/addRoute")
+   @PreAuthorize("hasRole('Vendor')")
+   public Route addRoute(@RequestBody Route route){
+      return   routeService.addRoute(route);
+    }
+    @GetMapping("/getAllRoute")
+    @PreAuthorize("hasRole('Vendor')")
+    public List<Route> getAllRoutes(){
+        return routeService.getAllRoutes();
+    }
+
+    @PostMapping("/addordinaryStops")
+    @PreAuthorize("hasRole('Vendor')")
+    public OrdinaryTrip addOrdinaryStops(@RequestBody OrdinaryTrip ordinaryTrip){
+        return  tripService.addOrdinaryStops(ordinaryTrip);
+    }
+
 }

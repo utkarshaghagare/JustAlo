@@ -53,4 +53,8 @@ public class BusService {
     public void deleteBus(Long id) {
         busRepository.deleteById(id);
     }
+
+    public long getBusesCount() {
+        return busRepository.count();
+    }
 }

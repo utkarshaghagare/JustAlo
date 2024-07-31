@@ -1,8 +1,7 @@
 package com.JustAlo.Entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+
 
 import java.util.Set;
 
@@ -12,6 +11,9 @@ public class Driver {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @ManyToOne
+    @JoinColumn(name = "vendor_id", referencedColumnName = "id")
+    private Vendor vendor;
     private String driver_name;
     private String email;
     private String password;
@@ -127,15 +129,31 @@ public class Driver {
         return verification_status;
     }
 
+    public Set<Role> getRole() {
+        return Role;
+    }
+
+    public void setRole(Set<Role>  role) {
+        Role = role;
+    }
+
     public void setVerification_status(Boolean verification_status) {
         this.verification_status = verification_status;
     }
 
-    public Set<com.JustAlo.Entity.Role> getRole() {
-        return Role;
+//    public Set<com.JustAlo.Entity.Role> getRole() {
+//        return Role;
+//    }
+//
+//    public void setRole(Set<com.JustAlo.Entity.Role> role) {
+//        Role = role;
+//    }
+
+    public Vendor getVendor() {
+        return vendor;
     }
 
-    public void setRole(Set<com.JustAlo.Entity.Role> role) {
-        Role = role;
+    public void setVendor(Vendor vendor) {
+        this.vendor = vendor;
     }
 }

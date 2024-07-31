@@ -3,11 +3,13 @@ package com.JustAlo.Controller;
 
 import com.JustAlo.Entity.*;
 import com.JustAlo.Exception.InvalidOtpException;
+import com.JustAlo.Model.OTPRequest;
 import com.JustAlo.Repo.RoleDao;
 import com.JustAlo.Repo.UserDao;
 import com.JustAlo.Security.JwtHelper;
 import com.JustAlo.Service.JwtService;
 
+import com.JustAlo.Service.MoOTOService;
 import com.JustAlo.Service.OtpService;
 import com.JustAlo.Service.UserService;
 import jakarta.annotation.PostConstruct;
@@ -34,7 +36,8 @@ public class UserController {
     private JwtService jwtService;
     @Autowired
     private RoleDao roleDao;
-
+    @Autowired
+    private MoOTOService moOTOService;
     @PostConstruct
     public void initRoleAndUser() {
         userService.initRoleAndUser();
@@ -124,13 +127,6 @@ public class UserController {
         return ResponseEntity.ok("OTP sent to your email.");
     }
 
-
-
-
-
-
-
-
     @PostMapping("/validate-otp")
     public ResponseEntity<?> validateOtp(@RequestParam String email, @RequestParam String otp) {
         if (otpService.validateOtp(email, otp)) {
@@ -138,9 +134,7 @@ public class UserController {
             if (user == null) {
                 //   user = new User();
                 user.setEmail(email);
-
                 // Assign a default role
-
                 Role role = roleDao.findById("User")
                         .orElseThrow(() -> new RuntimeException("Role not found"));
                 Set<Role> userRoles = new HashSet<>();
@@ -148,15 +142,24 @@ public class UserController {
                 user.setRole(userRoles);
                 userDao.save(user);
             }
-
             // Generate JWT token
             String token = jwtUtil.generateToken(email);
-
             return ResponseEntity.ok(new JwtResponse(email, token));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid OTP");
         }
-    }}
+    }
+
+
+
+    @PostMapping("/sendOtp")
+    public ResponseEntity<String> sendOtp(@RequestBody OTPRequest otpRequest) {
+        String phoneNumber = otpRequest.getContactNumber();
+        String otp = moOTOService.generateOtp();
+        String response = moOTOService.sendOtp(phoneNumber, otp);
+        return ResponseEntity.ok(response);
+    }
+}
 
 
 

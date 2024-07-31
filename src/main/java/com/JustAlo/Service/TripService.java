@@ -82,4 +82,8 @@ public class TripService {
     public void deleteById(Long id) {
         tripRepository.deleteById(id);
     }
+
+    public OrdinaryTrip addOrdinaryStops(OrdinaryTrip ordinaryTrip) {
+        return ordinaryTripRepository.save(ordinaryTrip);
+    }
 }

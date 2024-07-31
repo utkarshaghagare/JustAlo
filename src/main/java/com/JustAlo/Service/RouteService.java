@@ -5,13 +5,23 @@ import com.JustAlo.Repo.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
-public class RouteService {
+public class  RouteService {
     @Autowired
     private RouteRepository routeRepository;
     public Optional<Route> getRouteById(Long routeId) {
         return routeRepository.findById(routeId);
+    }
+
+    public Route addRoute(Route route) {
+       return routeRepository.save(route);
+
+    }
+
+    public List<Route> getAllRoutes() {
+        return routeRepository.findAll();
     }
 }
