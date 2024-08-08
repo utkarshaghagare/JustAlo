@@ -2,14 +2,11 @@ package com.JustAlo.Controller;
 
 import com.JustAlo.Entity.Bus;
 import com.JustAlo.Service.BusService;
-;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,14 +17,13 @@ public class BusController {
     @Autowired
     private BusService busService;
 
-
-    @PostMapping("/add")
+    @PostMapping
     @PreAuthorize("hasRole('Vendor')")
     public ResponseEntity<Bus> createBus(@RequestBody Bus bus) {
         Bus createdBus = busService.createBus(bus);
         return ResponseEntity.ok(createdBus);
     }
-//1. admin api toget unverifies buses and
+//1. admin api toget unverified buses and
 // 2.mark bus verified
     @GetMapping("/verified")
     public ResponseEntity<List<Bus>> getAllVerifiedBuses() {
@@ -57,8 +53,4 @@ public class BusController {
         busService.deleteBus(id);
         return ResponseEntity.noContent().build();
     }
-
-
-
-
 }

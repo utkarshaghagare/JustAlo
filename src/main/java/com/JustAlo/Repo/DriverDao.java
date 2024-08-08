@@ -13,14 +13,10 @@ import java.util.Optional;
 @Repository
 public interface DriverDao extends JpaRepository<Driver, Long> {
 
-
     Optional<Driver> findByEmail(String email);
 
-    @Query("SELECT d FROM Driver d WHERE d.verification_status = false")
-    List<Driver> findUnverifiedDrivers();
-    Optional<Driver> findById(Long id);
-
+    @Query("SELECT d.verification_status FROM Driver d WHERE d.id = :id")
+    Boolean isDriverVerified(@Param("id") Long id);
 
     @Query("SELECT d FROM Driver d WHERE d.verification_status = :verificationStatus")
     List<Driver> findByVerificationStatus(@Param("verificationStatus") Boolean verificationStatus);}
-

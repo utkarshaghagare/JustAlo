@@ -11,9 +11,4 @@ public class JwtRequest {
 	private String password;
 	private String otp;
 
-
-
-
-
-
 }

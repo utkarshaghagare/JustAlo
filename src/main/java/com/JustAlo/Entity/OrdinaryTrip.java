@@ -18,5 +18,17 @@ public class OrdinaryTrip {
     @JoinColumn(name = "trip_id", referencedColumnName = "id")
     private Trip trip;
 
-    private String Stops;
+    @Column(name = "stopname")
+    private String stopname;
+
+    @Column(name = "stopnumber")
+    private Integer stopnumber;
+
+    private Long amount;
+
+    private String longitute;
+
+    private String latitute;
+
+    //langitude latitute
 }

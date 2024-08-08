@@ -3,6 +3,7 @@ package com.JustAlo.Service;
 
 import com.JustAlo.Entity.Role;
 import com.JustAlo.Entity.Vendor;
+import com.JustAlo.Model.TicketBooking;
 import com.JustAlo.Model.VendorModel;
 import com.JustAlo.Repo.RoleDao;
 import com.JustAlo.Repo.VendorDao;
@@ -28,6 +29,8 @@ public class VendorService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private BookingService bookingService;
 
     //exception
     public Vendor registerVendor(VendorModel vendormodel) {
@@ -97,6 +100,14 @@ public class VendorService {
     public Vendor findById(Long id) {
         return vendorDao.findById(id).orElse(null);
     }
+
+//    public String reserveSeat(Long id, List<Integer> seats) {
+//        return bookingService.reserveSeat(id,seats);
+//    }
+
+//    public String bookSeat(TicketBooking ticketBooking) {
+//        return bookingService.bookSeat(ticketBooking,)
+//    }
 }
 
 

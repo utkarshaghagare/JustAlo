@@ -2,14 +2,12 @@ package com.JustAlo.Controller;
 
 
 import com.JustAlo.Entity.Vendor;
+import com.JustAlo.Model.TicketBooking;
 import com.JustAlo.Model.VendorModel;
-import com.JustAlo.Service.BusService;
-import com.JustAlo.Service.DriverService;
 import com.JustAlo.Service.UserService;
 import com.JustAlo.Service.VendorService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -17,11 +15,6 @@ import java.util.List;
 @RestController
 @RequestMapping
 public class VendorController {
-    @Autowired
-    private DriverService driverService;
-    @Autowired
-    private BusService busService;
-
     @Autowired
     private UserService userService;
 
@@ -49,17 +42,17 @@ public class VendorController {
         return vendorService.markVerified(id);
     }
 
-    @GetMapping("/getDriverCount")
-    @PreAuthorize("hasRole('Vendor')")
-    public ResponseEntity<Long> getDriverCount() {
-        long driverCount = driverService.getDriverCount();
-        return ResponseEntity.ok(driverCount);
-    }
-
-    @GetMapping("/getBusesCount")
-    @PreAuthorize("hasRole('Vendor')")
-    public ResponseEntity<Long> getAllBuses(){
-        long busCount= busService.getBusesCount();
-        return ResponseEntity.ok(busCount);
-    }
+//    @PostMapping("/BookSeat")
+//    @PreAuthorize("hasRole('Vendor')")
+//    public String bookSeat(@RequestBody TicketBooking ticketBooking) throws Exception {
+//        return vendorService.bookSeat(ticketBooking);
+//    }
+//    @PreAuthorize("hasRole('Vendor')")
+//    @PostMapping("/reserveSeat/{tripId}")
+//    public String reserveSeat(@PathVariable("tripId") Long id, @RequestBody List<Integer> seats) throws Exception {
+//        return vendorService.reserveSeat(id,seats);
+//    }
+//get trips
+    //get trips from date to date
+    
 }
