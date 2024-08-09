@@ -34,6 +34,8 @@ public class Trip {
     private Route route;
 
     private String type;
+
+    private Double amount;
     private Date date;
     private Time time;
 

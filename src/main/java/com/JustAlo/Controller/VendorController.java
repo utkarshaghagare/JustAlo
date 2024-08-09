@@ -2,6 +2,7 @@ package com.JustAlo.Controller;
 
 
 import com.JustAlo.Entity.Vendor;
+import com.JustAlo.Model.TicketBooking;
 import com.JustAlo.Model.VendorModel;
 import com.JustAlo.Service.UserService;
 import com.JustAlo.Service.VendorService;
@@ -40,6 +41,17 @@ public class VendorController {
     public Vendor markVerified(@PathVariable("id") Long id) throws Exception {
         return vendorService.markVerified(id);
     }
+
+//    @PostMapping("/BookSeat")
+//    @PreAuthorize("hasRole('Vendor')")
+//    public String bookSeat(@RequestBody TicketBooking ticketBooking) throws Exception {
+//        return vendorService.bookSeat(ticketBooking);
+//    }
+//    @PreAuthorize("hasRole('Vendor')")
+//    @PostMapping("/reserveSeat/{tripId}")
+//    public String reserveSeat(@PathVariable("tripId") Long id, @RequestBody List<Integer> seats) throws Exception {
+//        return vendorService.reserveSeat(id,seats);
+//    }
 //get trips
     //get trips from date to date
     

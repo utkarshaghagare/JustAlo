@@ -8,8 +8,7 @@ public class OrdinaryTripModel {
     public Long bus_id;
     public Long driver_id;
     public Long route_id;
-    public List<String> stops;
+    public List<Stop> stops;
     public Date date;
     public Time time;
-
 }

@@ -139,4 +139,8 @@ public class UserService {
 	    String username = jwtHelper.getEmailFromToken(token);
 		return new JwtResponse(token, username);
 	}
+
+	public void deleteUser(Long id) {
+			userDao.delete(userDao.findById(id).orElse(null));
+	}
 }

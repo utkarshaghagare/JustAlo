@@ -23,7 +23,7 @@ public class BusController {
         Bus createdBus = busService.createBus(bus);
         return ResponseEntity.ok(createdBus);
     }
-//1. admin api toget unverifies buses and
+//1. admin api toget unverified buses and
 // 2.mark bus verified
     @GetMapping("/verified")
     public ResponseEntity<List<Bus>> getAllVerifiedBuses() {

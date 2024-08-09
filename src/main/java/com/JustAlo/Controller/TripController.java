@@ -20,16 +20,10 @@ public class TripController {
     @Autowired
     private TripService tripService;
 
-//    @GetMapping
-//    public List<Trip> getAllTrips() {
-//        return tripService.findAll();
-//    }
-
-
 //Should we get trip as ordinary and luxury differently
-    @GetMapping("/{id}")
-    public List<Trip> getTripById(@PathVariable Long id) {
-        return tripService.findById(id);
+    @GetMapping("/{vendorid}")
+    public List<Trip> getTripById(@PathVariable Long vendorid) {
+        return tripService.findByVendorId(vendorid);
         // trip.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -69,7 +63,6 @@ public class TripController {
     public LuxuryTrip updateTrip(@RequestBody LuxuryTripModel trip,@PathVariable long id) {
         return tripService.update(trip,id);
     }
-
 
 
     //RESCHEDULING -Scheduling Again

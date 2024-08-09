@@ -2,14 +2,14 @@ package com.JustAlo.Controller;
 
 
 import com.JustAlo.Entity.*;
-import com.JustAlo.Exception.InvalidOtpException;
+import com.JustAlo.Model.TicketBooking;
+import com.JustAlo.Model.TripRequest;
+import com.JustAlo.Repo.BookingRepository;
 import com.JustAlo.Repo.RoleDao;
 import com.JustAlo.Repo.UserDao;
 import com.JustAlo.Security.JwtHelper;
-import com.JustAlo.Service.JwtService;
+import com.JustAlo.Service.*;
 
-import com.JustAlo.Service.OtpService;
-import com.JustAlo.Service.UserService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,20 +34,19 @@ public class UserController {
     private JwtService jwtService;
     @Autowired
     private RoleDao roleDao;
+    @Autowired
+    private TripService tripService;
+    @Autowired
+    private JwtHelper jwtUtil;
+    @Autowired
+    private BookingRepository bookingRepository;
 
     @PostConstruct
     public void initRoleAndUser() {
         userService.initRoleAndUser();
     }
 
-
-//    @PostMapping("/register")
-//    public ResponseEntity<User> registerUser(@RequestBody User user) {
-//        User registeredUser = userService.registerUser(user);
-//        return ResponseEntity.ok(registeredUser);
-//    }
-
-
+//USER CRUD
     @PostMapping({"/registerNewUser"})
     public User registerNewUser(@RequestBody User user) {
         return userService.registerNewUser(user);
@@ -58,15 +57,20 @@ public class UserController {
         return jwtService.createJwtToken(jwtRequest);
     }
 
+    @PutMapping({"/updateUser/{id}"})
+    public User updateUser(@PathVariable("id") Long id,@RequestBody User user) {
+        return userService.updateUser(id,user);
+    }
+
+    @PutMapping({"/deleteUser/{id}"})
+    public void updateUser(@PathVariable("id") Long id) {
+        userService.deleteUser(id);
+    }
+
     @PostMapping({"/registerAdmin"})
     public User registerNewAdmin(@RequestBody User user) {
         return userService.registerAdmin(user);
     }
-
-//    @PostMapping({"/updateUser/{id}"})
-//    public User updateUser(@PathVariable("id") Long id,@RequestBody User user) {
-//        return userService.updateUser(id,user);
-//    }
 
     @GetMapping({"/forAdmin"})
     @PreAuthorize("hasRole('Admin')")
@@ -84,15 +88,11 @@ public class UserController {
     @GetMapping("/getAllUser")
     @PreAuthorize("hasRole('User')")
     public List<User> getAllUser(){
-
         return userService.getAllUser();
-
 
     }
 
-
-    @Autowired
-    private JwtHelper jwtUtil;
+    //OTP LOGIN SYSTEM
 
     @PostMapping("/send-otp")
     public ResponseEntity<?> sendOtp(@RequestParam String email) {
@@ -124,13 +124,6 @@ public class UserController {
         return ResponseEntity.ok("OTP sent to your email.");
     }
 
-
-
-
-
-
-
-
     @PostMapping("/validate-otp")
     public ResponseEntity<?> validateOtp(@RequestParam String email, @RequestParam String otp) {
         if (otpService.validateOtp(email, otp)) {
@@ -156,7 +149,48 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid OTP");
         }
-    }}
+    }
+
+
+    //search trip-> input start end time/NO TIME
+    @GetMapping("/findTrip")
+    @PreAuthorize("hasRole('Vendor')")
+    public List<Trip> findTrip(@RequestBody TripRequest tripRequest){
+        return tripService.findTrip(tripRequest.getStart() ,tripRequest.getDestination(),tripRequest.getDate());
+    }
+
+    //select start point end point
+    //working
+    @GetMapping("/available_seats/{id}")
+    @PreAuthorize("hasRole('Vendor')")
+    public List<Integer> findSeat(@RequestBody TripRequest tripRequest, @PathVariable long id){
+        return tripService.findSeat(tripRequest.getStart() ,tripRequest.getDestination(),id);
+    }
+
+
+//select seats
+//provide passanger details
+//save
+    @PostMapping("/BookSeat")
+    @PreAuthorize("hasRole('Vendor')")
+    public String bookSeat(@RequestBody TicketBooking ticketBooking) throws Exception {
+        return tripService.bookSeat(ticketBooking);
+    }
+
+
+//payment
+
+//Yet to be tested
+    @GetMapping("/Tickets")
+    @PreAuthorize("hasRole('Vendor')")
+    public List<Booking> getTickets() throws Exception {
+        return tripService.getTickets();
+    }
+
+    //Mark all has roleUser
+
+
+}
 
 
 
