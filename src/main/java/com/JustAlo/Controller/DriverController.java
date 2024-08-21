@@ -68,7 +68,7 @@ public class DriverController {
 
     }
 
-    @GetMapping("/verified")
+    @GetMapping("/verifiedDrivers")
     public ResponseEntity<List<Driver>> getAllVerifiedDriver(@RequestBody DriverModel driverModel){
         List<Driver> drivers= driverService.getAllVerifiedDriver(driverModel);
         return ResponseEntity.ok(drivers);

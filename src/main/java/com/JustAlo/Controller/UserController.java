@@ -2,6 +2,8 @@ package com.JustAlo.Controller;
 
 
 import com.JustAlo.Entity.*;
+import com.JustAlo.Model.RentRequest;
+import com.JustAlo.Model.Seats;
 import com.JustAlo.Model.TicketBooking;
 import com.JustAlo.Model.TripRequest;
 import com.JustAlo.Repo.BookingRepository;
@@ -47,53 +49,17 @@ public class UserController {
     }
 
 //USER CRUD
+//registration
     @PostMapping({"/registerNewUser"})
     public User registerNewUser(@RequestBody User user) {
         return userService.registerNewUser(user);
     }
 
+//Login
     @PostMapping("/auth/login")
     public JwtResponse createJwtToken(@RequestBody JwtRequest jwtRequest) throws Exception {
         return jwtService.createJwtToken(jwtRequest);
     }
-
-    @PutMapping({"/updateUser/{id}"})
-    public User updateUser(@PathVariable("id") Long id,@RequestBody User user) {
-        return userService.updateUser(id,user);
-    }
-
-    @PutMapping({"/deleteUser/{id}"})
-    public void updateUser(@PathVariable("id") Long id) {
-        userService.deleteUser(id);
-    }
-
-    @PostMapping({"/registerAdmin"})
-    public User registerNewAdmin(@RequestBody User user) {
-        return userService.registerAdmin(user);
-    }
-
-    @GetMapping({"/forAdmin"})
-    @PreAuthorize("hasRole('Admin')")
-    public String forAdmin() {
-        return "This URL is only accessible to the admin";
-    }
-
-    @GetMapping({"/forUser"})
-    @PreAuthorize("hasRole('User')")
-    public String forUser() {
-        return "This URL is only accessible to the user";
-    }
-
-
-    @GetMapping("/getAllUser")
-    @PreAuthorize("hasRole('User')")
-    public List<User> getAllUser(){
-        return userService.getAllUser();
-
-    }
-
-    //OTP LOGIN SYSTEM
-
     @PostMapping("/send-otp")
     public ResponseEntity<?> sendOtp(@RequestParam String email) {
         User user = userDao.findByEmail(email);
@@ -150,11 +116,36 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid OTP");
         }
     }
+//Profile Section
+    @PutMapping({"/updateUser/{id}"})
+    public User updateUser(@PathVariable("id") Long id,@RequestBody User user) {
+        return userService.updateUser(id,user);
+    }
 
+                 //acess- admin , user
+    @PutMapping({"/deleteUser/{id}"})
+    public void updateUser(@PathVariable("id") Long id) {
+        userService.deleteUser(id);
+    }
+
+
+//Add to admin contoller
+    @PostMapping({"/registerAdmin"})
+    public User registerNewAdmin(@RequestBody User user) {
+        return userService.registerAdmin(user);
+    }
+
+    @GetMapping("/getAllUser")
+    @PreAuthorize("hasRole('User')")
+    public List<User> getAllUser(){
+        return userService.getAllUser();
+
+    }
+//BOOKING Section
 
     //search trip-> input start end time/NO TIME
     @GetMapping("/findTrip")
-    @PreAuthorize("hasRole('Vendor')")
+   // @PreAuthorize("hasRole('Vendor')")
     public List<Trip> findTrip(@RequestBody TripRequest tripRequest){
         return tripService.findTrip(tripRequest.getStart() ,tripRequest.getDestination(),tripRequest.getDate());
     }
@@ -163,14 +154,20 @@ public class UserController {
     //working
     @GetMapping("/available_seats/{id}")
     @PreAuthorize("hasRole('Vendor')")
-    public List<Integer> findSeat(@RequestBody TripRequest tripRequest, @PathVariable long id){
+    public Seats findSeat(@RequestBody TripRequest tripRequest, @PathVariable long id){
         return tripService.findSeat(tripRequest.getStart() ,tripRequest.getDestination(),id);
     }
 
 
-//select seats
-//provide passanger details
-//save
+    //select seats
+    //provide passanger details
+    //save
+    //yet to be tested
+    @GetMapping("/passengers")
+    @PreAuthorize("hasRole('User')")
+    public List<Passenger> getPassenger() throws Exception {
+        return tripService.getPassengers();
+    }
     @PostMapping("/BookSeat")
     @PreAuthorize("hasRole('Vendor')")
     public String bookSeat(@RequestBody TicketBooking ticketBooking) throws Exception {
@@ -178,17 +175,42 @@ public class UserController {
     }
 
 
-//payment
+    //payment
 
-//Yet to be tested
-    @GetMapping("/Tickets")
+
+
+//Tickets Section
+    //Yet to be tested
+    @GetMapping("/Tickets/booked")
     @PreAuthorize("hasRole('Vendor')")
     public List<Booking> getTickets() throws Exception {
-        return tripService.getTickets();
+        return tripService.getTickets("BOOKED");
     }
+    @GetMapping("/CancelTicket/{id}")
+    @PreAuthorize("hasRole('Vendor')")
+    public void cancelTicket(@PathVariable long id) throws Exception {
+        tripService.cancelTicket(id);
+    }
+    //Yet to be tested
+    @GetMapping("/Tickets/cancelled")
+    @PreAuthorize("hasRole('Vendor')")
+    public List<Booking> getCancelledTickets() throws Exception {
+        return tripService.getTickets("CANCELLED");
+    }
+
+
 
     //Mark all has roleUser
 
+
+    @Autowired
+    private RentService rentService;
+
+    @PostMapping("/rent/enquiry")
+    @PreAuthorize("hasRole('Vendor')")
+    public Rent addRentWithVehicles(@RequestBody RentRequest rentRequest) {
+        return rentService.addRentWithVehicles(rentRequest.rent, rentRequest.vehicles);
+    }
 
 }
 

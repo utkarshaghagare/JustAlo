@@ -12,6 +12,7 @@ public class LuxuryTripModel {
     public List<String> dropDownPoints;
     public Date date;
     public Time time;
+    public Time endtime;
     public Double amount;
 
     // Getters and Setters

@@ -16,19 +16,24 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findAllByTrip(Trip trip);
 
    // Booking findByTripandSeatno(Trip trip, Integer seatno);
-   @Query("SELECT b FROM Booking b WHERE b.trip = :trip AND b.seatno = :seatNo")
-   Booking findByTripAndSeatnumber(@Param("trip") Trip trip, @Param("seatNo") Integer seatNo);
+    @Query("SELECT b FROM Booking b WHERE b.trip = :trip AND b.seatno = :seatNo")
+    List<Booking> findByTripAndSeatnumber(@Param("trip") Trip trip, @Param("seatNo") Integer seatNo);
 
+    @Query("SELECT b FROM Booking b WHERE b.trip = :trip AND b.seatno = :seatNo")
+    Booking findByTripAndSeat(@Param("trip") Trip trip, @Param("seatNo") Integer seatNo);
     @Query("select count(b) from Booking b where b.trip = :trip")
     long countByTrip(@NonNull Trip trip);
 
-    @Query("SELECT b FROM Booking b WHERE b.passenger.user = :byEmail")
-    List<Booking> findAllByPassenger_User_Id(@Param("byEmail")User byEmail);
+    @Query("SELECT b FROM Booking b WHERE b.passenger.user = :byEmail AND b.status= :status")
+    List<Booking> findAllByPassenger_User_Id(@Param("byEmail")User byEmail,@Param("status") String status);
+
+    @Query("SELECT b.availableStops FROM Booking b WHERE b.trip = :trip AND b.seatno = :seatNo")
+    List<String> findAllAvailableStop(Trip trip, Integer seatNo);
 
 
-    @Modifying
-    @Transactional
-    @Query("UPDATE Booking b SET b.status = false WHERE b.trip = :trip AND b.seatno = :seatno")
-    void reserveSeat(@Param("trip") Trip trip, @Param("seatno") Integer seatno);
+//    @Modifying
+//    @Transactional
+//    @Query("UPDATE Booking b SET b.status = false WHERE b.trip = :trip AND b.seatno = :seatno")
+//    void reserveSeat(@Param("trip") Trip trip, @Param("seatno") Integer seatno);
 
 }

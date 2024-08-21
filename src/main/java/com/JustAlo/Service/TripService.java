@@ -9,10 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TripService {
@@ -45,6 +43,9 @@ public class TripService {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private PointsRepository pointsRepository;
+
     public List<Trip> findAll() {
         return tripRepository.findAll();
     }
@@ -67,6 +68,7 @@ public class TripService {
         trip.setVendor(vendorService.findByUsername(JwtAuthenticationFilter.CURRENT_USER));
         trip.setDate(tripModel.date);
         trip.setTime(tripModel.time);
+        trip.setEndtime(tripModel.endtime);
 
         // Save the Trip entity to generate an ID
         Trip savedTrip = tripRepository.save(trip);
@@ -86,16 +88,22 @@ public class TripService {
             ordinaryTrip.setTrip(savedTrip);
             ordinaryTrip.setStopname(stop.Stop_name);// Assuming OrdinaryTrip has a field `stop` for each stop
             ordinaryTrip.setAmount(stop.amount);
-            ordinaryTrip.setLatitute(stop.latitute);
-            ordinaryTrip.setLongitute(stop.longitute);
+//            ordinaryTrip.setLatitute(stop.latitute);
+//            ordinaryTrip.setLongitute(stop.longitute);
+            List<Points> points= pointsRepository.saveAll(stop.points);
+            ordinaryTrip.setPoints(stop.points);
             ordinaryTrip.setStopnumber(i++);  // Assuming OrdinaryTrip has a field `stop` for each stop
+
             ordinaryTripRepository.save(ordinaryTrip);
         }
     }
     public void makeBooking(int n, Trip savedTrip){
+        List<Booking> bookings = new ArrayList<>();
+        List<String> allStops = ordinaryTripRepository.findAllStopNames(savedTrip);
         for(int j=1; j<=n; j++){
-            bookingRepository.save(new Booking(savedTrip,j));
+            bookings.add(new Booking(savedTrip,j,allStops));
         }
+        bookingRepository.saveAll(bookings);
     }
     public LuxuryTrip save(LuxuryTripModel tripModel) throws Exception {
         LuxuryTrip trip = new LuxuryTrip();
@@ -106,6 +114,7 @@ public class TripService {
         trip.setVendor(vendorService.findByUsername(JwtAuthenticationFilter.CURRENT_USER));
         trip.setDate(tripModel.date);
         trip.setTime(tripModel.time);
+        trip.setEndtime(tripModel.endtime);
         trip.setAmount(tripModel.amount);
         trip.setPickupPoints(tripModel.pickupPoints);
         trip.setDropDownPoints(tripModel.dropDownPoints);
@@ -185,7 +194,7 @@ public class TripService {
         return Trips;
     }
 
-    public List<Integer> findSeat(String start, String destination,Long trip_id) {
+    public Seats findSeat(String start, String destination,Long trip_id) {
         Trip trip= findById(trip_id);
         if(trip!=null){
           return bookingService.findSeats(start,destination,trip);
@@ -203,8 +212,16 @@ public class TripService {
         return null;
     }
 
-    public List<Booking> getTickets() {
-        return bookingRepository.findAllByPassenger_User_Id(userDao.findByEmail(JwtAuthenticationFilter.CURRENT_USER));
+    public List<Booking> getTickets(String status) {
+        return bookingRepository.findAllByPassenger_User_Id(userDao.findByEmail(JwtAuthenticationFilter.CURRENT_USER),status);
+    }
+
+    public void cancelTicket(Long id) {
+        bookingService.cancelTicket(id);
+    }
+
+    public List<Passenger> getPassengers() {
+        return bookingService.getPassengers(userDao.findByEmail(JwtAuthenticationFilter.CURRENT_USER));
     }
 }
 

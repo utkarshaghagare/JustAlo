@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -33,11 +36,14 @@ public class Booking {
 
     private String ending_stop;
 
-    private Boolean status;
-    public Booking(Trip trip, Integer seatNo) {
+    private String status;
+
+    @ElementCollection
+    private List<String> availableStops = new ArrayList<>();
+    public Booking(Trip trip, Integer seatNo,List<String> availableStops) {
         this.trip= trip;
         this.seatno=seatNo;
-        this.status=true;
+        this.availableStops=availableStops;
     }
     //langitude latitute
 }

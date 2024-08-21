@@ -11,4 +11,5 @@ public class OrdinaryTripModel {
     public List<Stop> stops;
     public Date date;
     public Time time;
+    public Time endtime;
 }

@@ -38,6 +38,6 @@ public class Trip {
     private Double amount;
     private Date date;
     private Time time;
-
+    private Time endtime;
 
 }
