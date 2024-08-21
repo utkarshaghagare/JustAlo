@@ -13,37 +13,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
 class MyConfig {
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        UserDetails userDetails = User.builder().
-//                username("DURGESH")
-//                .password(passwordEncoder().encode("DURGESH")).roles("ADMIN").
-//                build();
-//        return new InMemoryUserDetailsManager(userDetails);
-//    }
 
-//
-//    public JwtResponse createJwtToken(JwtRequest jwtRequest) throws Exception {
-//        String username = jwtRequest.getUsername();
-//        String password = jwtRequest.getPassword();
-//        authenticate(username, password);
-//
-//        UserDetails userDetails = loadUserByUsername(username);
-//        String newGeneratedToken = jwtUtil.generateToken(userDetails);
-//
-//        // Determine if the authenticated entity is a user or a vendor
-//        User user = userDao.findByUsername(username).orElse(null);
-//        if (user != null) {
-//            return new JwtResponse(username, newGeneratedToken);
-//        } else {
-//            Vendor vendor = vendorDao.findByUsername(username).orElse(null);
-//            if (vendor != null) {
-//                return new JwtResponse(username, newGeneratedToken);
-//            } else {
-//                throw new Exception("User or Vendor not found with username: " + username);
-//            }
-//        }
-//    }
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

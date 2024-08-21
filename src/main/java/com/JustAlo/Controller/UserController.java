@@ -130,10 +130,10 @@ public class UserController {
 
 
 //Add to admin contoller
-    @PostMapping({"/registerAdmin"})
-    public User registerNewAdmin(@RequestBody User user) {
-        return userService.registerAdmin(user);
-    }
+//    @PostMapping({"/registerAdmin"})
+//    public User registerNewAdmin(@RequestBody User user) {
+//        return userService.registerAdmin(user);
+//    }
 
     @GetMapping("/getAllUser")
     @PreAuthorize("hasRole('User')")

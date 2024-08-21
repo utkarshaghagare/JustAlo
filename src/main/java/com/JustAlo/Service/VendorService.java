@@ -11,15 +11,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.*;
 
 @Service
 public class VendorService {
+
+    private final S3Client s3Client;
+    private final String bucketName = "studycycle";
+    private final String spaceUrl = "https://studycycle.blr1.digitaloceanspaces.com/";
+    @Autowired
+    public VendorService(S3Client s3Client) {
+        this.s3Client = s3Client;
+    }
     @Autowired
     private VendorDao vendorDao;
 
@@ -54,26 +67,91 @@ public class VendorService {
             }
         } else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password not matching");
     }
+//
+//    public Vendor saveVendor(VendorModel vendormodel){
+//
+//        Vendor vendor = new Vendor();
+//        Role role = roleDao.findById("Vendor").get();
+//        Set<Role> venderRoles = new HashSet<>();
+//        venderRoles.add(role);
+//        vendor.setRole(venderRoles);
+//        vendor.setPassword(getEncodedPassword(vendormodel.getPassword()));
+//        vendor.setAddress(vendormodel.getAddress());
+//        vendor.setEmail(vendormodel.getEmail());
+//        vendor.setUsername(vendormodel.getUsername());
+//        vendor.setOrganization_name(vendormodel.getOrganization_name());
+//        vendor.setPhone_number(vendormodel.getPhone_number());
+//        vendor.setVerification_status(false);
+//        vendor.setDoc1(vendormodel.getDoc1());
+//        vendor.setDoc2(vendormodel.getDoc2());
+//
+//        return vendorDao.save(vendor);
+//    }
 
-    public Vendor saveVendor(VendorModel vendormodel){
+    public Vendor saveVendor(VendorModel vendormodel) {
+        try {
+            // Upload documents to DigitalOcean Spaces
+            String doc1Url = uploadFileToSpace(vendormodel.getDoc1());
+            String doc2Url = uploadFileToSpace(vendormodel.getDoc2());
 
-        Vendor vendor = new Vendor();
-        Role role = roleDao.findById("Vendor").get();
-        Set<Role> venderRoles = new HashSet<>();
-        venderRoles.add(role);
-        vendor.setRole(venderRoles);
-        vendor.setPassword(getEncodedPassword(vendormodel.getPassword()));
-        vendor.setAddress(vendormodel.getAddress());
-        vendor.setEmail(vendormodel.getEmail());
-        vendor.setUsername(vendormodel.getUsername());
-        vendor.setOrganization_name(vendormodel.getOrganization_name());
-        vendor.setPhone_number(vendormodel.getPhone_number());
-        vendor.setVerification_status(false);
-        vendor.setDoc1(vendormodel.getDoc1());
-        vendor.setDoc2(vendormodel.getDoc2());
+            // Save Vendor with document URLs
+            Vendor vendor = new Vendor();
+            Role role = roleDao.findById("Vendor")
+                    .orElseThrow(() -> new RuntimeException("Role not found"));
+            Set<Role> vendorRoles = new HashSet<>();
+            vendorRoles.add(role);
+            vendor.setRole(vendorRoles);
+            vendor.setPassword(getEncodedPassword(vendormodel.getPassword()));
+            vendor.setAddress(vendormodel.getAddress());
+            vendor.setEmail(vendormodel.getEmail());
+            vendor.setUsername(vendormodel.getUsername());
+            vendor.setOrganization_name(vendormodel.getOrganization_name());
+            vendor.setPhone_number(vendormodel.getPhone_number());
+            vendor.setVerification_status(false);
 
-        return vendorDao.save(vendor);
-    }  public String getEncodedPassword(String password) {
+            // Set the uploaded document URLs
+            vendor.setDoc1(doc1Url);
+            vendor.setDoc2(doc2Url);
+
+            return vendorDao.save(vendor);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error saving vendor", e);
+        }
+    }
+
+    private String uploadFileToSpace(MultipartFile file) throws IOException {
+        String fileName = UUID.randomUUID().toString() + "-" + StringUtils.cleanPath(file.getOriginalFilename());
+
+        // Validate file
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("File is empty");
+        }
+
+        Path tempFile = Files.createTempFile("upload-", fileName);
+
+        try (var inputStream = file.getInputStream()) {
+            Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        // Upload to DigitalOcean Spaces
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(fileName)
+                .acl("public-read")
+                .build();
+
+        s3Client.putObject(putObjectRequest, tempFile);
+
+        // Clean up temporary file
+        Files.deleteIfExists(tempFile);
+
+        // Return the file URL
+        return spaceUrl + fileName;
+    }
+
+    public String getEncodedPassword(String password) {
         return passwordEncoder.encode(password);
     }
 

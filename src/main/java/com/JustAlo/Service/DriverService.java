@@ -1,24 +1,28 @@
 package com.JustAlo.Service;
 
 import com.JustAlo.Configuration.AmazonS3Config;
-import com.JustAlo.Entity.Driver;
-import com.JustAlo.Entity.Role;
-import com.JustAlo.Entity.User;
+import com.JustAlo.Entity.*;
 import com.JustAlo.Model.DriverModel;
+
 import com.JustAlo.Repo.DriverDao;
 import com.JustAlo.Repo.RoleDao;
+import com.JustAlo.Repo.RouteRepository;
+import com.JustAlo.Repo.TripRepository;
+import com.JustAlo.Security.JwtAuthenticationFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class DriverService {
+    @Autowired
+    private RouteRepository routeRepository;
+
+    @Autowired
+    private TripRepository tripRepository;
 
 
     @Autowired
@@ -32,7 +36,7 @@ public class DriverService {
     @Autowired
     private RoleDao roleDao;
 
-    public List<Driver> getAllDriver(DriverModel driverModel) {
+    public List<Driver> getAllDriver() {
         return driverDao.findAll();
     }
 
@@ -80,4 +84,28 @@ public class DriverService {
         }
         throw new Exception("Driver not found");
     }
+
+
+    public List<Trip> getDriverTripDetails() {
+
+        String email = JwtAuthenticationFilter.CURRENT_USER;
+
+        // Find the driver by the current user ID
+        Driver driver = driverDao.findByEmail(email).get();
+
+        // Fetch trips associated with the current driver
+        List<Trip> trips = tripRepository.findByDriverId(driver.getId());
+       for(Trip trip: trips){
+           trip.getRoute().getOrigin();
+           trip.getRoute().getDestination();
+           trip.getDate();
+           trip.getEndtime();
+           trip.getTime();
+       }
+        return trips;
+
+
+    }
+
+
 }

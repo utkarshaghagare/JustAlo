@@ -1,13 +1,15 @@
 package com.JustAlo.Model;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class VendorModel {
     public String username;
     public String email;
     public String phone_number;
     public String organization_name;
     public String address;
-    public String doc1;
-    public String doc2;
+    public MultipartFile doc1;
+    public MultipartFile doc2;
     public String password;
     public String confirm_password;
 
@@ -50,22 +52,38 @@ public class VendorModel {
     public void setAddress(String address) {
         this.address = address;
     }
-
-    public String getDoc1() {
+    public MultipartFile setDoc1(MultipartFile doc1) {
+        this.doc1 = doc1;
         return doc1;
     }
-
-    public void setDoc1(String doc1) {
-        this.doc1 = doc1;
+    public MultipartFile getDoc1() {
+        return doc1;
     }
-
-    public String getDoc2() {
+    public MultipartFile getDoc2() {
         return doc2;
     }
 
-    public void setDoc2(String doc2) {
+    public MultipartFile setDoc2(MultipartFile doc2) {
         this.doc2 = doc2;
+        return doc2;
     }
+
+
+//    public String getDoc1() {
+//        return doc1;
+//    }
+//
+//    public void setDoc1(String doc1) {
+//        this.doc1 = doc1;
+//    }
+//
+//    public String getDoc2() {
+//        return doc2;
+//    }
+//
+//    public void setDoc2(String doc2) {
+//        this.doc2 = doc2;
+//    }
 
     public String getPassword() {
         return password;

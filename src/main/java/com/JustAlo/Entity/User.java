@@ -16,15 +16,15 @@ import java.util.Set;
 
 public class User implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String username;
-    private String name;
-    private String email;
-    private String password;
-    private String contactNumber;
-    private String otp;
-    private LocalDateTime expirationTime;
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+        private String username;
+        private String name;
+        private String email;
+        private String password;
+        private String contactNumber;
+        private String otp;
+        private LocalDateTime expirationTime;
     @Transient
     private boolean isVerified;
 

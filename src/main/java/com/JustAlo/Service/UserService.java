@@ -1,10 +1,12 @@
 package com.JustAlo.Service;
 
 
+import com.JustAlo.Entity.Admin;
 import com.JustAlo.Entity.JwtResponse;
 import com.JustAlo.Entity.Role;
 import com.JustAlo.Entity.User;
 import com.JustAlo.Exception.InvalidOtpException;
+import com.JustAlo.Repo.AdminRepository;
 import com.JustAlo.Security.JwtHelper;
 import com.JustAlo.Repo.RoleDao;
 import com.JustAlo.Repo.UserDao;
@@ -32,6 +34,9 @@ public class UserService {
 		@Autowired
 		private OtpService otpService;
 
+
+		@Autowired
+		private AdminRepository adminDao;
 
 	@Autowired
 	private JwtHelper jwtHelper;
@@ -63,6 +68,8 @@ public class UserService {
 
 
 
+
+
 	    }
 
 	    public User registerNewUser(User user) {
@@ -79,15 +86,31 @@ public class UserService {
 	        return passwordEncoder.encode(password);
 	    }
 
-	public User registerAdmin(User user) {
+	public Admin registerAdmin(Admin admin) {
+//		admin.setName("Admin Name");  // Static name
+//		admin.setEmail("admin@example.com");  // Static email
+//		admin.setPassword(getEncodedPassword("admin@password"));  // Static password, encoded
+
+		// Assign the "Admin" role to the user
 		Role role = roleDao.findById("Admin").get();
 		Set<Role> userRoles = new HashSet<>();
 		userRoles.add(role);
-		user.setRole(userRoles);
-		user.setPassword(getEncodedPassword(user.getPassword()));
+		admin.setRole(userRoles);
+		admin.setPassword(getEncodedPassword(admin.getPassword()));
 
-		return userDao.save(user);
-	}
+		adminDao.save(admin);
+        return admin;
+    }
+
+
+//		Role role = roleDao.findById("Admin").get();
+//		Set<Role> userRoles = new HashSet<>();
+//		userRoles.add(role);
+//		user.setRole(userRoles);
+//		user.setPassword(getEncodedPassword(user.getPassword()));
+//
+//		return userDao.save(user);
+	//}
 
 
     public List<User> getAllUser() {

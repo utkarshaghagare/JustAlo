@@ -4,6 +4,7 @@ import com.JustAlo.Entity.Booking;
 import com.JustAlo.Entity.Passenger;
 import com.JustAlo.Entity.Trip;
 import com.JustAlo.Entity.User;
+import com.JustAlo.Model.JourneyDetails;
 import com.JustAlo.Model.Passenger_details;
 import com.JustAlo.Model.Seats;
 import com.JustAlo.Model.TicketBooking;
@@ -301,5 +302,20 @@ public class BookingService {
     }
     public List<Passenger> getPassengers(User byEmail) {
         return passengerRepository.findAllByUser(byEmail);
+    }
+
+    public JourneyDetails getdetails(Trip trip, String stopName, Integer remaining) {
+        List<Booking> bookings= bookingRepository.findAllByTrip(trip);
+        int in = 0, out = 0;
+        for (Booking b: bookings){
+            if(b.getStarting_stop()==stopName){
+                in++;
+            } else if (b.getEnding_stop()==stopName) {
+                out++;
+            }
+        }
+        remaining+=in;
+        remaining-=out;
+        return new JourneyDetails(in,out,remaining);
     }
 }

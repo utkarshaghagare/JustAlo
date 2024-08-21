@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+@CrossOrigin(origins = "http://localhost:3000")
 
 @RestController
 @RequestMapping("/buses")
@@ -18,7 +19,7 @@ public class BusController {
     private BusService busService;
 
     @PostMapping
-    @PreAuthorize("hasRole('Vendor')")
+   // @PreAuthorize("hasRole('Vendor')")
     public ResponseEntity<Bus> createBus(@RequestBody Bus bus) {
         Bus createdBus = busService.createBus(bus);
         return ResponseEntity.ok(createdBus);

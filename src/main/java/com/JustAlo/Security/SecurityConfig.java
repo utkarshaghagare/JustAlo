@@ -11,6 +11,31 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
+    private static final String[] PUBLIC_URLS = {
+            "/registerAdmin",
+            "/buses/upload",
+            "/registerNewVendor",
+            "/registerAdmin",
+            "/auth/login" ,
+            "/registerNewUser",
+            "/findTrip",
+            "/authenticate",
+            "/send-otp",
+            "/validate-otp",
+            "/getfindTrip",
+            "/buses/**",
+            "/addDriver",
+            "/trips/**",
+            "/available_seats/{id}",
+            "/BookSeat",
+            "/Tickets",
+            "/getAllDriver",
+            "/trips/getAllRoute",
+            "/getdetails/{id}",
+            "/BookSeat"
+
+    };
+
 
     @Autowired
     private JwtAuthenticationEntryPoint point;
@@ -22,7 +47,7 @@ public class SecurityConfig {
 
         http.csrf(csrf -> csrf.disable())
                 .authorizeRequests().
-                requestMatchers("/test").authenticated().requestMatchers("/findTrip","/registerNewVendor","/registerAdmin","/auth/login" , "/registerNewUser", "/authenticate").permitAll()
+                requestMatchers("/test").authenticated().requestMatchers(PUBLIC_URLS).permitAll()
                 .anyRequest()
                 .authenticated()
                 .and().exceptionHandling(ex -> ex.authenticationEntryPoint(point))

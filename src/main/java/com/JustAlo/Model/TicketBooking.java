@@ -14,4 +14,7 @@ public class TicketBooking {
     private List<Passenger_details> passengers;
     private String start;
     private String end;
+    private String razorpay_booking_id;
+    private String razorpay_payment_id;
+    private Double amount;
 }

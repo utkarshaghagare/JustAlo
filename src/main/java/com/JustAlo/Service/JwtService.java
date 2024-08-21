@@ -1,6 +1,7 @@
 package com.JustAlo.Service;
 
 import com.JustAlo.Entity.*;
+import com.JustAlo.Repo.AdminRepository;
 import com.JustAlo.Repo.DriverDao;
 import com.JustAlo.Repo.VendorDao;
 import com.JustAlo.Security.JwtHelper;
@@ -36,6 +37,8 @@ public class JwtService implements UserDetailsService {
 
     @Autowired
     private DriverDao driverDao;
+    @Autowired
+    private AdminRepository adminDao;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -45,7 +48,7 @@ public class JwtService implements UserDetailsService {
         String password = jwtRequest.getPassword();
         String otp = jwtRequest.getOtp();
 
-        authenticate(email, password,otp);
+        authenticate(email, password, otp);
 
         UserDetails userDetails = loadUserByUsername(email);
         String newGeneratedToken = jwtUtil.generateToken(userDetails);
@@ -59,11 +62,16 @@ public class JwtService implements UserDetailsService {
             if (vendor != null) {
                 return new JwtResponse(email, newGeneratedToken);
             } else {
-                Driver driver= driverDao.findByEmail(email).orElse(null);
-                if (driver !=null) {
+                Driver driver = driverDao.findByEmail(email).orElse(null);
+                if (driver != null) {
                     return new JwtResponse(email, newGeneratedToken);
                 } else {
-                    throw new Exception("User, Vendor, or Driver not found with email: " + email);
+                    Admin admin = adminDao.findByEmail(email);
+                    if (admin != null) {
+                        return new JwtResponse(email, newGeneratedToken);
+                    } else {
+                        throw new Exception("User, Vendor, or Driver not found with email: " + email);
+                    }
                 }
             }
         }
@@ -78,12 +86,15 @@ public class JwtService implements UserDetailsService {
         User user = userDao.findByEmail(email);
         Vendor vendor = vendorDao.findByEmail(email);
         Optional<Driver> driverOptional = driverDao.findByEmail(email);
-        if (user == null && vendor == null && driverOptional == null) {
+        Admin admin = adminDao.findByEmail(email);
+
+        if (user == null && vendor == null && driverOptional.isEmpty() && admin == null) {
             throw new UsernameNotFoundException("User not found with email: " + email);
         }
 
         Collection<GrantedAuthority> authorities = new HashSet<>();
         String password = null;
+
         if (user != null) {
             user.getRole().forEach(role -> {
                 authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
@@ -94,19 +105,60 @@ public class JwtService implements UserDetailsService {
                 authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
             });
             password = vendor.getPassword();
-
         } else if (driverOptional.isPresent()) {
             Driver driver = driverOptional.get();
             driver.getRole().forEach(role -> {
                 authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
             });
             password = driver.getPassword();
-
+        } else if (admin != null) {
+            admin.getRole().forEach(role -> {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
+            });
+            password = admin.getPassword();
         }
 
         return new org.springframework.security.core.userdetails.User(email, password, authorities);
-
     }
+
+//    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+//
+//        if (email == null || email.isEmpty()) {
+//            throw new IllegalArgumentException("Email cannot be null or empty");
+//        }
+//
+//        User user = userDao.findByEmail(email);
+//        Vendor vendor = vendorDao.findByEmail(email);
+//        Optional<Driver> driverOptional = driverDao.findByEmail(email);
+//        if (user == null && vendor == null && driverOptional == null) {
+//            throw new UsernameNotFoundException("User not found with email: " + email);
+//        }
+//
+//        Collection<GrantedAuthority> authorities = new HashSet<>();
+//        String password = null;
+//        if (user != null) {
+//            user.getRole().forEach(role -> {
+//                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
+//            });
+//            password = user.getOtp();
+//        } else if (vendor != null) {
+//            vendor.getRole().forEach(role -> {
+//                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
+//            });
+//            password = vendor.getPassword();
+//
+//        } else if (driverOptional.isPresent()) {
+//            Driver driver = driverOptional.get();
+//            driver.getRole().forEach(role -> {
+//                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
+//            });
+//            password = driver.getPassword();
+//
+//        }
+//
+//        return new org.springframework.security.core.userdetails.User(email, password, authorities);
+//
+//    }
 
     private void authenticate(String email, String password, String otp) throws Exception {
             try {

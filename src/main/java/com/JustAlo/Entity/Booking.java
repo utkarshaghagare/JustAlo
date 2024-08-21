@@ -28,13 +28,16 @@ public class Booking {
 
     private Integer seatno;
 
-    private String razorpay_id;
+
 
     private Double amount;
 
     private String starting_stop;
 
     private String ending_stop;
+    private String razorpay_booking_id;
+    private String razorpay_payment_id;
+
 
     private String status;
 

@@ -223,5 +223,9 @@ public class TripService {
     public List<Passenger> getPassengers() {
         return bookingService.getPassengers(userDao.findByEmail(JwtAuthenticationFilter.CURRENT_USER));
     }
+
+    public List<JourneyDetails> getdetails(long id) {
+        return null;
+    }
 }
 
