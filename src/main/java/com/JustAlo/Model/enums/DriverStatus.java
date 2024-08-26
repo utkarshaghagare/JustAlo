@@ -1,0 +1,2 @@
+package com.JustAlo.Model.enums;public enum DriverStatus {
+}
