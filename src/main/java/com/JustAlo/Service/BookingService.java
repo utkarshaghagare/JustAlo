@@ -10,6 +10,7 @@ import com.JustAlo.Model.Seats;
 import com.JustAlo.Model.TicketBooking;
 import com.JustAlo.Repo.*;
 import com.JustAlo.Security.JwtAuthenticationFilter;
+import com.razorpay.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,9 @@ public class BookingService {
 
     @Autowired
     private TripRepository tripRepository;
+
+    @Autowired
+    private  PaymentService paymentService;
 
 
     //list of seats and amount
@@ -180,6 +184,17 @@ public class BookingService {
     public String bookSeat(TicketBooking ticketBooking, Trip trip) throws Exception {
         List<Integer> availableSeats=findSeats(ticketBooking.getStart(),ticketBooking.getEnd(),trip).available;
 
+        // Calculate total amount
+        double totalAmount = ticketBooking.getPassengers().size() * setamount(trip, ticketBooking.getStart(), ticketBooking.getEnd());
+
+        // Create Razorpay order
+        Order order = paymentService.bookedTicket(totalAmount);
+
+        // Send the order ID back to the frontend to complete the payment
+        String orderId = order.get("id");
+        // You can now return the order ID to the client-side to complete the payment via Razorpay's frontend integration
+
+
         for (Passenger_details passenger : ticketBooking.getPassengers()) {
 
             if(availableSeats.contains(passenger.getSeat_no())){
@@ -189,15 +204,18 @@ public class BookingService {
 
                     allavailableStops.removeAll(requestedStops);
                     List<String> stop = new ArrayList<>(allavailableStops);
-//                    Booking booking= new Booking(trip, passenger.getSeat_no(),stop );
-//                    booking.setTrip(trip);
-//                    booking.setSeatno(passenger.getSeat_no());
-//                    booking.setStarting_stop(ticketBooking.getStart());
-//                    booking.setEnding_stop(ticketBooking.getEnd());
-//                    User user= userDao.getById(ticketBooking.getUser_id());
-//                    booking.setPassenger(passengerRepository.findById(passenger.getId()).orElse(passengerRepository.save(new Passenger(passenger.getName(),passenger.getAge(),user.getId()))));
-//
-//                    bookingRepository.save(booking);
+                    Booking booking= new Booking(trip, passenger.getSeat_no(),stop );
+                    booking.setTrip(trip);
+                    booking.setSeatno(passenger.getSeat_no());
+                    booking.setStarting_stop(ticketBooking.getStart());
+                    booking.setEnding_stop(ticketBooking.getEnd());
+                    User user= userDao.getById(ticketBooking.getUser_id());
+                    booking.setPassenger(passengerRepository.findById(passenger.getId()).orElse(passengerRepository.save(new Passenger(passenger.getName(),passenger.getAge(),user.getId()))));
+                    booking.setAmount(setamount(trip, ticketBooking.getStart(), ticketBooking.getEnd()));
+                    booking.setStatus("PENDING");  // Set status as pending until payment is confirmed
+                    booking.setRazorpay_booking_id(orderId);  // Save Razorpay order ID
+
+                    bookingRepository.save(booking);
 
                     List<Booking> prev_bookings= bookingRepository.findByTripAndSeatnumber(trip, passenger.getSeat_no());
                     int i=0;
@@ -216,7 +234,7 @@ public class BookingService {
                         }
                         else{
                             if(i==0){
-                                Booking booking= new Booking(trip,passenger.getSeat_no(),stop);
+                               // Booking booking = new Booking(trip,passenger.getSeat_no(),stop);
                                 booking.setStarting_stop(ticketBooking.getStart());
                                 booking.setEnding_stop(ticketBooking.getEnd());
                                 User user1= userDao.getById(ticketBooking.getUser_id());

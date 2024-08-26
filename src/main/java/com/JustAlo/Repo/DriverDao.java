@@ -28,5 +28,4 @@ public interface DriverDao extends JpaRepository<Driver, Long> {
     @Query(value = "SELECT * FROM driver WHERE vendor_id = :id", nativeQuery = true)
     List<Driver> findByVendorId(@Param("id") Long id);
 
-//Driver findByCurrentUser(String currentUser);
 }

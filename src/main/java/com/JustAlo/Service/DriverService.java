@@ -4,6 +4,7 @@ import com.JustAlo.Configuration.AmazonS3Config;
 import com.JustAlo.Entity.*;
 import com.JustAlo.Model.DriverModel;
 
+import com.JustAlo.Model.enums.DriverStatus;
 import com.JustAlo.Repo.DriverDao;
 import com.JustAlo.Repo.RoleDao;
 import com.JustAlo.Repo.RouteRepository;
@@ -111,4 +112,30 @@ public class DriverService {
     public List<Driver> getAllDriverByPerticularVendor(Long id) {
         return driverDao.findByVendorId(id);
     }
+
+    public Driver blockDriver(Long id) {
+        Optional<Driver> optionaldriver = driverDao.findById(id);
+        if(optionaldriver.isPresent()){
+            Driver driver=optionaldriver.get();
+            driver.setStatus(DriverStatus.BLOCKED);
+            driver.setVerification_status(false);
+            driverDao.save(driver);
+            return driver;
+        }else {
+            return  null;
+        }
+    }
+
+    public Driver UnblockDriver(Long id) {
+        Optional<Driver> optionalDriver = driverDao.findById(id);
+        if (optionalDriver.isPresent()) {
+            Driver driver = optionalDriver.get(); // Retrieve the existing driver
+            driver.setStatus(DriverStatus.ACTIVE); // Update the status to ACTIVE
+            driver.setVerification_status(true); // Set verification status to true
+            return driverDao.save(driver); // Save the updated driver entity
+        } else {
+            return null;
+        }
+    }
+
 }

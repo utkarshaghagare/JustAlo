@@ -1,5 +1,7 @@
 package com.JustAlo.Entity;
 
+import com.JustAlo.Model.enums.DriverStatus;
+import com.JustAlo.Model.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +27,8 @@ public class Driver {
     private String id_proof_img;
     private String license_img;
     private Boolean verification_status;
+    @Column(columnDefinition = "tinyint default 0")
+    private DriverStatus status = DriverStatus.ACTIVE;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "USER_ROLE", joinColumns = {
