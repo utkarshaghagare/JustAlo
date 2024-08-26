@@ -32,7 +32,14 @@ public class SecurityConfig {
             "/getAllDriver",
             "/trips/getAllRoute",
             "/getdetails/{id}",
-            "/BookSeat"
+            "/BookSeat",
+            "/startTrip/{id}",
+            "/tobeVerified",
+            "/AllVendor",
+            "/getAllAdmin",
+            "/blockUser/{id}",
+            "/unblockUser/{id}",
+            "/addRoute"
 
     };
 

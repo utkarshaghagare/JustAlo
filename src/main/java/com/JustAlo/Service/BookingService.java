@@ -30,7 +30,7 @@ public class BookingService {
     private UserDao userDao;
     @Autowired
     private PassengerRepository passengerRepository;
-    
+
     @Autowired
     private TripRepository tripRepository;
 
@@ -70,18 +70,18 @@ public class BookingService {
                 availableSeats.add(booking.getSeatno());
             }
             else if("Ordinary".equals(trip.getType())&& checka(booking,start, destination,trip)){
-                    availableSeats.add(booking.getSeatno());
+                availableSeats.add(booking.getSeatno());
             }
             else{
                 User current_user=userDao.findByEmail(JwtAuthenticationFilter.CURRENT_USER);
 
                 if(current_user!= null && Objects.equals(booking.getPassenger().getUser(), current_user.getId())&& !Objects.equals(booking.getStatus(), "CANCELLED")){
-                      your.add(booking.getSeatno());
+                    your.add(booking.getSeatno());
                 } else if (current_user==null && booking.getPassenger().getUser()==null&& !Objects.equals(booking.getStatus(), "CANCELLED")) {
-                        vendor.add(booking.getSeatno());
-                    }
+                    vendor.add(booking.getSeatno());
+                }
             }
-            }
+        }
         Seats seats= new Seats(availableSeats,your,vendor);
         return seats;
     }
@@ -178,14 +178,14 @@ public class BookingService {
 //    }
 
     public String bookSeat(TicketBooking ticketBooking, Trip trip) throws Exception {
-       List<Integer> availableSeats=findSeats(ticketBooking.getStart(),ticketBooking.getEnd(),trip).available;
+        List<Integer> availableSeats=findSeats(ticketBooking.getStart(),ticketBooking.getEnd(),trip).available;
 
         for (Passenger_details passenger : ticketBooking.getPassengers()) {
 
             if(availableSeats.contains(passenger.getSeat_no())){
                 if("Ordinary".equals(trip.getType())){
                     List<String> allavailableStops = bookingRepository.findAllAvailableStop(trip,passenger.getSeat_no());
-                     List<String> requestedStops = ordinaryTripRepository.findStopsBetween(trip,ordinaryTripRepository.findStopnumberByStopname(trip,ticketBooking.getStart()),ordinaryTripRepository.findStopnumberByStopname(trip, ticketBooking.getEnd())-1);
+                    List<String> requestedStops = ordinaryTripRepository.findStopsBetween(trip,ordinaryTripRepository.findStopnumberByStopname(trip,ticketBooking.getStart()),ordinaryTripRepository.findStopnumberByStopname(trip, ticketBooking.getEnd())-1);
 
                     allavailableStops.removeAll(requestedStops);
                     List<String> stop = new ArrayList<>(allavailableStops);
@@ -204,7 +204,7 @@ public class BookingService {
                     for(Booking prev_booking: prev_bookings){
                         if(prev_booking.getPassenger()==null){
                             prev_booking.setTrip(trip);
-                           // prev_booking.setSeatno(passenger.getSeat_no());
+                            // prev_booking.setSeatno(passenger.getSeat_no());
                             prev_booking.setStarting_stop(ticketBooking.getStart());
                             prev_booking.setEnding_stop(ticketBooking.getEnd());
                             User user1= userDao.getById(ticketBooking.getUser_id());
@@ -317,5 +317,10 @@ public class BookingService {
         remaining+=in;
         remaining-=out;
         return new JourneyDetails(in,out,remaining);
+
     }
 }
+
+
+
+

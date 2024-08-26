@@ -67,26 +67,7 @@ public class VendorService {
             }
         } else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password not matching");
     }
-//
-//    public Vendor saveVendor(VendorModel vendormodel){
-//
-//        Vendor vendor = new Vendor();
-//        Role role = roleDao.findById("Vendor").get();
-//        Set<Role> venderRoles = new HashSet<>();
-//        venderRoles.add(role);
-//        vendor.setRole(venderRoles);
-//        vendor.setPassword(getEncodedPassword(vendormodel.getPassword()));
-//        vendor.setAddress(vendormodel.getAddress());
-//        vendor.setEmail(vendormodel.getEmail());
-//        vendor.setUsername(vendormodel.getUsername());
-//        vendor.setOrganization_name(vendormodel.getOrganization_name());
-//        vendor.setPhone_number(vendormodel.getPhone_number());
-//        vendor.setVerification_status(false);
-//        vendor.setDoc1(vendormodel.getDoc1());
-//        vendor.setDoc2(vendormodel.getDoc2());
-//
-//        return vendorDao.save(vendor);
-//    }
+
 
     public Vendor saveVendor(VendorModel vendormodel) {
         try {
@@ -177,6 +158,11 @@ public class VendorService {
 
     public Vendor findById(Long id) {
         return vendorDao.findById(id).orElse(null);
+    }
+
+    public List<Vendor> getAllVendor() {
+
+        return vendorDao.findAll();
     }
 
 //    public String reserveSeat(Long id, List<Integer> seats) {

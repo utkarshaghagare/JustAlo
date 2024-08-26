@@ -40,4 +40,7 @@ public class Trip {
     private Time time;
     private Time endtime;
 
+    private String status;
+
+
 }

@@ -1,9 +1,11 @@
 package com.JustAlo.Entity;
 
-import jakarta.annotation.PostConstruct;
+import com.JustAlo.Model.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -16,15 +18,17 @@ import java.util.Set;
 
 public class User implements Serializable {
     @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
-        private String username;
-        private String name;
-        private String email;
-        private String password;
-        private String contactNumber;
-        private String otp;
-        private LocalDateTime expirationTime;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String username;
+    private String name;
+    private String email;
+    private String password;
+    private String contactNumber;
+    private String otp;
+    private LocalDateTime expirationTime;
+    @Column(columnDefinition = "tinyint default 0")
+    private UserStatus status = UserStatus.ACTIVE;
     @Transient
     private boolean isVerified;
 

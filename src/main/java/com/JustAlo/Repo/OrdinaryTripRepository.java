@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface OrdinaryTripRepository extends JpaRepository<OrdinaryTrip, Long> {
 
-    List<OrdinaryTrip> findAllByTripId(Trip trip);
+    List<OrdinaryTrip> findAllByTripId(long trip);
 
     @Modifying
     @Transactional

@@ -17,4 +17,9 @@ public class Route {
     private String origin;
 
     private String destination;
+
+    private String longitute;
+
+    private String latitute;
+
 }

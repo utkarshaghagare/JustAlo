@@ -6,6 +6,7 @@ import com.JustAlo.Model.RentRequest;
 import com.JustAlo.Model.Seats;
 import com.JustAlo.Model.TicketBooking;
 import com.JustAlo.Model.TripRequest;
+import com.JustAlo.Model.enums.UserStatus;
 import com.JustAlo.Repo.BookingRepository;
 import com.JustAlo.Repo.RoleDao;
 import com.JustAlo.Repo.UserDao;
@@ -13,6 +14,7 @@ import com.JustAlo.Security.JwtHelper;
 import com.JustAlo.Service.*;
 
 import jakarta.annotation.PostConstruct;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,7 +63,7 @@ public class UserController {
         return jwtService.createJwtToken(jwtRequest);
     }
     @PostMapping("/send-otp")
-    public ResponseEntity<?> sendOtp(@RequestParam String email) {
+    public ResponseEntity<?> sendOtp(@RequestParam String email) throws BadRequestException {
         User user = userDao.findByEmail(email);
 
         if (user == null) {
@@ -75,6 +77,10 @@ public class UserController {
             userRoles.add(role);
             user.setRole(userRoles);
             userDao.save(user);
+        }
+
+        if( user.getStatus() == UserStatus.BLOCKED) {
+            throw new BadRequestException("User is blocked");
         }
 
         // Check if OTP exists and if it is expired

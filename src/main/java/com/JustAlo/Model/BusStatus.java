@@ -4,5 +4,7 @@ public enum BusStatus {
     AVAILABLE,
     UNAVAILABLE,
     IN_SERVICE,
-    OUT_OF_SERVICE
+    OUT_OF_SERVICE,
+    RUNNING,
+    COMPLATED
 }

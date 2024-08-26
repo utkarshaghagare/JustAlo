@@ -1,27 +1,105 @@
 package com.JustAlo.Service;
 
 import com.JustAlo.Entity.Bus;
+import com.JustAlo.Model.BusModel;
+import com.JustAlo.Model.BusStatus;
 import com.JustAlo.Repo.BusRepository;
 import com.JustAlo.Security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class BusService {
+    private final S3Client s3Client;
+    private final String bucketName = "studycycle";
+    private final String spaceUrl = "https://studycycle.blr1.digitaloceanspaces.com/";
 
     @Autowired
     private BusRepository busRepository;
     @Autowired
     private VendorService vendorService;
 
-    public Bus createBus(Bus bus) {
+    public BusService(S3Client s3Client) {
+        this.s3Client = s3Client;
+    }
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+
+    public Bus createBus(BusModel bus) {
         // Ensure the verified status is false when creating a new bus
-        bus.setVendor(vendorService.findByUsername(JwtAuthenticationFilter.CURRENT_USER));
-        bus.setVerified(false);
-        return busRepository.save(bus);
+        Bus b=new Bus();
+        try {
+            // Upload documents to DigitalOcean Spaces
+            String insuranceImgUrl = uploadFileToSpace(bus.getInsuranceImg());
+            b.setVendor(vendorService.findByUsername(JwtAuthenticationFilter.CURRENT_USER));
+            b.setBus_number(bus.getBusNumber());
+            b.setTotal_seats(bus.getTotalSeats());
+            b.setType(bus.getType());
+            b.setAc(bus.getAc());
+            b.setStatus(BusStatus.valueOf(bus.getStatus())); // Assuming BusStatus is an enum
+            b.setLayout(bus.getLayout());
+            b.setChassis_num(bus.getChassisNum());
+            b.setNo_of_row(bus.getNoOfRow());
+            b.setLast_row_seats(bus.getLastRowSeats());
+            b.setInsurance_no(bus.getInsuranceNo());
+            b.setFromDate(dateFormat.parse(bus.getFromDate()));
+            b.setToDate(dateFormat.parse(bus.getToDate()));
+
+            b.setInsurance_img(insuranceImgUrl);
+            b.setVerified(false);
+
+            return busRepository.save(b);
+        } catch (IOException e) {
+            // Handle the exception appropriately
+            throw new RuntimeException("Failed to upload file or save bus", e);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String uploadFileToSpace(MultipartFile file) throws IOException {
+        String fileName = UUID.randomUUID().toString() + "-" + StringUtils.cleanPath(file.getOriginalFilename());
+
+        // Validate file
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("File is empty");
+        }
+
+        Path tempFile = Files.createTempFile("upload-", fileName);
+
+        try (var inputStream = file.getInputStream()) {
+            Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        // Upload to DigitalOcean Spaces
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(fileName)
+                .acl("public-read")
+                .build();
+
+        s3Client.putObject(putObjectRequest, tempFile);
+
+        // Clean up temporary file
+        Files.deleteIfExists(tempFile);
+
+        // Return the file URL
+        return spaceUrl + fileName;
     }
 
     public Optional<Bus> getBusById(Long id) {

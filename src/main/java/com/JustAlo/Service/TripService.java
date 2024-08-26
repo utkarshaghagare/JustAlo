@@ -12,6 +12,9 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.JustAlo.Model.BusStatus.COMPLATED;
+import static com.JustAlo.Model.BusStatus.RUNNING;
+
 @Service
 public class TripService {
     @Autowired
@@ -225,7 +228,37 @@ public class TripService {
     }
 
     public List<JourneyDetails> getdetails(long id) {
-        return null;
+
+        Trip trip =tripRepository.findById(id).orElse(null);
+        if(trip==null){
+         return null;
+
+            }
+        List<JourneyDetails> journeyDetailsList=new ArrayList<>();
+       List<OrdinaryTrip> stop = ordinaryTripRepository.findAllByTripId(trip.getId());
+        int rem=0;
+        for (OrdinaryTrip o:stop) {
+            JourneyDetails j= bookingService.getdetails(trip,o.getStopname(),rem);
+            rem= j.getRemaining();
+            journeyDetailsList.add(j);
+        }
+        return journeyDetailsList;
     }
+
+    public Trip startTrip(long id) {
+        // Fetch the trip by ID, handle the case where the trip is not found
+        Trip trip = tripRepository.findById(id).orElseThrow(() -> new RuntimeException("Trip not found with id: " + id));
+
+        // Check the current status and update accordingly
+        if (trip.getStatus() == null) {
+            trip.setStatus("RUNNING");
+        } else if (trip.getStatus().equals("RUNNING")) {
+            trip.setStatus("COMPLETED");
+        }
+
+        // Save the updated trip back to the repository
+        return tripRepository.save(trip);
+    }
+
 }
 
