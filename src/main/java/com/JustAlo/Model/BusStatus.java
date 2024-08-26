@@ -6,5 +6,5 @@ public enum BusStatus {
     IN_SERVICE,
     OUT_OF_SERVICE,
     RUNNING,
-    COMPLATED
+    COMPLETED
 }

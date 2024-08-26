@@ -77,6 +77,8 @@ public class DriverService {
         Driver driver=driverDao.findById(driverId).orElse(null);
         if(driver!=null){
             if(driverDao.isDriverVerified(driverId)){
+                driver.setStatus(DriverStatus.UNAVAILABLE);
+                driverDao.save(driver);
                 return driver ;
             }
             else{

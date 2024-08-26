@@ -14,6 +14,8 @@ import com.razorpay.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -212,6 +214,7 @@ public class BookingService {
                     User user= userDao.getById(ticketBooking.getUser_id());
                     booking.setPassenger(passengerRepository.findById(passenger.getId()).orElse(passengerRepository.save(new Passenger(passenger.getName(),passenger.getAge(),user.getId()))));
                     booking.setAmount(setamount(trip, ticketBooking.getStart(), ticketBooking.getEnd()));
+                    booking.setDate(Date.valueOf(LocalDate.now()));
                     booking.setStatus("PENDING");  // Set status as pending until payment is confirmed
                     booking.setRazorpay_booking_id(orderId);  // Save Razorpay order ID
 
@@ -228,6 +231,7 @@ public class BookingService {
                             User user1= userDao.getById(ticketBooking.getUser_id());
                             prev_booking.setPassenger(passengerRepository.findById(passenger.getId()).orElse(passengerRepository.save(new Passenger(passenger.getName(),passenger.getAge(),user1.getId()))));
                             prev_booking.setAmount(setamount(trip,ticketBooking.getStart(),ticketBooking.getEnd()));
+                           prev_booking.setDate(Date.valueOf(LocalDate.now()));
                             prev_booking.setAvailableStops(stop);
                             prev_booking.setStatus("BOOKED");
                             bookingRepository.save(prev_booking);
@@ -240,6 +244,7 @@ public class BookingService {
                                 User user1= userDao.getById(ticketBooking.getUser_id());
                                 booking.setPassenger(passengerRepository.findById(passenger.getId()).orElse(passengerRepository.save(new Passenger(passenger.getName(),passenger.getAge(),user1.getId()))));
                                 booking.setAmount(setamount(trip,ticketBooking.getStart(),ticketBooking.getEnd()));
+                                booking.setDate(Date.valueOf(LocalDate.now()));
                                 booking.setStatus("BOOKED");
                                 bookingRepository.save(prev_booking);
                                 i++;
@@ -260,6 +265,7 @@ public class BookingService {
                         User user= userDao.getById(ticketBooking.getUser_id());
                         prev_bookings.setPassenger(passengerRepository.findById(passenger.getId()).orElse(passengerRepository.save(new Passenger(passenger.getName(),passenger.getAge(),user.getId()))));
                         prev_bookings.setAmount(trip.getAmount());
+                        prev_bookings.setDate(Date.valueOf(LocalDate.now()));
                         prev_bookings.setStatus("BOOKED");
                         bookingRepository.save(prev_bookings);
                     }

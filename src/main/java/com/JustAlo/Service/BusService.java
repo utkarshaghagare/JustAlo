@@ -134,8 +134,10 @@ public class BusService {
 
     public Bus getVerfiedBusById(Long id) throws Exception {
          Bus bus=busRepository.findById(id).orElse(null);
-         if(bus!=null){
+         if(bus!=null && bus.getStatus().equals(BusStatus.AVAILABLE)){
              if(bus.getVerified()){
+                 bus.setStatus(BusStatus.UNAVAILABLE);
+                 busRepository.save(bus);
                  return bus;
              }
              throw new Exception("bus unverified");
@@ -143,7 +145,17 @@ public class BusService {
          throw new Exception("bus not found");
     }
 
-    public List<Bus> getAllBusByPerticularVendor(Long id) {
-        return busRepository.findByVendorId(id);
+//    public List<Bus> getAllBusByPerticularVendor(Long id) {
+//        return busRepository.findByVendorId(id);
+//    }
+
+    public String turnOffBus(Long id, BusStatus b) {
+        Bus bus= getBusById(id).orElse(null);
+        if(bus!=null){
+            bus.setStatus(b);
+            busRepository.save(bus);
+        }
+        return "Bus Turned off";
     }
+
 }

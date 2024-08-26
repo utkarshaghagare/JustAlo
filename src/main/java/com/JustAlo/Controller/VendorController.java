@@ -1,9 +1,13 @@
 package com.JustAlo.Controller;
 
 
+import com.JustAlo.Entity.Booking;
+import com.JustAlo.Entity.Bus;
 import com.JustAlo.Entity.Vendor;
+import com.JustAlo.Model.BusStatus;
 import com.JustAlo.Model.TicketBooking;
 import com.JustAlo.Model.VendorModel;
+import com.JustAlo.Service.BusService;
 import com.JustAlo.Service.UserService;
 import com.JustAlo.Service.VendorService;
 import jakarta.annotation.PostConstruct;
@@ -25,6 +29,9 @@ public class VendorController {
 
     @Autowired
     private VendorService vendorService;
+
+    @Autowired
+    private BusService busService;
 
     @PostConstruct
     public void initRoleAndVendor() {
@@ -86,5 +93,17 @@ public class VendorController {
 //    }
 //get trips
     //get trips from date to date
-    
+
+
+    //Bus
+
+    @GetMapping({"/turnOffBus/{id}"})
+    public String turnOffBus(@PathVariable("id") Long id){
+        return busService.turnOffBus(id, BusStatus.OUT_OF_SERVICE);
+    }
+    @GetMapping({"/turnONBus/{id}"})
+    public String turnONBus(@PathVariable("id") Long id){
+        return busService.turnOffBus(id, BusStatus.AVAILABLE);
+    }
+
 }

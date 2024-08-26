@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.JustAlo.Model.BusStatus.COMPLATED;
+import static com.JustAlo.Model.BusStatus.COMPLETED;
 import static com.JustAlo.Model.BusStatus.RUNNING;
 
 @Service
@@ -257,6 +257,8 @@ public class TripService {
             trip.setStatus("RUNNING");
         } else if (trip.getStatus().equals("RUNNING")) {
             trip.setStatus("COMPLETED");
+            busService.turnOffBus(trip.getBus().getId(),BusStatus.AVAILABLE);
+            driverService.UnblockDriver(trip.getDriver().getId());
         }
 
         // Save the updated trip back to the repository

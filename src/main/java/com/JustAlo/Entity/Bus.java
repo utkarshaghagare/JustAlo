@@ -38,5 +38,6 @@ public class Bus {
     public Date fromDate;
     public Date toDate;
     public String insurance_img;
+
 }
 
