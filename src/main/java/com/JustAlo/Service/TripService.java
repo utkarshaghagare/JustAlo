@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.JustAlo.Model.BusStatus.COMPLATED;
 import static com.JustAlo.Model.BusStatus.RUNNING;
@@ -258,6 +261,57 @@ public class TripService {
 
         // Save the updated trip back to the repository
         return tripRepository.save(trip);
+    }
+    public List<RecentBookingsRoute> findRecentTrips() {
+        // Retrieve all bookings sorted by date in descending order
+        List<Booking> recentBookings = bookingRepository.findByPassengerOrderByBookingDateDesc(
+                userDao.findByEmail(JwtAuthenticationFilter.CURRENT_USER)
+        );
+
+        List<RecentBookingsRoute> response = new ArrayList<>(5);
+        Set<String> uniqueRoutes = new HashSet<>();
+
+        for (Booking b : recentBookings) {
+            Route r = b.getTrip().getRoute();
+            String routeKey = r.getOrigin() + "-" + r.getDestination(); // Create a unique key for the route
+
+            // Add the route to the response only if it's unique
+            if (!uniqueRoutes.contains(routeKey)) {
+                RecentBookingsRoute record = new RecentBookingsRoute(r.getOrigin(), r.getDestination());
+                response.add(record);
+                uniqueRoutes.add(routeKey);
+            }
+
+            // Stop the loop if we've collected 5 unique routes
+            if (response.size() == 5) {
+                break;
+            }
+        }
+
+        return response;
+    }
+
+    public List<Trip> findTripsFromOrigin(String longitude, String latitude) {
+        // Retrieve all trips with a date of today or later
+        Date today = Date.valueOf(LocalDate.now());
+        List<Trip> allTrips = tripRepository.findTripsFromToday(today);
+
+        List<Trip> response = new ArrayList<>(5);
+
+        for (Trip trip : allTrips) {
+            // Compare the trip's origin with the user's current location (longitude and latitude)
+            Route route = trip.getRoute();
+            if (route.getLongitute().equals(longitude) && route.getLatitute().equals(latitude)) {
+                response.add(trip);
+            }
+
+            // Stop the loop if we have 5 trips in the response
+            if (response.size() == 5) {
+                break;
+            }
+        }
+
+        return response;
     }
 
 }
