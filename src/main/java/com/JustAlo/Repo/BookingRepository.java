@@ -29,7 +29,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT b.availableStops FROM Booking b WHERE b.trip = :trip AND b.seatno = :seatNo")
     List<String> findAllAvailableStop(Trip trip, Integer seatNo);
-
+    @Query("SELECT * FROM Booking b WHERE b.passenger.user = :byEmail ORDER BY b.date DESC ")
+    List<Booking> findByPassengerOrderByBookingDateDesc(User byEmail);
 
 
 //    @Modifying

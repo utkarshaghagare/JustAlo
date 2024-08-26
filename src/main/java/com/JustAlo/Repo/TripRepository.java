@@ -3,6 +3,8 @@ package com.JustAlo.Repo;
 import com.JustAlo.Entity.Trip;
 import com.JustAlo.Entity.Vendor;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -16,4 +18,7 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
     Optional<Trip> findByDateAndTime(Date date, Time time);
 
     List<Trip> findByDriverId(Long id);
+
+    @Query("SELECT t FROM Trip t WHERE t.date >= :today")
+    List<Trip> findTripsFromToday(@Param("today") Date today);
 }

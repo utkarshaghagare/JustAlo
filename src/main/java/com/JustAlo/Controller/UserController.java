@@ -2,10 +2,7 @@ package com.JustAlo.Controller;
 
 
 import com.JustAlo.Entity.*;
-import com.JustAlo.Model.RentRequest;
-import com.JustAlo.Model.Seats;
-import com.JustAlo.Model.TicketBooking;
-import com.JustAlo.Model.TripRequest;
+import com.JustAlo.Model.*;
 import com.JustAlo.Model.enums.UserStatus;
 import com.JustAlo.Repo.BookingRepository;
 import com.JustAlo.Repo.RoleDao;
@@ -124,12 +121,15 @@ public class UserController {
     }
 //Profile Section
     @PutMapping({"/updateUser/{id}"})
+    @PreAuthorize("hasRole('User')")
     public User updateUser(@PathVariable("id") Long id,@RequestBody User user) {
         return userService.updateUser(id,user);
     }
 
                  //acess- admin , user
     @PutMapping({"/deleteUser/{id}"})
+    @PreAuthorize("hasRole('Admin','User')")
+
     public void updateUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
     }
@@ -142,7 +142,7 @@ public class UserController {
 //    }
 
     @GetMapping("/getAllUser")
-    @PreAuthorize("hasRole('User')")
+    @PreAuthorize("hasRole('Admin')")
     public List<User> getAllUser(){
         return userService.getAllUser();
 
@@ -151,15 +151,31 @@ public class UserController {
 
     //search trip-> input start end time/NO TIME
     @GetMapping("/findTrip")
-   // @PreAuthorize("hasRole('Vendor')")
+   @PreAuthorize("hasRole('Vendor','User')")
     public List<Trip> findTrip(@RequestBody TripRequest tripRequest){
         return tripService.findTrip(tripRequest.getStart() ,tripRequest.getDestination(),tripRequest.getDate());
+    }
+    @PostMapping("/findTrip")
+    @PreAuthorize("hasRole('Vendor','User')")
+    public List<Trip> findTrip1(@RequestBody TripRequest tripRequest){
+        return tripService.findTrip(tripRequest.getStart() ,tripRequest.getDestination(),tripRequest.getDate());
+    }
+
+    @GetMapping("/findRecentRoutes")
+    @PreAuthorize("hasRole('User')")
+    public List<RecentBookingsRoute> findRecentTrips(){
+        return tripService.findRecentTrips();
+    }
+    @GetMapping("/findTripsfromOrigin")
+    @PreAuthorize("hasRole('Vendor','User')")
+    public List<Trip> findTripsFromOrigin(@RequestBody UserLocation u ){
+        return tripService.findTripsFromOrigin(u.longitude,u.latitude);
     }
 
     //select start point end point
     //working
     @GetMapping("/available_seats/{id}")
-    @PreAuthorize("hasRole('Vendor')")
+    @PreAuthorize("hasRole('Vendor','User')")
     public Seats findSeat(@RequestBody TripRequest tripRequest, @PathVariable long id){
         return tripService.findSeat(tripRequest.getStart() ,tripRequest.getDestination(),id);
     }
@@ -175,7 +191,7 @@ public class UserController {
         return tripService.getPassengers();
     }
     @PostMapping("/BookSeat")
-    @PreAuthorize("hasRole('Vendor')")
+    @PreAuthorize("hasRole('Vendor','User')")
     public String bookSeat(@RequestBody TicketBooking ticketBooking) throws Exception {
         return tripService.bookSeat(ticketBooking);
     }
@@ -188,18 +204,18 @@ public class UserController {
 //Tickets Section
     //Yet to be tested
     @GetMapping("/Tickets/booked")
-    @PreAuthorize("hasRole('Vendor')")
+    @PreAuthorize("hasRole('Vendor','User')")
     public List<Booking> getTickets() throws Exception {
         return tripService.getTickets("BOOKED");
     }
     @GetMapping("/CancelTicket/{id}")
-    @PreAuthorize("hasRole('Vendor')")
+    @PreAuthorize("hasRole('Vendor','User')")
     public void cancelTicket(@PathVariable long id) throws Exception {
         tripService.cancelTicket(id);
     }
     //Yet to be tested
     @GetMapping("/Tickets/cancelled")
-    @PreAuthorize("hasRole('Vendor')")
+    @PreAuthorize("hasRole('Vendor','User')")
     public List<Booking> getCancelledTickets() throws Exception {
         return tripService.getTickets("CANCELLED");
     }
@@ -213,7 +229,7 @@ public class UserController {
     private RentService rentService;
 
     @PostMapping("/rent/enquiry")
-    @PreAuthorize("hasRole('Vendor')")
+    @PreAuthorize("hasRole('User')")
     public Rent addRentWithVehicles(@RequestBody RentRequest rentRequest) {
         return rentService.addRentWithVehicles(rentRequest.rent, rentRequest.vehicles);
     }
