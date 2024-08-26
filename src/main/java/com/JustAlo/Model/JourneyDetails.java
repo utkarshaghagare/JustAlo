@@ -1,6 +1,12 @@
 package com.JustAlo.Model;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class JourneyDetails {
+    private String stopname;
     private int in;        // Represents the number of passengers who boarded
     private int out;       // Represents the number of passengers who alighted
     private int remaining; // Represents the number of passengers still on the journey
@@ -11,6 +17,7 @@ public class JourneyDetails {
         this.out = out;
         this.remaining = remaining;
     }
+
 
     // Getter and Setter for in
     public int getIn() {

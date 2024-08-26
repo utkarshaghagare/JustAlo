@@ -108,4 +108,7 @@ public class DriverService {
     }
 
 
+    public List<Driver> getAllDriverByPerticularVendor(Long id) {
+        return driverDao.findByVendorId(id);
+    }
 }

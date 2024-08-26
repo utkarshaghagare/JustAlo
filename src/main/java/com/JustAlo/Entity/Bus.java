@@ -4,6 +4,9 @@ import com.JustAlo.Model.BusStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Date;
 
 @Entity
 @Getter
@@ -29,5 +32,11 @@ public class Bus {
     public String layout;
     public Boolean verified;
     public String chassis_num;
+    public int no_of_row;
+    public int last_row_seats;
+    public String insurance_no;
+    public Date fromDate;
+    public Date toDate;
+    public String insurance_img;
 }
 

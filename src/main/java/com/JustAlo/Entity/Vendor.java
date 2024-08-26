@@ -22,6 +22,7 @@ public class Vendor {
     private String address;
     private String doc1;
     private String doc2;
+    private String profile_img;
     private String password;
     private Boolean verification_status;
 

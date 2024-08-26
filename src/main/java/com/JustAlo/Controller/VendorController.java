@@ -8,8 +8,12 @@ import com.JustAlo.Service.UserService;
 import com.JustAlo.Service.VendorService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 
@@ -28,9 +32,36 @@ public class VendorController {
     }
 
     @PostMapping({"/registerNewVendor"})
-    public Vendor registerNewUser(@RequestBody VendorModel vendormodel) {
-        return vendorService.registerVendor(vendormodel);
+    public ResponseEntity<Vendor> registerVendor(
+            @RequestParam("username") String username,
+            @RequestParam("email") String email,
+            @RequestParam("phone_number") String phone_number,
+            @RequestParam("organization_name") String organization_name,
+            @RequestParam("address") String address,
+            @RequestParam("password") String password,
+            @RequestParam("confirm_password") String confirm_password,
+            @RequestParam("doc1") MultipartFile doc1,
+            @RequestParam("doc2") MultipartFile doc2,
+            @RequestParam("profile_img")MultipartFile profile_img
+    ) {
+        VendorModel vendorModel = new VendorModel();
+        vendorModel.setUsername(username);
+        vendorModel.setEmail(email);
+        vendorModel.setPhone_number(phone_number);
+        vendorModel.setOrganization_name(organization_name);
+        vendorModel.setAddress(address);
+        vendorModel.setPassword(password);
+        vendorModel.setConfirm_password(confirm_password);
+        vendorModel.setDoc1(doc1);
+        vendorModel.setDoc2(doc2);
+        vendorModel.setProfile_img(profile_img);
+
+        Vendor vendor = vendorService.registerVendor(vendorModel);
+        return new ResponseEntity<>(vendor, HttpStatus.CREATED);
     }
+//    public Vendor registerNewUser(@RequestBody VendorModel vendormodel) {
+//        return vendorService.registerVendor(vendormodel);
+//    }
 
     @GetMapping({"/tobeVerified"})
     public List<Vendor> tobeVerified(){

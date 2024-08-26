@@ -65,6 +65,7 @@ public class DriverController {
     @PostMapping("/addDriver")
    // @PreAuthorize("hasRole('Vendor')")
     public ResponseEntity<Driver> addDriver(@RequestParam("driverName") String driverName,
+                                            @RequestParam("driverNickname") String driverNickname,
                                             @RequestParam("email") String email,
                                             @RequestParam("password") String password,
                                             @RequestParam("mobileNo") String mobileNo,
@@ -85,6 +86,7 @@ public class DriverController {
             // Save Driver with image URLs
             Driver driver = new Driver();
             driver.setDriver_name(driverName);
+            driver.setDriver_nickname(driverNickname);
             driver.setEmail(email);
             driver.setPassword(getEncodedPassword(password));
          //   vendor.setPassword(getEncodedPassword(vendormodel.getPassword()));
@@ -165,5 +167,11 @@ public class DriverController {
     @PreAuthorize("hasRole('Driver')")
     public List<Trip> getDriverTripDetails(){
         return driverService.getDriverTripDetails();
+    }
+
+    @PutMapping("/startTrip/{id}")
+     public Trip startTrip(@PathVariable("id") long id){
+        return  tripService.startTrip(id);
+
     }
 }

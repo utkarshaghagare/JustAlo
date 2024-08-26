@@ -6,11 +6,13 @@ import com.JustAlo.Entity.JwtResponse;
 import com.JustAlo.Entity.Role;
 import com.JustAlo.Entity.User;
 import com.JustAlo.Exception.InvalidOtpException;
+import com.JustAlo.Model.enums.UserStatus;
 import com.JustAlo.Repo.AdminRepository;
 import com.JustAlo.Security.JwtHelper;
 import com.JustAlo.Repo.RoleDao;
 import com.JustAlo.Repo.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,33 +44,98 @@ public class UserService {
 	private JwtHelper jwtHelper;
 	    public void initRoleAndUser() {
 //
-	        Role adminRole = new Role();
-	        adminRole.setRoleName("Admin");
-	        adminRole.setRoleDescription("Admin role");
-			boolean a= roleDao.existsById("Admin");
-			if(!a){
+//	        Role adminRole = new Role();
+//	        adminRole.setRoleName("Admin");
+//	        adminRole.setRoleDescription("Admin role");
+//			boolean a= roleDao.existsById("Admin");
+//			if(!a){
+//				roleDao.save(adminRole);
+//			}
+//
+//
+//	        Role userRole = new Role();
+//	        userRole.setRoleName("User");
+//	        userRole.setRoleDescription("Default role for newly created User");
+//	        roleDao.save(userRole);
+//
+//			Role vendorRole = new Role();
+//			vendorRole.setRoleName("Vendor");
+//			vendorRole.setRoleDescription("Default role for newly created vendor");
+//			roleDao.save(vendorRole);
+//
+//			Role driverRole = new Role();
+//			driverRole.setRoleName("Driver");
+//			driverRole.setRoleDescription("Default role for newly created Driver");
+//			roleDao.save(driverRole);
+//
+//			// Create Super Admin user
+//			String superAdminEmail = "superadmin@example.com"; // Hardcoded super admin email
+//			if (userDao.findByEmail(superAdminEmail) == null) {
+//				Admin superAdmin = new Admin();
+//				superAdmin.setName("Super Admin");
+//				superAdmin.setEmail(superAdminEmail);
+//				superAdmin.setPassword(getEncodedPassword("superadminpassword")); // Hardcoded super admin password
+//
+//				// Assign the "Admin" role to the super admin
+//				Set<Role> superAdminRoles = new HashSet<>();
+//				superAdminRoles.add(adminRole);
+//				superAdmin.setRole(superAdminRoles);
+//
+//				adminDao.save(superAdmin);
+//			}
+//
+
+
+			// Create roles
+			if (!roleDao.existsById("Admin")) {
+				Role adminRole = new Role();
+				adminRole.setRoleName("Admin");
+				adminRole.setRoleDescription("Admin role");
 				roleDao.save(adminRole);
 			}
 
+			if (!roleDao.existsById("User")) {
+				Role userRole = new Role();
+				userRole.setRoleName("User");
+				userRole.setRoleDescription("Default role for newly created User");
+				roleDao.save(userRole);
+			}
 
-	        Role userRole = new Role();
-	        userRole.setRoleName("User");
-	        userRole.setRoleDescription("Default role for newly created record");
-	        roleDao.save(userRole);
+			if (!roleDao.existsById("Vendor")) {
+				Role vendorRole = new Role();
+				vendorRole.setRoleName("Vendor");
+				vendorRole.setRoleDescription("Default role for newly created Vendor");
+				roleDao.save(vendorRole);
+			}
 
-			Role vendorRole = new Role();
-			vendorRole.setRoleName("Vendor");
-			vendorRole.setRoleDescription("Default role for newly created vendor");
-			roleDao.save(userRole);
-
-			Role driverRole = new Role();
-			driverRole.setRoleName("Driver");
-			driverRole.setRoleDescription("Default role for newly created Driver");
-			roleDao.save(driverRole);
-
+			if (!roleDao.existsById("Driver")) {
+				Role driverRole = new Role();
+				driverRole.setRoleName("Driver");
+				driverRole.setRoleDescription("Default role for newly created Driver");
+				roleDao.save(driverRole);
+			}
 
 
+			// Create Super Admin user
+			String superAdminEmail = "superadmin@example.com"; // Hardcoded super admin email
+			if (adminDao.findByEmail(superAdminEmail) == null) {
+				Role superAdminRole = new Role();
+				superAdminRole.setRoleName("SuperAdmin");
+				superAdminRole.setRoleDescription("Dedult role super admin");
+				  roleDao.save(superAdminRole); // Hardcoded super admin password
+				Admin superAdmin = new Admin();
 
+				Role role = roleDao.findById("SuperAdmin")
+						.orElseThrow(() -> new RuntimeException("Role not found"));
+				Set<Role> superadminRoles = new HashSet<>();
+				superadminRoles.add(role);
+				superAdmin.setRole(superadminRoles);
+                superAdmin.setEmail(superAdminEmail);
+				superAdmin.setPassword(getEncodedPassword("superadminpassword"));
+				adminDao.save(superAdmin);
+
+
+			}
 
 	    }
 
@@ -166,4 +233,30 @@ public class UserService {
 	public void deleteUser(Long id) {
 			userDao.delete(userDao.findById(id).orElse(null));
 	}
+
+	public User blockUser(Long id) {
+		Optional<User> optionalUser = userDao.findById(id);
+		if (optionalUser.isPresent()) {
+			User user = optionalUser.get();
+			user.setStatus(UserStatus.BLOCKED);
+			userDao.save(user);
+			return user;
+		} else {
+			return null; // User not found, return null or handle it as needed
+		}
+	}
+
+
+	public User unblockUser(Long id) {
+		Optional<User> optionalUser = userDao.findById(id);
+		if (optionalUser.isPresent()) {
+			User user = optionalUser.get();
+			user.setStatus(UserStatus.ACTIVE); // Assuming ACTIVE is the status for an unblocked user
+			userDao.save(user);
+			return user;
+		} else {
+			return null; // User not found, return null or handle it as needed
+		}
+	}
+
 }

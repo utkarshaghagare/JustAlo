@@ -31,6 +31,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<String> findAllAvailableStop(Trip trip, Integer seatNo);
 
 
+
 //    @Modifying
 //    @Transactional
 //    @Query("UPDATE Booking b SET b.status = false WHERE b.trip = :trip AND b.seatno = :seatno")
