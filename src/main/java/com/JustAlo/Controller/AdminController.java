@@ -3,6 +3,7 @@ package com.JustAlo.Controller;
 
 import com.JustAlo.Entity.*;
 import com.JustAlo.Repo.CityRepository;
+import com.JustAlo.Repo.DriverDao;
 import com.JustAlo.Repo.UserDao;
 import com.JustAlo.Service.*;
 import com.JustAlo.Entity.Admin;
@@ -43,6 +44,8 @@ public class AdminController {
 
     @Autowired
    private UserDao userDao;
+    @Autowired
+    private  DriverDao driverRepository;
 
 
 
@@ -145,4 +148,15 @@ public ResponseEntity<Driver> UnblockDriver(@PathVariable("id") Long id){
 //        List<User> user= userDao.findAll();
 //        return  ResponseEntity.ok(user);
 //    }
+
+//    @GetMapping("/unverifieddriver")
+//    public ResponseEntity<List<Driver>> unverifiredDriverList() {
+//        List<Driver> drivers = driverRepository.findUnverifiedDrivers();
+//        return new ResponseEntity<>(drivers, HttpStatus.OK);
+//    }
+@GetMapping("/unverifieddriver")
+public ResponseEntity<List<Driver>> unverifiredDriverList() {
+    List<Driver> drivers = driverRepository.findUnverifiedDrivers();
+    return new ResponseEntity<>(drivers, HttpStatus.OK);
+}
 }

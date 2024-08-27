@@ -1,19 +1,13 @@
 package com.JustAlo.Controller;
 
 
-import com.JustAlo.Entity.Booking;
-import com.JustAlo.Entity.Bus;
-import com.JustAlo.Entity.Trip;
-import com.JustAlo.Entity.Vendor;
+import com.JustAlo.Entity.*;
 import com.JustAlo.Model.BusStatus;
 import com.JustAlo.Model.TicketBooking;
 import com.JustAlo.Model.VendorModel;
 import com.JustAlo.Repo.BookingRepository;
 import com.JustAlo.Repo.TripRepository;
-import com.JustAlo.Service.BusService;
-import com.JustAlo.Service.TripService;
-import com.JustAlo.Service.UserService;
-import com.JustAlo.Service.VendorService;
+import com.JustAlo.Service.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,6 +33,9 @@ public class VendorController {
 
     @Autowired
     private BusService busService;
+
+    @Autowired
+    private DriverService driverService;
     @Autowired
     private TripService tripService;
 
@@ -85,12 +82,14 @@ public class VendorController {
 //    }
 
     @GetMapping({"/tobeVerified"})
+    @PreAuthorize("hasRole('Admin')")
     public List<Vendor> tobeVerified(){
         return vendorService.tobeVerified();
     }
 
-    //@PreAuthorize("hasRole('Vendor')")
+
     @PostMapping("/markVerified/{id}")
+    @PreAuthorize("hasRole('Admin')")
     public Vendor markVerified(@PathVariable("id") Long id) throws Exception {
         return vendorService.markVerified(id);
     }
@@ -112,15 +111,25 @@ public class VendorController {
     //Bus
 
     @GetMapping({"/turnOffBus/{id}"})
+    @PreAuthorize("hasRole('Vendor')")
     public String turnOffBus(@PathVariable("id") Long id){
         return busService.turnOffBus(id, BusStatus.OUT_OF_SERVICE);
     }
     @GetMapping({"/turnONBus/{id}"})
+    @PreAuthorize("hasRole('Vendor')")
     public String turnONBus(@PathVariable("id") Long id){
         return busService.turnOffBus(id, BusStatus.AVAILABLE);
     }
 
+    @GetMapping("/verifiedAndAvailableDriver")
+    @PreAuthorize("hasRole('Vendor')")
+    public List<Driver> getAllVerifiedBuses() {
+        List<Driver> drivers = driverService.getAllVerifiedAvailableDrivers();
+        return drivers;
+    }
+
     @GetMapping("/tripsByVendor/{id}")
+    @PreAuthorize("hasRole('Vendor','Admin')")
     public ResponseEntity<List<Trip>> getTripsByVendor(@PathVariable("id") Long id) {
         List<Trip> trips = tripRepository.findTripsByVendorId(id);
         if (trips.isEmpty()) {
@@ -130,7 +139,9 @@ public class VendorController {
         }
     }
 
+
     @GetMapping("/TodayTripsByVendor/{id}")
+    @PreAuthorize("hasRole('Vendor','Admin')")
     public ResponseEntity<List<Trip>> getTodayTripsByVendor(@PathVariable("id") Long id) {
         List<Trip> trips = tripRepository.findTripsByVendorId(id);
         if (trips.isEmpty()) {
@@ -146,7 +157,9 @@ public class VendorController {
         }
     }
 
+    //Not Tested
     @GetMapping("/BookingByTrip/{id}")
+    @PreAuthorize("hasRole('Vendor','Admin')")
     public ResponseEntity<List<Booking>> getBookingByTrip(@PathVariable("id") Long id) {
         List<Booking> bookings = bookingRepository.findAllByTrip(tripRepository.findById(id).orElse(null));
         if (bookings.isEmpty()) {
@@ -157,6 +170,7 @@ public class VendorController {
         }
     }
     @GetMapping("/BookingChartByTrip/{id}")
+    @PreAuthorize("hasRole('Vendor','Admin')")
     public ResponseEntity<List<Booking>> getBookingChartByTrip(@PathVariable("id") Long id) {
         List<Booking> bookings = bookingRepository.findAllByTrip(tripRepository.findById(id).orElse(null));
         if (bookings.isEmpty()) {

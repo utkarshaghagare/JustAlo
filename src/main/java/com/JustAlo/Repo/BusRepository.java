@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface BusRepository extends JpaRepository<Bus, Long> {
-    List<Bus> findByVerifiedTrue();
 
     @Query(value = "SELECT * FROM bus WHERE vendor_id = :id", nativeQuery = true)
     List<Bus> findByVendorId(@Param("id") Long id);

@@ -11,5 +11,5 @@ import java.util.List;
 public interface PassengerRepository extends JpaRepository<Passenger, Long> {
 
     @Query("SELECT b FROM Passenger b WHERE b.user = :byEmail")
-    List<Passenger> findAllByUser(@Param("byEmail") User byEmail);
+    List<Passenger> findAllByUser(@Param("byEmail") Long byEmail);
 }

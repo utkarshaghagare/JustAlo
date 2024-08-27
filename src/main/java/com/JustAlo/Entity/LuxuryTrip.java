@@ -12,8 +12,8 @@ import java.util.List;
 @Setter
 public class LuxuryTrip extends Trip {
     @ElementCollection
-    private List<Points> pickupPoints;
+    private List<String> pickupPoints;
     
     @ElementCollection
-    private List<Points> dropDownPoints;
+    private List<String> dropDownPoints;
 }

@@ -26,9 +26,9 @@ public class BusController {
            // @RequestParam("id")  id,
             @RequestParam("busNumber") String busNumber,
             @RequestParam("totalSeats") int totalSeats,
-            @RequestParam("type") String type,
+//            @RequestParam("type") String type,
             @RequestParam("ac") Boolean ac,
-            @RequestParam("status") String status,
+//            @RequestParam("status") String status,
             @RequestParam("layout") String layout,
             @RequestParam("chassisNum") String chassisNum,
             @RequestParam("noOfRow") int noOfRow,
@@ -36,16 +36,16 @@ public class BusController {
             @RequestParam("insuranceNo") String insuranceNo,
             @RequestParam("fromDate") String fromDate,
             @RequestParam("toDate") String toDate,
-            @RequestParam("verified") Boolean verified,
+//            @RequestParam("verified") Boolean verified,
             @RequestParam("insuranceImg") MultipartFile insuranceImg
     ) {
         BusModel busModel = new BusModel();
       //  busModel.setId(id);
         busModel.setBusNumber(busNumber);
         busModel.setTotalSeats(totalSeats);
-        busModel.setType(type);
+//        busModel.setType(type);
         busModel.setAc(ac);
-        busModel.setStatus(status);
+        //busModel.setStatus(status);
         busModel.setLayout(layout);
         busModel.setChassisNum(chassisNum);
         busModel.setNoOfRow(noOfRow);
@@ -53,7 +53,7 @@ public class BusController {
         busModel.setInsuranceNo(insuranceNo);
         busModel.setFromDate(fromDate);
         busModel.setToDate(toDate);
-        busModel.setVerified(verified);
+       // busModel.setVerified(verified);
         busModel.setInsuranceImg(insuranceImg);
 
         Bus createdBus = busService.createBus(busModel);
@@ -67,12 +67,14 @@ public class BusController {
 //    }
 //1. admin api toget unverified buses and
 // 2.mark bus verified
-    @GetMapping("/verified")
-    public ResponseEntity<List<Bus>> getAllVerifiedBuses() {
+    @GetMapping("/verifiedAndAvailable")
+    @PreAuthorize("hasRole('Vendor')")
+    public List<Bus> getAllVerifiedBuses() {
         List<Bus> buses = busService.getAllVerifiedBuses();
-        return ResponseEntity.ok(buses);
+        return buses;
     }
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('Vendor')")
     public ResponseEntity<Bus> getBusById(@PathVariable Long id) {
         Optional<Bus> bus = busService.getBusById(id);
         return bus.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
@@ -85,12 +87,14 @@ public class BusController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('Vendor')")
     public ResponseEntity<Bus> updateBus(@PathVariable Long id, @RequestBody Bus busDetails) {
         Bus updatedBus = busService.updateBus(id, busDetails);
         return ResponseEntity.ok(updatedBus);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('Vendor')")
     public ResponseEntity<Void> deleteBus(@PathVariable Long id) {
         busService.deleteBus(id);
         return ResponseEntity.noContent().build();

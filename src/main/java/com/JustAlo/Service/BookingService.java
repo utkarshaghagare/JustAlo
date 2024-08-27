@@ -327,7 +327,7 @@ public class BookingService {
         }
     }
     public List<Passenger> getPassengers(User byEmail) {
-        return passengerRepository.findAllByUser(byEmail);
+        return passengerRepository.findAllByUser(byEmail.getId());
     }
 
     public JourneyDetails getdetails(Trip trip, String stopName, Integer remaining) {

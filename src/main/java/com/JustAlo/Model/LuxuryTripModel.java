@@ -10,8 +10,8 @@ public class LuxuryTripModel {
     public Long bus_id;
     public Long driver_id;
     public Long route_id;
-    public List<Points> pickupPoints;
-    public List<Points> dropDownPoints;
+    public List<String> pickupPoints;
+    public List<String> dropDownPoints;
     public Date date;
     public Time time;
     public Time endtime;

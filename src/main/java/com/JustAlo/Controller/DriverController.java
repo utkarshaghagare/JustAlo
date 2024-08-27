@@ -9,8 +9,10 @@ import com.JustAlo.Model.DriverModel;
 import com.JustAlo.Model.JourneyDetails;
 import com.JustAlo.Repo.DriverDao;
 import com.JustAlo.Repo.RoleDao;
+import com.JustAlo.Security.JwtAuthenticationFilter;
 import com.JustAlo.Service.DriverService;
 import com.JustAlo.Service.TripService;
+import com.JustAlo.Service.VendorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,13 +59,16 @@ public class DriverController {
     @Autowired
     private AmazonS3Config amazonS3Config;
 
+    @Autowired
+    private VendorService vendorService;
+
     public String getEncodedPassword(String password) {
         return passwordEncoder.encode(password);
     }
 
 
     @PostMapping("/addDriver")
-   // @PreAuthorize("hasRole('Vendor')")
+    @PreAuthorize("hasRole('Vendor')")
     public ResponseEntity<Driver> addDriver(@RequestParam("driverName") String driverName,
                                             @RequestParam("driverNickname") String driverNickname,
                                             @RequestParam("email") String email,
@@ -74,8 +79,8 @@ public class DriverController {
                                             @RequestParam("aadharNo") String aadharNo,
                                             @RequestParam("driver_img") MultipartFile driverImg,
                                             @RequestParam("id_proof_img") MultipartFile idProofImg,
-                                            @RequestParam("license_img") MultipartFile licenseImg,
-                                            @RequestParam("verificationStatus") Boolean verificationStatus) {
+                                            @RequestParam("license_img") MultipartFile licenseImg
+                                           ) {
 
         try {
             // Upload images to DigitalOcean Spaces
@@ -88,6 +93,7 @@ public class DriverController {
             driver.setDriver_name(driverName);
             driver.setDriver_nickname(driverNickname);
             driver.setEmail(email);
+            driver.setVendor(vendorService.findByUsername(JwtAuthenticationFilter.CURRENT_USER));
             driver.setPassword(getEncodedPassword(password));
          //   vendor.setPassword(getEncodedPassword(vendormodel.getPassword()));
             driver.setMobile_no(mobileNo);
@@ -97,7 +103,7 @@ public class DriverController {
             driver.setDriver_img(driverImgUrl);
             driver.setId_proof_img(idProofImgUrl);
             driver.setLicense_img(licenseImgUrl);
-            driver.setVerification_status(verificationStatus);
+            driver.setVerification_status(false);
 
             Role role = roleDao.findById("Driver")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
@@ -147,12 +153,14 @@ public class DriverController {
         return spaceUrl + fileName;
     }
     @GetMapping("/getAllDriver")
+    @PreAuthorize("hasRole('Vendor')")
     public List<Driver> getAllDriver(){
         return driverService.getAllDriver();
 
     }
 
     @GetMapping("/verifiedDrivers")
+    @PreAuthorize("hasRole('Vendor')")
     public ResponseEntity<List<Driver>> getAllVerifiedDriver(@RequestBody DriverModel driverModel){
         List<Driver> drivers= driverService.getAllVerifiedDriver(driverModel);
         return ResponseEntity.ok(drivers);

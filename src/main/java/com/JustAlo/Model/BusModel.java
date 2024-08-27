@@ -14,7 +14,7 @@ public class BusModel {
     private int totalSeats;
     private String type;
     private Boolean ac;
-    private String status; // Assuming you have an Enum for BusStatus
+//    private String status; // Assuming you have an Enum for BusStatus
     private String layout;
 
     private String chassisNum;
@@ -24,7 +24,7 @@ public class BusModel {
     private String fromDate; // Assuming you will handle the date format appropriately
     private String toDate;   // Assuming you will handle the date format appropriately
     private MultipartFile insuranceImg; // This would be the URL or path to the image
-    private Boolean verified;
+//    private Boolean verified;
 
     // Add constructors, if needed
     // public BusModel() {}

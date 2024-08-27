@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -48,9 +49,9 @@ public class BusService {
             b.setVendor(vendorService.findByUsername(JwtAuthenticationFilter.CURRENT_USER));
             b.setBus_number(bus.getBusNumber());
             b.setTotal_seats(bus.getTotalSeats());
-            b.setType(bus.getType());
+//            b.setType(bus.getType());
             b.setAc(bus.getAc());
-            b.setStatus(BusStatus.valueOf(bus.getStatus())); // Ensure this matches your BusStatus enum
+            b.setStatus(BusStatus.AVAILABLE); // Ensure this matches your BusStatus enum
             b.setLayout(bus.getLayout());
             b.setChassis_num(bus.getChassisNum());
             b.setNo_of_row(bus.getNoOfRow());
@@ -59,7 +60,7 @@ public class BusService {
             b.setFromDate(dateFormat.parse(bus.getFromDate()));
             b.setToDate(dateFormat.parse(bus.getToDate()));
             b.setInsurance_img(insuranceImgUrl);
-            b.setVerified(bus.getVerified());
+            b.setVerified(false);
 
             return busRepository.save(b);
         } catch (IOException e) {
@@ -105,7 +106,15 @@ public class BusService {
 
 
     public List<Bus> getAllVerifiedBuses() {
-        return busRepository.findByVerifiedTrue();
+        List<Bus>buses=busRepository.findByVendorId(vendorService.findByUsername(JwtAuthenticationFilter.CURRENT_USER).getId());
+
+        List<Bus> response= new ArrayList<>();
+        for(Bus b:buses){
+       if(b.getVerified() && b.getStatus().equals(BusStatus.AVAILABLE)){
+           response.add(b);
+       }
+   }
+        return response;
     }
 
     public List<Bus> getAllBuses() {
@@ -116,7 +125,7 @@ public class BusService {
         Bus bus = busRepository.findById(id).orElseThrow(() -> new RuntimeException("Bus not found"));
         bus.setBus_number(busDetails.getBus_number());
         bus.setTotal_seats(busDetails.getTotal_seats());
-        bus.setType(busDetails.getType());
+//        bus.setType(busDetails.getType());
         bus.setAc(busDetails.getAc());
         bus.setStatus(busDetails.getStatus());
         bus.setLayout(busDetails.getLayout());

@@ -12,6 +12,7 @@ import com.JustAlo.Repo.TripRepository;
 import com.JustAlo.Security.JwtAuthenticationFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,8 @@ public class DriverService {
 
     @Autowired
     private DriverDao driverDao;
+    @Autowired
+    private VendorService vendorService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -50,8 +53,10 @@ public class DriverService {
         driver.setPassword(passwordEncoder.encode(driverDTO.getPassword()));
         driver.setMobile_no(driverDTO.getMobileNo());
         driver.setLicense_no(driverDTO.getLicenseNo());
+        driver.setStatus(DriverStatus.ACTIVE);
         driver.setAddress(driverDTO.getAddress());
         driver.setAadhar_no(driverDTO.getAadharNo());
+       // driver.setVendor(vendorService.findByUsername(JwtAuthenticationFilter.CURRENT_USER));
         driver.setVerification_status(driverDTO.getVerificationStatus());
        ;
 
@@ -140,4 +145,18 @@ public class DriverService {
         }
     }
 
+    public List<Driver> getAllVerifiedAvailableDrivers() {
+        List<Driver> drivers= getAllDriverByPerticularVendor(vendorService.findByUsername(JwtAuthenticationFilter.CURRENT_USER).getId());
+    List<Driver> response= new ArrayList<>();
+        for(Driver d:drivers){
+        if(d.getVerification_status() && d.getStatus().equals(DriverStatus.ACTIVE)){
+            response.add(d);
+        }
+    }
+        return response;
+    }
+
+//    public ResponseEntity<Driver> getunverifiredDriverList() {
+//        return driverDao.unverifiredDriverList();
+//    }
 }

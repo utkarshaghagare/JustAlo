@@ -23,7 +23,7 @@ public class Bus {
 
     public String bus_number;
     public int total_seats;
-    public String type;
+//    public String type;
     public Boolean ac;
 
     @Enumerated(EnumType.STRING)

@@ -194,7 +194,7 @@ public class UserController {
     //provide passanger details
     //save
     //yet to be tested
-    @GetMapping("/passengers")
+        @GetMapping("/passengers")
     @PreAuthorize("hasRole('User')")
     public List<Passenger> getPassenger() throws Exception {
         return tripService.getPassengers();

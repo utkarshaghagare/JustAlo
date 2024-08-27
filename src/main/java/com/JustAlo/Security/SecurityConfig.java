@@ -23,7 +23,7 @@ public class SecurityConfig {
             "/send-otp",
             "/validate-otp",
             "/getfindTrip",
-            "/buses/**",
+//            "/buses/**",
             "/addDriver",
             "/trips/**",
             "/available_seats/{id}",
@@ -48,7 +48,8 @@ public class SecurityConfig {
             "/addcity&bordingpoint",
             "/getAllCities",
            // "/buses/add",
-            "/getAllUser"
+            "/getAllUser",
+            "/unverifieddriver"
 
 
     };

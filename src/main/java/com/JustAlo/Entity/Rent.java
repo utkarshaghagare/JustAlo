@@ -17,8 +17,9 @@ public class Rent {
     private String name;
     private String phoneNumber;
     private String address;
-    private String fromDate;
-    private String toDate;
+    private String from;
+    private String to;
+    private String date;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "rent_id")

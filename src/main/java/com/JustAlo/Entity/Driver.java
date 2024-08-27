@@ -1,5 +1,6 @@
 package com.JustAlo.Entity;
 
+import com.JustAlo.Model.BusStatus;
 import com.JustAlo.Model.enums.DriverStatus;
 import com.JustAlo.Model.enums.UserStatus;
 import jakarta.persistence.*;
@@ -15,6 +16,9 @@ public class Driver {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @ManyToOne
+    @JoinColumn(name = "vendor_id", referencedColumnName = "id")
+    public Vendor vendor;
     private String driver_name;
     private String driver_nickname;
     private String email;
@@ -27,9 +31,11 @@ public class Driver {
     private String id_proof_img;
     private String license_img;
     private Boolean verification_status;
-    @Column(columnDefinition = "tinyint default 0")
-    private DriverStatus status = DriverStatus.ACTIVE;
+//    @Column(columnDefinition = "tinyint default 0")
+//    private DriverStatus status = DriverStatus.ACTIVE;
 
+    @Enumerated(EnumType.STRING)
+    public DriverStatus status;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "USER_ROLE", joinColumns = {
             @JoinColumn(name = "USER_ID", referencedColumnName = "email")
