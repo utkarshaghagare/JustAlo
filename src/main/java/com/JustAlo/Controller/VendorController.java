@@ -8,6 +8,7 @@ import com.JustAlo.Entity.Vendor;
 import com.JustAlo.Model.BusStatus;
 import com.JustAlo.Model.TicketBooking;
 import com.JustAlo.Model.VendorModel;
+import com.JustAlo.Repo.BookingRepository;
 import com.JustAlo.Repo.TripRepository;
 import com.JustAlo.Service.BusService;
 import com.JustAlo.Service.TripService;
@@ -21,6 +22,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 
@@ -40,6 +44,8 @@ public class VendorController {
 
     @Autowired
     private TripRepository tripRepository;
+    @Autowired
+    private BookingRepository bookingRepository;
 
     @PostConstruct
     public void initRoleAndVendor() {
@@ -121,6 +127,43 @@ public class VendorController {
             return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(trips);
+        }
+    }
+
+    @GetMapping("/TodayTripsByVendor/{id}")
+    public ResponseEntity<List<Trip>> getTodayTripsByVendor(@PathVariable("id") Long id) {
+        List<Trip> trips = tripRepository.findTripsByVendorId(id);
+        if (trips.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            List<Trip> response= new ArrayList<>();
+            for(Trip t:trips){
+                if(t.getDate().equals(Date.valueOf(LocalDate.now()))){
+                    response.add(t);
+                }
+            }
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    @GetMapping("/BookingByTrip/{id}")
+    public ResponseEntity<List<Booking>> getBookingByTrip(@PathVariable("id") Long id) {
+        List<Booking> bookings = bookingRepository.findAllByTrip(tripRepository.findById(id).orElse(null));
+        if (bookings.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            bookings.removeIf(b -> b.getPassenger() == null);
+            return ResponseEntity.ok(bookings);
+        }
+    }
+    @GetMapping("/BookingChartByTrip/{id}")
+    public ResponseEntity<List<Booking>> getBookingChartByTrip(@PathVariable("id") Long id) {
+        List<Booking> bookings = bookingRepository.findAllByTrip(tripRepository.findById(id).orElse(null));
+        if (bookings.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            bookings.removeIf(b -> b.getStatus().equals("BOOKED"));
+            return ResponseEntity.ok(bookings);
         }
     }
 
