@@ -17,7 +17,11 @@ public class Rent {
     private String name;
     private String phoneNumber;
     private String address;
+    @Column(name = "`from`")
+
     private String from;
+    @Column(name = "`to`")
+
     private String to;
     private String date;
 

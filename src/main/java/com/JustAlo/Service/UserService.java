@@ -117,25 +117,25 @@ public class UserService {
 
 
 			// Create Super Admin user
-			String superAdminEmail = "superadmin@example.com"; // Hardcoded super admin email
-			if (adminDao.findByEmail(superAdminEmail) == null) {
-				Role superAdminRole = new Role();
-				superAdminRole.setRoleName("SuperAdmin");
-				superAdminRole.setRoleDescription("Dedult role super admin");
-				  roleDao.save(superAdminRole); // Hardcoded super admin password
-				Admin superAdmin = new Admin();
+//			String superAdminEmail = "superadmin@example.com"; // Hardcoded super admin email
+//			if (adminDao.findByEmail(superAdminEmail) == null) {
+//				Role superAdminRole = new Role();
+//				superAdminRole.setRoleName("SuperAdmin");
+//				superAdminRole.setRoleDescription("Dedult role super admin");
+//				  roleDao.save(superAdminRole); // Hardcoded super admin password
+//				Admin superAdmin = new Admin();
+//
+//				Role role = roleDao.findById("SuperAdmin")
+//						.orElseThrow(() -> new RuntimeException("Role not found"));
+//				Set<Role> superadminRoles = new HashSet<>();
+//				superadminRoles.add(role);
+//				superAdmin.setRole(superadminRoles);
+//                superAdmin.setEmail(superAdminEmail);
+//				superAdmin.setPassword(getEncodedPassword("superadminpassword"));
+//				adminDao.save(superAdmin);
 
-				Role role = roleDao.findById("SuperAdmin")
-						.orElseThrow(() -> new RuntimeException("Role not found"));
-				Set<Role> superadminRoles = new HashSet<>();
-				superadminRoles.add(role);
-				superAdmin.setRole(superadminRoles);
-                superAdmin.setEmail(superAdminEmail);
-				superAdmin.setPassword(getEncodedPassword("superadminpassword"));
-				adminDao.save(superAdmin);
 
-
-			}
+//			}
 
 	    }
 
