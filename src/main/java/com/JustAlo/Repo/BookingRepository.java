@@ -29,8 +29,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT b.availableStops FROM Booking b WHERE b.trip = :trip AND b.seatno = :seatNo")
     List<String> findAllAvailableStop(Trip trip, Integer seatNo);
-    @Query("SELECT * FROM Booking b WHERE b.passenger.user = :byEmail ORDER BY b.date DESC ")
+//    @Query("SELECT * FROM Booking b WHERE b.passenger.user = :byEmail ORDER BY b.date DESC ")
+@Query("SELECT b FROM Booking b WHERE b.passenger.user = :byEmail ORDER BY b.date DESC")
     List<Booking> findByPassengerOrderByBookingDateDesc(User byEmail);
+
+    @Query("SELECT b FROM Booking b WHERE b.razorpay_booking_id = :razorpay_booking_id")
+    List<Booking> findByRazorpayBookingId(@Param("razorpay_booking_id") String razorpay_booking_id);
+
 
 
 //    @Modifying

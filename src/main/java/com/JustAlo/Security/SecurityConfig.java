@@ -42,7 +42,12 @@ public class SecurityConfig {
             "/addRoute",
             "/verifiedDrivers",
             "/AllDriverByPerticularVendor/{id}",
-            "/getAllBusByPerticularVendor/{id}"
+            "/getAllBusByPerticularVendor/{id}",
+            "/confirmBooking",
+            "/tripsByVendor/{id}",
+            "/addcity&bordingpoint",
+            "/getAllCities"
+
 
     };
 

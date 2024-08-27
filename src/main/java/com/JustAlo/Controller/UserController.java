@@ -3,8 +3,10 @@ package com.JustAlo.Controller;
 
 import com.JustAlo.Entity.*;
 import com.JustAlo.Model.*;
+import com.JustAlo.Model.enums.DriverStatus;
 import com.JustAlo.Model.enums.UserStatus;
 import com.JustAlo.Repo.BookingRepository;
+import com.JustAlo.Repo.DriverDao;
 import com.JustAlo.Repo.RoleDao;
 import com.JustAlo.Repo.UserDao;
 import com.JustAlo.Security.JwtHelper;
@@ -19,9 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 public class UserController {
@@ -42,6 +42,12 @@ public class UserController {
     @Autowired
     private BookingRepository bookingRepository;
 
+    @Autowired
+    private PaymentService paymentService;
+
+    @Autowired
+    private DriverDao driverDao;
+
     @PostConstruct
     public void initRoleAndUser() {
         userService.initRoleAndUser();
@@ -57,6 +63,10 @@ public class UserController {
 //Login
     @PostMapping("/auth/login")
     public JwtResponse createJwtToken(@RequestBody JwtRequest jwtRequest) throws Exception {
+        Optional<Driver> driver =driverDao.findByEmail(jwtRequest.getEmail());
+        if( driver.get().getStatus() == DriverStatus.BLOCKED) {
+            throw new BadRequestException("User is blocked");
+        }
         return jwtService.createJwtToken(jwtRequest);
     }
     @PostMapping("/send-otp")
@@ -194,6 +204,32 @@ public class UserController {
     public String bookSeat(@RequestBody TicketBooking ticketBooking) throws Exception {
         return tripService.bookSeat(ticketBooking);
     }
+
+
+//    @PostMapping("/confirmBooking")
+//   // @PreAuthorize("hasRole('User')")
+//    public String confirmBooking(@RequestBody Map<String, String> paymentDetails) throws Exception {
+//        String razorpay_booking_id = paymentDetails.get("razorpay_booking_id");
+//        String razorpayPaymentId = paymentDetails.get("razorpay_payment_id");
+//        String razorpaySignature = paymentDetails.get("razorpay_signature");
+//
+//        // Verify the payment
+//        boolean isPaymentVerified = paymentService.verifyPayment(razorpay_booking_id, razorpayPaymentId, razorpaySignature);
+//
+//        if (!isPaymentVerified) {
+//            throw new Exception("Payment verification failed");
+//        }
+//
+//        // Update booking status to "BOOKED"
+//        List<Booking> bookings = bookingRepository.findByRazorpayBookingId(razorpay_booking_id);
+//        for (Booking booking : bookings) {
+//            booking.setStatus("BOOKED");
+//            booking.setRazorpay_payment_id(razorpayPaymentId);
+//            bookingRepository.save(booking);
+//        }
+//
+//        return "Booking confirmed";
+//    }
 
 
     //payment

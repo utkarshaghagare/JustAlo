@@ -3,11 +3,14 @@ package com.JustAlo.Controller;
 
 import com.JustAlo.Entity.Booking;
 import com.JustAlo.Entity.Bus;
+import com.JustAlo.Entity.Trip;
 import com.JustAlo.Entity.Vendor;
 import com.JustAlo.Model.BusStatus;
 import com.JustAlo.Model.TicketBooking;
 import com.JustAlo.Model.VendorModel;
+import com.JustAlo.Repo.TripRepository;
 import com.JustAlo.Service.BusService;
+import com.JustAlo.Service.TripService;
 import com.JustAlo.Service.UserService;
 import com.JustAlo.Service.VendorService;
 import jakarta.annotation.PostConstruct;
@@ -32,6 +35,11 @@ public class VendorController {
 
     @Autowired
     private BusService busService;
+    @Autowired
+    private TripService tripService;
+
+    @Autowired
+    private TripRepository tripRepository;
 
     @PostConstruct
     public void initRoleAndVendor() {
@@ -104,6 +112,16 @@ public class VendorController {
     @GetMapping({"/turnONBus/{id}"})
     public String turnONBus(@PathVariable("id") Long id){
         return busService.turnOffBus(id, BusStatus.AVAILABLE);
+    }
+
+    @GetMapping("/tripsByVendor/{id}")
+    public ResponseEntity<List<Trip>> getTripsByVendor(@PathVariable("id") Long id) {
+        List<Trip> trips = tripRepository.findTripsByVendorId(id);
+        if (trips.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(trips);
+        }
     }
 
 }

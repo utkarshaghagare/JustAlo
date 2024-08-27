@@ -4,10 +4,7 @@ import com.JustAlo.Entity.Booking;
 import com.JustAlo.Entity.Passenger;
 import com.JustAlo.Entity.Trip;
 import com.JustAlo.Entity.User;
-import com.JustAlo.Model.JourneyDetails;
-import com.JustAlo.Model.Passenger_details;
-import com.JustAlo.Model.Seats;
-import com.JustAlo.Model.TicketBooking;
+import com.JustAlo.Model.*;
 import com.JustAlo.Repo.*;
 import com.JustAlo.Security.JwtAuthenticationFilter;
 import com.razorpay.Order;
@@ -185,17 +182,21 @@ public class BookingService {
 
     public String bookSeat(TicketBooking ticketBooking, Trip trip) throws Exception {
         List<Integer> availableSeats=findSeats(ticketBooking.getStart(),ticketBooking.getEnd(),trip).available;
-
-        // Calculate total amount
-        double totalAmount = ticketBooking.getPassengers().size() * setamount(trip, ticketBooking.getStart(), ticketBooking.getEnd());
-
-        // Create Razorpay order
-        Order order = paymentService.bookedTicket(totalAmount);
-
-        // Send the order ID back to the frontend to complete the payment
-        String orderId = order.get("id");
+//
+//        // Calculate total amount
+//        double totalAmount = ticketBooking.getPassengers().size() * setamount(trip, ticketBooking.getStart(), ticketBooking.getEnd());
+//
+//        // Create Razorpay order
+//        Order order = paymentService.bookedTicket(totalAmount);
+//
+//        // Send the order ID back to the frontend to complete the payment
+//        String orderId = order.get("id");
         // You can now return the order ID to the client-side to complete the payment via Razorpay's frontend integration
-
+//        PaymentResponse response = new PaymentResponse();
+//        response.setRazorpay_order_id(order.get("id"));
+//        response.setAmount(totalAmount);
+//        response.setCurrency("INR");
+//        response.setStatus("created");
 
         for (Passenger_details passenger : ticketBooking.getPassengers()) {
 
@@ -216,7 +217,7 @@ public class BookingService {
                     booking.setAmount(setamount(trip, ticketBooking.getStart(), ticketBooking.getEnd()));
                     booking.setDate(Date.valueOf(LocalDate.now()));
                     booking.setStatus("PENDING");  // Set status as pending until payment is confirmed
-                    booking.setRazorpay_booking_id(orderId);  // Save Razorpay order ID
+                 //   booking.setRazorpay_booking_id(orderId);  // Save Razorpay order ID
 
                     bookingRepository.save(booking);
 
@@ -292,7 +293,8 @@ public class BookingService {
             }
         }
 
-        return "Booked";
+        return "BOOKED";
+                //order.get(orderId);
     }
 
     //working check

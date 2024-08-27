@@ -145,9 +145,9 @@ public class BusService {
          throw new Exception("bus not found");
     }
 
-//    public List<Bus> getAllBusByPerticularVendor(Long id) {
-//        return busRepository.findByVendorId(id);
-//    }
+    public List<Bus> getAllBusByPerticularVendor(Long id) {
+        return busRepository.findByVendorId(id);
+    }
 
     public String turnOffBus(Long id, BusStatus b) {
         Bus bus= getBusById(id).orElse(null);

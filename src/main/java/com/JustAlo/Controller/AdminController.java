@@ -2,6 +2,7 @@ package com.JustAlo.Controller;
 
 
 import com.JustAlo.Entity.*;
+import com.JustAlo.Repo.CityRepository;
 import com.JustAlo.Service.*;
 import com.JustAlo.Entity.Admin;
 import com.JustAlo.Entity.Route;
@@ -35,6 +36,9 @@ public class AdminController {
     private DriverService driverService;
     @Autowired
     private  BusService busService;
+
+    @Autowired
+    private CityRepository cityRepository;
 
 
 
@@ -115,5 +119,21 @@ public ResponseEntity<Driver> UnblockDriver(@PathVariable("id") Long id){
         return busService.getAllBusByPerticularVendor(id);
     }
 
+    @PostMapping("/addcity&bordingpoint")
+    public ResponseEntity<City> addCityAndBordingPoint(@RequestBody City city){
 
+        City savedCity = cityRepository.save(city);
+        return ResponseEntity.ok(savedCity);
+    }
+    @GetMapping("getCityBy/{id}")
+    public ResponseEntity<City> getCityById(@PathVariable Long id) {
+        return cityRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+    @GetMapping("/getAllCities")
+    public ResponseEntity<List<City>> getAllCities() {
+        List<City> cities = cityRepository.findAll();
+        return ResponseEntity.ok(cities);
+    }
 }

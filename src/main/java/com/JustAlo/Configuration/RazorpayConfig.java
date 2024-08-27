@@ -19,4 +19,7 @@ public class RazorpayConfig {
     public RazorpayClient razorpayClient() throws RazorpayException {
         return new RazorpayClient(key, secret);
     }
+    public String getSecret() {
+        return secret;
+    }
 }
