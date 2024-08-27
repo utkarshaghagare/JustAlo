@@ -55,18 +55,18 @@ public class UserController {
 
 //USER CRUD
 //registration
-    @PostMapping({"/registerNewUser"})
-    public User registerNewUser(@RequestBody User user) {
-        return userService.registerNewUser(user);
-    }
+//    @PostMapping({"/registerNewUser"})
+//    public User registerNewUser(@RequestBody User user) {
+//        return userService.registerNewUser(user);
+//    }
 
 //Login
     @PostMapping("/auth/login")
     public JwtResponse createJwtToken(@RequestBody JwtRequest jwtRequest) throws Exception {
-        Optional<Driver> driver =driverDao.findByEmail(jwtRequest.getEmail());
-        if( driver.get().getStatus() == DriverStatus.BLOCKED) {
-            throw new BadRequestException("User is blocked");
-        }
+//        Optional<Driver> driver =driverDao.findByEmail(jwtRequest.getEmail());
+//        if( driver.get().getStatus() == DriverStatus.BLOCKED) {
+//            throw new BadRequestException("User is blocked");
+//        }
         return jwtService.createJwtToken(jwtRequest);
     }
     @PostMapping("/send-otp")

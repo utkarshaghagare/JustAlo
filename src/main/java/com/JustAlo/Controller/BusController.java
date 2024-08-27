@@ -23,8 +23,7 @@ public class BusController {
     @PostMapping("/add")
     @PreAuthorize("hasRole('Vendor')")
     public ResponseEntity<Bus> createBus(
-            @RequestParam("id") Long id,
-            @RequestParam("vendorId") Long vendorId,
+           // @RequestParam("id")  id,
             @RequestParam("busNumber") String busNumber,
             @RequestParam("totalSeats") int totalSeats,
             @RequestParam("type") String type,
@@ -41,8 +40,7 @@ public class BusController {
             @RequestParam("insuranceImg") MultipartFile insuranceImg
     ) {
         BusModel busModel = new BusModel();
-        busModel.setId(id);
-        busModel.setVendorId(vendorId);
+      //  busModel.setId(id);
         busModel.setBusNumber(busNumber);
         busModel.setTotalSeats(totalSeats);
         busModel.setType(type);
@@ -56,14 +54,13 @@ public class BusController {
         busModel.setFromDate(fromDate);
         busModel.setToDate(toDate);
         busModel.setVerified(verified);
-
-        // Handle file upload
         busModel.setInsuranceImg(insuranceImg);
 
         Bus createdBus = busService.createBus(busModel);
         return ResponseEntity.ok(createdBus);
     }
-//   // @PreAuthorize("hasRole('Vendor')")
+
+    //   // @PreAuthorize("hasRole('Vendor')")
 //    public ResponseEntity<Bus> createBus(@RequestBody BusModel bus) {
 //        Bus createdBus = busService.createBus(bus);
 //        return ResponseEntity.ok(createdBus);

@@ -3,6 +3,7 @@ package com.JustAlo.Controller;
 
 import com.JustAlo.Entity.*;
 import com.JustAlo.Repo.CityRepository;
+import com.JustAlo.Repo.UserDao;
 import com.JustAlo.Service.*;
 import com.JustAlo.Entity.Admin;
 import com.JustAlo.Entity.Route;
@@ -39,6 +40,9 @@ public class AdminController {
 
     @Autowired
     private CityRepository cityRepository;
+
+    @Autowired
+   private UserDao userDao;
 
 
 
@@ -136,4 +140,9 @@ public ResponseEntity<Driver> UnblockDriver(@PathVariable("id") Long id){
         List<City> cities = cityRepository.findAll();
         return ResponseEntity.ok(cities);
     }
+//    @GetMapping("/getAllUser")
+//    public ResponseEntity<List<User>> getAllUser(){
+//        List<User> user= userDao.findAll();
+//        return  ResponseEntity.ok(user);
+//    }
 }

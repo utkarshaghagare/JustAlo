@@ -139,15 +139,15 @@ public class UserService {
 
 	    }
 
-	    public User registerNewUser(User user) {
-	        Role role = roleDao.findById("User").get();
-	        Set<Role> userRoles = new HashSet<>();
-	        userRoles.add(role);
-	        user.setRole(userRoles);
-	        user.setPassword(getEncodedPassword(user.getPassword()));
-
-	        return userDao.save(user);
-	    }
+//	    public User registerNewUser(User user) {
+//	        Role role = roleDao.findById("User").get();
+//	        Set<Role> userRoles = new HashSet<>();
+//	        userRoles.add(role);
+//	        user.setRole(userRoles);
+//	        user.setPassword(getEncodedPassword(user.getPassword()));
+//
+//	        return userDao.save(user);
+//	    }
 
 	    public String getEncodedPassword(String password) {
 	        return passwordEncoder.encode(password);

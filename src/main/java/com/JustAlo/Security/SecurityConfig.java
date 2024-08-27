@@ -46,7 +46,9 @@ public class SecurityConfig {
             "/confirmBooking",
             "/tripsByVendor/{id}",
             "/addcity&bordingpoint",
-            "/getAllCities"
+            "/getAllCities",
+           // "/buses/add",
+            "/getAllUser"
 
 
     };

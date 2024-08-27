@@ -1,6 +1,7 @@
 package com.JustAlo.Service;
 
 import com.JustAlo.Entity.*;
+import com.JustAlo.Entity.Points;
 import com.JustAlo.Model.*;
 import com.JustAlo.Repo.*;
 //import com.JustAlo.Repo.ScheduledTripRepository;

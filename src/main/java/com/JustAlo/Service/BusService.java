@@ -41,8 +41,7 @@ public class BusService {
 
 
     public Bus createBus(BusModel bus) {
-        // Ensure the verified status is false when creating a new bus
-        Bus b=new Bus();
+        Bus b = new Bus();
         try {
             // Upload documents to DigitalOcean Spaces
             String insuranceImgUrl = uploadFileToSpace(bus.getInsuranceImg());
@@ -51,7 +50,7 @@ public class BusService {
             b.setTotal_seats(bus.getTotalSeats());
             b.setType(bus.getType());
             b.setAc(bus.getAc());
-            b.setStatus(BusStatus.valueOf(bus.getStatus())); // Assuming BusStatus is an enum
+            b.setStatus(BusStatus.valueOf(bus.getStatus())); // Ensure this matches your BusStatus enum
             b.setLayout(bus.getLayout());
             b.setChassis_num(bus.getChassisNum());
             b.setNo_of_row(bus.getNoOfRow());
@@ -59,16 +58,14 @@ public class BusService {
             b.setInsurance_no(bus.getInsuranceNo());
             b.setFromDate(dateFormat.parse(bus.getFromDate()));
             b.setToDate(dateFormat.parse(bus.getToDate()));
-
             b.setInsurance_img(insuranceImgUrl);
-            b.setVerified(false);
+            b.setVerified(bus.getVerified());
 
             return busRepository.save(b);
         } catch (IOException e) {
-            // Handle the exception appropriately
             throw new RuntimeException("Failed to upload file or save bus", e);
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to parse date", e);
         }
     }
 
