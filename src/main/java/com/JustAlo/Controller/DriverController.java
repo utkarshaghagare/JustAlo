@@ -166,6 +166,7 @@ public class DriverController {
         return ResponseEntity.ok(drivers);
     }
     @GetMapping("/getdetails/{id}")
+    @PreAuthorize("hasRole('Driver')")
     public List<JourneyDetails> getdetails(@PathVariable("id") long id ) throws Exception {
 
         return tripService.getdetails(id);
@@ -178,7 +179,8 @@ public class DriverController {
     }
 
     @PutMapping("/startTrip/{id}")
-     public Trip startTrip(@PathVariable("id") long id){
+    @PreAuthorize("hasRole('Driver')")
+    public Trip startTrip(@PathVariable("id") long id){
         return  tripService.startTrip(id);
 
     }

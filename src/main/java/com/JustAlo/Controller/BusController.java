@@ -80,20 +80,22 @@ public class BusController {
         return bus.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping
+    @GetMapping("/allBuses")
+    @PreAuthorize("hasRole('Vendor')")
+
     public ResponseEntity<List<Bus>> getAllBuses() {
         List<Bus> buses = busService.getAllBuses();
         return ResponseEntity.ok(buses);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("updateBus/{id}")
     @PreAuthorize("hasRole('Vendor')")
     public ResponseEntity<Bus> updateBus(@PathVariable Long id, @RequestBody Bus busDetails) {
         Bus updatedBus = busService.updateBus(id, busDetails);
         return ResponseEntity.ok(updatedBus);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("deleteBus/{id}")
     @PreAuthorize("hasRole('Vendor')")
     public ResponseEntity<Void> deleteBus(@PathVariable Long id) {
         busService.deleteBus(id);

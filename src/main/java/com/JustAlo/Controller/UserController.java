@@ -3,12 +3,12 @@ package com.JustAlo.Controller;
 
 import com.JustAlo.Entity.*;
 import com.JustAlo.Model.*;
-import com.JustAlo.Model.enums.DriverStatus;
 import com.JustAlo.Model.enums.UserStatus;
 import com.JustAlo.Repo.BookingRepository;
 import com.JustAlo.Repo.DriverDao;
 import com.JustAlo.Repo.RoleDao;
 import com.JustAlo.Repo.UserDao;
+import com.JustAlo.Security.JwtAuthenticationFilter;
 import com.JustAlo.Security.JwtHelper;
 import com.JustAlo.Service.*;
 
@@ -239,20 +239,20 @@ public class UserController {
 //Tickets Section
     //Yet to be tested
     @GetMapping("/Tickets/booked")
-    @PreAuthorize("hasRole('Vendor')")
+    @PreAuthorize("hasRole('Vendor','User')")
     public List<Booking> getTickets() throws Exception {
-        return tripService.getTickets("BOOKED");
+        return tripService.getTickets( userDao.findByEmail(JwtAuthenticationFilter.CURRENT_USER).getId(),"BOOKED");
     }
     @GetMapping("/CancelTicket/{id}")
-    @PreAuthorize("hasRole('Vendor')")
+    @PreAuthorize("hasRole('Vendor','User')")
     public void cancelTicket(@PathVariable long id) throws Exception {
         tripService.cancelTicket(id);
     }
     //Yet to be tested
     @GetMapping("/Tickets/cancelled")
-    @PreAuthorize("hasRole('Vendor')")
+    @PreAuthorize("hasRole('Vendor','User')")
     public List<Booking> getCancelledTickets() throws Exception {
-        return tripService.getTickets("CANCELLED");
+        return tripService.getTickets(userDao.findByEmail(JwtAuthenticationFilter.CURRENT_USER).getId(),"CANCELLED");
     }
 
 

@@ -3,7 +3,6 @@ package com.JustAlo.Controller;
 
 import com.JustAlo.Entity.*;
 import com.JustAlo.Model.BusStatus;
-import com.JustAlo.Model.TicketBooking;
 import com.JustAlo.Model.VendorModel;
 import com.JustAlo.Repo.BookingRepository;
 import com.JustAlo.Repo.TripRepository;
@@ -184,5 +183,25 @@ public class VendorController {
             return ResponseEntity.ok(bookings);
         }
     }
+
+    //Ticket
+    @GetMapping("/Tickets/BookedByVendor")
+    @PreAuthorize("hasRole('Vendor')")
+    public List<Booking> getTickets() throws Exception {
+        return tripService.getTickets(0L,"BOOKED");
+    }
+    @GetMapping("/CancelTicket/{id}")
+    @PreAuthorize("hasRole('Vendor','User')")
+    public void cancelTicket(@PathVariable long id) throws Exception {
+        tripService.cancelTicket(id);
+    }
+    //Yet to be tested
+    @GetMapping("/Tickets/cancelled")
+    @PreAuthorize("hasRole('Vendor','User')")
+    public List<Booking> getCancelledTickets() throws Exception {
+        return tripService.getTickets(0L, "CANCELLED");
+    }
+
+
 
 }

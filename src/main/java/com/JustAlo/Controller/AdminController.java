@@ -58,17 +58,19 @@ public class AdminController {
     }
 
     @GetMapping("/AllVendor")
-    @PreAuthorize("hasRole('Super Admin')")
+    @PreAuthorize("hasRole('Admin')")
     public List<Vendor> getAllVendor(){
         return vendorService.getAllVendor();
     }
 
     @GetMapping("/getAllAdmin")
+    @PreAuthorize("hasRole('Admin')")
     public List<Admin> getAllAdmin(){
         return adminService.getAllVendor();
     }
 
     @PostMapping("/blockUser/{id}")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<User> blockUser(@PathVariable("id") Long id) {
         User updatedUser = userService.blockUser(id);
         if (updatedUser != null) {
@@ -78,6 +80,7 @@ public class AdminController {
         }
     }
     @PostMapping("/unblockUser/{id}")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<User> unblockUser(@PathVariable("id") Long id) {
         User updatedUser = userService.unblockUser(id);
         if (updatedUser != null) {
@@ -111,6 +114,7 @@ public ResponseEntity<Driver> UnblockDriver(@PathVariable("id") Long id){
 }
 
     @PostMapping("/addRoute")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<Route> addRoute(@RequestBody Route route) {
         Route savedRoute = routeService.addRoute(route);
         return new ResponseEntity<>(savedRoute, HttpStatus.CREATED);
@@ -119,29 +123,33 @@ public ResponseEntity<Driver> UnblockDriver(@PathVariable("id") Long id){
 
 
     @GetMapping("/AllDriverByPerticularVendor/{id}")
+    @PreAuthorize("hasRole('Admin')")
     public  List<Driver> getAllDriverByPerticularVendor(@PathVariable("id") Long id){
         return driverService.getAllDriverByPerticularVendor(id);
 
     }
 
     @GetMapping("/getAllBusByPerticularVendor/{id}")
+    @PreAuthorize("hasRole('Admin')")
     public List<Bus> getAllBusByPerticularVendor(@PathVariable("id") Long id) {
         return busService.getAllBusByPerticularVendor(id);
     }
 
     @PostMapping("/addcity&bordingpoint")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<City> addCityAndBordingPoint(@RequestBody City city){
-
         City savedCity = cityRepository.save(city);
         return ResponseEntity.ok(savedCity);
     }
     @GetMapping("getCityBy/{id}")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<City> getCityById(@PathVariable Long id) {
         return cityRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
     @GetMapping("/getAllCities")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<List<City>> getAllCities() {
         List<City> cities = cityRepository.findAll();
         return ResponseEntity.ok(cities);
@@ -167,11 +175,9 @@ public ResponseEntity<Driver>verifiredDriverList(@PathVariable("id") Long id) {
     }
 
 
-
     @PutMapping("/verifiedBus/{id}")
     @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<Bus> verifyBus(@PathVariable("id") Long id) {
-
        return   busService.verifyBus(id);
 
     }

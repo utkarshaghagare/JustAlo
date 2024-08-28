@@ -7,7 +7,6 @@ import com.JustAlo.Repo.*;
 //import com.JustAlo.Repo.ScheduledTripRepository;
 import com.JustAlo.Security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -16,9 +15,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static com.JustAlo.Model.BusStatus.COMPLETED;
-import static com.JustAlo.Model.BusStatus.RUNNING;
 
 @Service
 public class TripService {
@@ -220,8 +216,8 @@ public class TripService {
         return null;
     }
 
-    public List<Booking> getTickets(String status) {
-        return bookingRepository.findAllByPassenger_User_Id(userDao.findByEmail(JwtAuthenticationFilter.CURRENT_USER).getId(),status);
+    public List<Booking> getTickets(long l, String status) {
+        return bookingRepository.findAllByPassenger_User_Id(l,status);
     }
 
     public void cancelTicket(Long id) {

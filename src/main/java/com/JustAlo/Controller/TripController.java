@@ -21,7 +21,8 @@ public class TripController {
     private TripService tripService;
 
 //Should we get trip as ordinary and luxury differently
-    @GetMapping("/{vendorid}")
+    @GetMapping("/TripById/{vendorid}")
+    @PreAuthorize("hasRole('Vendor')")
     public List<Trip> getTripById(@PathVariable Long vendorid) {
         return tripService.findByVendorId(vendorid);
         // trip.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
@@ -44,7 +45,7 @@ public class TripController {
 
 
     //Scheduling if not already
-    @PostMapping
+    @PostMapping("/ScheduleTrip")
     @PreAuthorize("hasRole('Vendor')")
     public Trip ScheduleTrip(@RequestBody ScheduleTripModel trip) throws Exception {
         return tripService.scheduleTrip(trip);
@@ -80,7 +81,8 @@ public class TripController {
 
 
 //DELETING
-    @DeleteMapping("/{id}")
+    @DeleteMapping("deleteTrip/{id}")
+    @PreAuthorize("hasRole('Vendor')")
     public ResponseEntity<Void> deleteTrip(@PathVariable Long id) {
         tripService.deleteById(id);
         return ResponseEntity.noContent().build();
