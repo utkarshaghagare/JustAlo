@@ -12,6 +12,7 @@ import com.JustAlo.Repo.TripRepository;
 import com.JustAlo.Security.JwtAuthenticationFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -154,6 +155,18 @@ public class DriverService {
         }
     }
         return response;
+    }
+
+    public ResponseEntity<Driver> verifiredDriverList(Long id) {
+        Optional<Driver> optionalDriver = driverDao.findById(id);
+        if (optionalDriver.isPresent()) {
+            Driver driver = optionalDriver.get();
+            driver.setVerification_status(true);
+            driverDao.save(driver);
+            return new ResponseEntity<>(driver, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
 //    public ResponseEntity<Driver> getunverifiredDriverList() {

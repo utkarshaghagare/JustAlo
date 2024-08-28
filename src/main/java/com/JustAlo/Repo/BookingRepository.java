@@ -3,9 +3,7 @@ package com.JustAlo.Repo;
 import com.JustAlo.Entity.Booking;
 import com.JustAlo.Entity.Trip;
 import com.JustAlo.Entity.User;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
@@ -25,7 +23,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     long countByTrip(@NonNull Trip trip);
 
     @Query("SELECT b FROM Booking b WHERE b.passenger.user = :byEmail AND b.status= :status")
-    List<Booking> findAllByPassenger_User_Id(@Param("byEmail")User byEmail,@Param("status") String status);
+    List<Booking> findAllByPassenger_User_Id(@Param("byEmail") Long byEmail, @Param("status") String status);
 
     @Query("SELECT b.availableStops FROM Booking b WHERE b.trip = :trip AND b.seatno = :seatNo")
     List<String> findAllAvailableStop(Trip trip, Integer seatNo);

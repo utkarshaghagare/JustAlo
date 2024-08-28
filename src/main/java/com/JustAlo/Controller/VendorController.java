@@ -20,6 +20,8 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @CrossOrigin(origins = "http://localhost:3000")
 
 @RestController
@@ -176,7 +178,9 @@ public class VendorController {
         if (bookings.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            bookings.removeIf(b -> b.getStatus().equals("BOOKED"));
+            bookings = bookings.stream()
+                    .filter(b -> "BOOKED".equals(b.getStatus()))
+                    .collect(Collectors.toList());
             return ResponseEntity.ok(bookings);
         }
     }

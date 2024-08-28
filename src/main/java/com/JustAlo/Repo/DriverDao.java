@@ -31,4 +31,7 @@ public interface DriverDao extends JpaRepository<Driver, Long> {
 
     @Query(value = "SELECT * FROM driver WHERE verification_status = false", nativeQuery = true)
     List<Driver> findUnverifiedDrivers();
+
+//    @Query(value = "SELECT * FROM driver WHERE verification_status = true", nativeQuery = true)
+//    List<Driver> findverifiedDrivers();
 }

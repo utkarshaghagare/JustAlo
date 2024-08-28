@@ -2,6 +2,7 @@ package com.JustAlo.Controller;
 
 
 import com.JustAlo.Entity.*;
+import com.JustAlo.Repo.BusRepository;
 import com.JustAlo.Repo.CityRepository;
 import com.JustAlo.Repo.DriverDao;
 import com.JustAlo.Repo.UserDao;
@@ -46,6 +47,8 @@ public class AdminController {
    private UserDao userDao;
     @Autowired
     private  DriverDao driverRepository;
+    @Autowired
+    private BusRepository busRepository;
 
 
 
@@ -143,20 +146,33 @@ public ResponseEntity<Driver> UnblockDriver(@PathVariable("id") Long id){
         List<City> cities = cityRepository.findAll();
         return ResponseEntity.ok(cities);
     }
-//    @GetMapping("/getAllUser")
-//    public ResponseEntity<List<User>> getAllUser(){
-//        List<User> user= userDao.findAll();
-//        return  ResponseEntity.ok(user);
-//    }
 
-//    @GetMapping("/unverifieddriver")
-//    public ResponseEntity<List<Driver>> unverifiredDriverList() {
-//        List<Driver> drivers = driverRepository.findUnverifiedDrivers();
-//        return new ResponseEntity<>(drivers, HttpStatus.OK);
-//    }
 @GetMapping("/unverifieddriver")
+@PreAuthorize("hasRole('Admin')")
 public ResponseEntity<List<Driver>> unverifiredDriverList() {
     List<Driver> drivers = driverRepository.findUnverifiedDrivers();
     return new ResponseEntity<>(drivers, HttpStatus.OK);
 }
+
+@PutMapping("/verifieddriver/{id}")
+@PreAuthorize("hasRole('Admin')")
+public ResponseEntity<Driver>verifiredDriverList(@PathVariable("id") Long id) {
+     return driverService.verifiredDriverList(id);
+}
+    @GetMapping("/unverifiedBus")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<List<Bus>> unverifiredBusList() {
+        List<Bus> bus = busRepository.findUnverifiedBus();
+        return new ResponseEntity<>(bus, HttpStatus.OK);
+    }
+
+
+
+    @PutMapping("/verifiedBus/{id}")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<Bus> verifyBus(@PathVariable("id") Long id) {
+
+       return   busService.verifyBus(id);
+
+    }
 }

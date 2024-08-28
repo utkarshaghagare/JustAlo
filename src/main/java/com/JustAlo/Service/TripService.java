@@ -221,7 +221,7 @@ public class TripService {
     }
 
     public List<Booking> getTickets(String status) {
-        return bookingRepository.findAllByPassenger_User_Id(userDao.findByEmail(JwtAuthenticationFilter.CURRENT_USER),status);
+        return bookingRepository.findAllByPassenger_User_Id(userDao.findByEmail(JwtAuthenticationFilter.CURRENT_USER).getId(),status);
     }
 
     public void cancelTicket(Long id) {

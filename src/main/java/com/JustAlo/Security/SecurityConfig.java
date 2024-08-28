@@ -49,7 +49,9 @@ public class SecurityConfig {
             "/getAllCities",
            // "/buses/add",
             "/getAllUser",
-            "/unverifieddriver"
+            "/unverifieddriver",
+            "/verifiedBus/{id}",
+            "/verifieddriver/{id}"
 
 
     };

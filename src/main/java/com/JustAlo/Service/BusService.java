@@ -1,12 +1,13 @@
 package com.JustAlo.Service;
 
 import com.JustAlo.Entity.Bus;
-import com.JustAlo.Entity.Driver;
 import com.JustAlo.Model.BusModel;
 import com.JustAlo.Model.BusStatus;
 import com.JustAlo.Repo.BusRepository;
 import com.JustAlo.Security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -164,4 +165,16 @@ public class BusService {
         return "Bus Turned off";
     }
 
-}
+    public ResponseEntity<Bus> verifyBus(Long id) {
+        Optional<Bus> optionalBus = busRepository.findById(id);
+        if (optionalBus.isPresent()) {
+            Bus bus = optionalBus.get();
+            bus.setVerified(true);
+            busRepository.save(bus);
+            return new ResponseEntity<>(bus, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    }
+
