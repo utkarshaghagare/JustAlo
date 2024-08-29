@@ -82,7 +82,6 @@ public class BusController {
 
     @GetMapping("/allBuses")
     @PreAuthorize("hasRole('Vendor')")
-
     public ResponseEntity<List<Bus>> getAllBuses() {
         List<Bus> buses = busService.getAllBuses();
         return ResponseEntity.ok(buses);

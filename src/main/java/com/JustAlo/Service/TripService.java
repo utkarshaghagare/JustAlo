@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -184,20 +185,35 @@ public class TripService {
     }
 
 //check
-    public List<Trip> findTrip(String start, String destination, Date date) {
-        List<Trip> TripsByDate = tripRepository.findAllByDate(date);
-        List<Trip> Trips = new ArrayList<>(); // Initialize as an empty list
-        if (TripsByDate != null) { // Check if TripsByDate is not null
-            for (Trip t : TripsByDate) {
-                Route route = t.getRoute();
-                if (route != null && route.getOrigin().equals(start) && route.getDestination().equals(destination)) {
+public List<Trip> findTrip(String start, String destination, Date date) {
+    List<Trip> TripsByDate = tripRepository.findAllByDate(date);
+
+    List<Trip> Trips = new ArrayList<>(); // Initialize as an empty list
+    if (TripsByDate != null) { // Check if TripsByDate is not null
+        for (Trip t : TripsByDate) {
+            Route route = t.getRoute();
+            if (route != null && route.getOrigin().equals(start) && route.getDestination().equals(destination)&& t.getTime().toLocalTime().isAfter(LocalTime.now().plusMinutes(15))) {
+                Trips.add(t);
+            }
+            else if(t.getType().equals("Ordinary")){
+                List<OrdinaryTrip> stops= ordinaryTripRepository.findAllByTripId(t.getId());
+                List<String> trip_stops= new ArrayList<>();
+                for(OrdinaryTrip o: stops){
+                    trip_stops.add(o.getStopname());
+                }
+                //check if trip_stops contain start and destination
+                int startIndex = trip_stops.indexOf(start);
+                int destinationIndex = trip_stops.indexOf(destination);
+
+                if (startIndex != -1 && destinationIndex != -1 && startIndex < destinationIndex && t.getTime().toLocalTime().isAfter(LocalTime.now().plusMinutes(15))) {
+                    // Add trip to list if both stops exist and start comes before destination
                     Trips.add(t);
                 }
             }
         }
-        return Trips;
     }
-
+    return Trips;
+}
     public Seats findSeat(String start, String destination,Long trip_id) {
         Trip trip= findById(trip_id);
         if(trip!=null){
@@ -312,6 +328,10 @@ public class TripService {
         }
 
         return response;
+    }
+
+    public List<OrdinaryTrip> findStops(long id) {
+        return ordinaryTripRepository.findAllByTripId(id);
     }
 
 //    public ResponseEntity<Trip> getTripByPerticularVender(Long id) {

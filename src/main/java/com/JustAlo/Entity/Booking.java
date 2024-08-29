@@ -37,7 +37,6 @@ public class Booking {
 
     private String ending_stop;
     private String razorpay_booking_id;
-    private String razorpay_payment_id;
 
 
     private String status;

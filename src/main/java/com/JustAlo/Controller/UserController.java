@@ -12,6 +12,7 @@ import com.JustAlo.Security.JwtAuthenticationFilter;
 import com.JustAlo.Security.JwtHelper;
 import com.JustAlo.Service.*;
 
+import com.razorpay.Order;
 import jakarta.annotation.PostConstruct;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,6 +170,17 @@ public class UserController {
         return tripService.findTrip(tripRequest.getStart() ,tripRequest.getDestination(),tripRequest.getDate());
     }
 
+    @GetMapping("/findStops/{id}")
+    @PreAuthorize("hasRole('Vendor','User')")
+    public List<OrdinaryTrip> findStops(@PathVariable long id){
+        return tripService.findStops(id);
+    }
+
+//    @GetMapping("/findLocationOfPoints/{id}")
+//    @PreAuthorize("hasRole('Vendor','User')")
+//    public List<OrdinaryTrip> findStops(@PathVariable long id){
+//        return tripService.findStops(id);
+//    }
     @GetMapping("/findRecentRoutes")
     @PreAuthorize("hasRole('User')")
     public List<RecentBookingsRoute> findRecentTrips(){
@@ -206,51 +218,64 @@ public class UserController {
     }
 
 
-//    @PostMapping("/confirmBooking")
-//   // @PreAuthorize("hasRole('User')")
-//    public String confirmBooking(@RequestBody Map<String, String> paymentDetails) throws Exception {
-//        String razorpay_booking_id = paymentDetails.get("razorpay_booking_id");
-//        String razorpayPaymentId = paymentDetails.get("razorpay_payment_id");
-//        String razorpaySignature = paymentDetails.get("razorpay_signature");
-//
-//        // Verify the payment
-//        boolean isPaymentVerified = paymentService.verifyPayment(razorpay_booking_id, razorpayPaymentId, razorpaySignature);
-//
-//        if (!isPaymentVerified) {
-//            throw new Exception("Payment verification failed");
-//        }
-//
-//        // Update booking status to "BOOKED"
-//        List<Booking> bookings = bookingRepository.findByRazorpayBookingId(razorpay_booking_id);
-//        for (Booking booking : bookings) {
-//            booking.setStatus("BOOKED");
-//            booking.setRazorpay_payment_id(razorpayPaymentId);
-//            bookingRepository.save(booking);
-//        }
-//
-//        return "Booking confirmed";
-//    }
 
 
     //payment
+//    @PostMapping("/payment")
+//    @PreAuthorize("hasRole('User')")
+//    public ResponseEntity<String> paymentamonut(@RequestParam double amount){
+//        try{
+//              TicketBooking ticketBooking= new TicketBooking();
+//            double totalAmount =   ticketBooking.getAmount();
+//            Order order=paymentService.bookedTicket(totalAmount);
+//            User user = userDao.getById(ticketBooking.getUser_id());
+//
+//            Transaction transaction=paymentService.saveTransaction(order.get("id"),totalAmount,"INR","created",user);
+//            return ResponseEntity.ok("Order created successfully with transaction ID: " + transaction.getId());
+//
+//        }catch (Exception e){
+//            return ResponseEntity.status(500).body("Failed to create order: " + e.getMessage());
+//
+//        }
+//    }
 
+    @PostMapping("/payment")
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<String> paymentAmount(@RequestParam double amount) {
+        try {
+            // Assuming the user ID is passed as a parameter
+            User user = userDao.findByEmail((JwtAuthenticationFilter.CURRENT_USER));
+
+            // Create a Razorpay order
+            Order order = paymentService.bookedTicket(amount);
+
+
+            // Save the transaction
+            Transaction transaction = paymentService.saveTransaction(order.get("id"), amount, "INR", "created", user);
+              transaction.getAmount();
+
+            return ResponseEntity.ok("Order created successfully with transaction ID: " + transaction.getId());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to create order: " + e.getMessage());
+        }
+    }
 
 
 //Tickets Section
     //Yet to be tested
     @GetMapping("/Tickets/booked")
-    @PreAuthorize("hasRole('Vendor','User')")
+    @PreAuthorize("hasRole('User')")
     public List<Booking> getTickets() throws Exception {
         return tripService.getTickets( userDao.findByEmail(JwtAuthenticationFilter.CURRENT_USER).getId(),"BOOKED");
     }
     @GetMapping("/CancelTicket/{id}")
-    @PreAuthorize("hasRole('Vendor','User')")
+    @PreAuthorize("hasRole('User')")
     public void cancelTicket(@PathVariable long id) throws Exception {
         tripService.cancelTicket(id);
     }
     //Yet to be tested
     @GetMapping("/Tickets/cancelled")
-    @PreAuthorize("hasRole('Vendor','User')")
+    @PreAuthorize("hasRole('User')")
     public List<Booking> getCancelledTickets() throws Exception {
         return tripService.getTickets(userDao.findByEmail(JwtAuthenticationFilter.CURRENT_USER).getId(),"CANCELLED");
     }

@@ -114,8 +114,23 @@ public ResponseEntity<Driver> UnblockDriver(@PathVariable("id") Long id){
 }
 
     @PostMapping("/addRoute")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('Admin','Vendor')")
     public ResponseEntity<Route> addRoute(@RequestBody Route route) {
+        // Find the city by name (assuming the route contains city names for start and end points)
+        City startCity = cityRepository.findByCityname(route.getOrigin());
+        City endCity = cityRepository.findByCityname(route.getDestination());
+
+        if (startCity == null || endCity == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // Set the longitude and latitude in the Route entity
+        route.setLongitute(startCity.getLongitude());
+        route.setLatitute(startCity.getLatitude());
+        route.setLongitute(endCity.getLongitude());
+        route.setLatitute(endCity.getLatitude());
+
+        // Save the route
         Route savedRoute = routeService.addRoute(route);
         return new ResponseEntity<>(savedRoute, HttpStatus.CREATED);
     }
@@ -130,7 +145,7 @@ public ResponseEntity<Driver> UnblockDriver(@PathVariable("id") Long id){
     }
 
     @GetMapping("/getAllBusByPerticularVendor/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('Admin','Vendor')")
     public List<Bus> getAllBusByPerticularVendor(@PathVariable("id") Long id) {
         return busService.getAllBusByPerticularVendor(id);
     }

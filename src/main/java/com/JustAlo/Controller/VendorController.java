@@ -185,19 +185,19 @@ public class VendorController {
     }
 
     //Ticket
-    @GetMapping("/Tickets/BookedByVendor")
+    @GetMapping("Vendor/Tickets/BookedByVendor")
     @PreAuthorize("hasRole('Vendor')")
     public List<Booking> getTickets() throws Exception {
         return tripService.getTickets(0L,"BOOKED");
     }
-    @GetMapping("/CancelTicket/{id}")
-    @PreAuthorize("hasRole('Vendor','User')")
+    @GetMapping("Vendor/CancelTicket/{id}")
+    @PreAuthorize("hasRole('Vendor')")
     public void cancelTicket(@PathVariable long id) throws Exception {
         tripService.cancelTicket(id);
     }
     //Yet to be tested
-    @GetMapping("/Tickets/cancelled")
-    @PreAuthorize("hasRole('Vendor','User')")
+    @GetMapping("Vendor/Tickets/cancelled")
+    @PreAuthorize("hasRole('Vendor')")
     public List<Booking> getCancelledTickets() throws Exception {
         return tripService.getTickets(0L, "CANCELLED");
     }
