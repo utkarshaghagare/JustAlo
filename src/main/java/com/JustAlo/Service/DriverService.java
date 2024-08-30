@@ -4,6 +4,7 @@ import com.JustAlo.Configuration.AmazonS3Config;
 import com.JustAlo.Entity.*;
 import com.JustAlo.Model.DriverModel;
 
+import com.JustAlo.Model.TripDTO;
 import com.JustAlo.Model.enums.DriverStatus;
 import com.JustAlo.Repo.DriverDao;
 import com.JustAlo.Repo.RoleDao;
@@ -25,6 +26,8 @@ import java.util.stream.Collectors;
 public class DriverService {
     @Autowired
     private RouteRepository routeRepository;
+    @Autowired
+    private TripService tripService;
 
     @Autowired
     private TripRepository tripRepository;
@@ -34,6 +37,9 @@ public class DriverService {
     private DriverDao driverDao;
     @Autowired
     private VendorService vendorService;
+
+    @Autowired
+    private  BookingService bookingService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -97,7 +103,7 @@ public class DriverService {
     }
 
 
-    public List<Trip> getDriverTripDetails() {
+    public List<TripDTO> getDriverTripDetails() {
 
         String email = JwtAuthenticationFilter.CURRENT_USER;
 
@@ -108,7 +114,7 @@ public class DriverService {
         List<Trip> trips = tripRepository.findByDriverId(driver.getId());
 
         LocalDate today = LocalDate.now();
-        LocalDate upcomingDate = today.plusDays(5); // Next 5 days
+        LocalDate upcomingDate = today.plusDays(2); // Next 5 days
         List<Trip> upcomingTrips = trips.stream()
                 .filter(trip -> !trip.getDate().isBefore(today) && !trip.getDate().isAfter(upcomingDate)) // Within today and next 5 days
                 .collect(Collectors.toList());
@@ -119,7 +125,18 @@ public class DriverService {
            trip.getEndtime();
            trip.getTime();
        }
-        return upcomingTrips;
+       List<TripDTO>  response= new ArrayList<>();
+        int stopcount;
+       for(Trip t: upcomingTrips){
+           if(t.getType().equals("Ordinary")){
+              stopcount= tripService.findStops(t.getId()).size();
+           }
+           else{
+               stopcount=2;
+           }
+           response.add(new TripDTO(t.getDate(),t.getTime(),t.getEndtime(),bookingService.getpassengercount(t),stopcount,t.getRoute().getOrigin(),t.getRoute().getDestination(),t.getStatus()));
+       }
+        return response;
 
 
     }

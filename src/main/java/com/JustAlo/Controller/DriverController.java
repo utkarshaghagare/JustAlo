@@ -7,6 +7,8 @@ import com.JustAlo.Entity.Trip;
 import com.JustAlo.Model.DriverModel;
 
 import com.JustAlo.Model.JourneyDetails;
+import com.JustAlo.Model.TripDTO;
+import com.JustAlo.Model.enums.DriverStatus;
 import com.JustAlo.Repo.DriverDao;
 import com.JustAlo.Repo.RoleDao;
 import com.JustAlo.Security.JwtAuthenticationFilter;
@@ -103,6 +105,7 @@ public class DriverController {
             driver.setId_proof_img(idProofImgUrl);
             driver.setLicense_img(licenseImgUrl);
             driver.setVerification_status(false);
+            driver.setStatus(DriverStatus.ACTIVE);
 
             Role role = roleDao.findById("Driver")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
@@ -173,7 +176,7 @@ public class DriverController {
 
     @GetMapping("/getDriverTripDetails")
     @PreAuthorize("hasRole('Driver')")
-    public List<Trip> getDriverTripDetails(){
+    public List<TripDTO> getDriverTripDetails(){
         return driverService.getDriverTripDetails();
     }
 

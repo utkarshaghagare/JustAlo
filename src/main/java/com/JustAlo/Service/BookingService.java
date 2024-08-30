@@ -349,6 +349,17 @@ public class BookingService {
         return new JourneyDetails(in,out,remaining);
 
     }
+
+    public Integer getpassengercount(Trip t) {
+        int response=0;
+        List<Booking> bookings= bookingRepository.findAllByTrip(t);
+        for(Booking b: bookings){
+            if(b.getStatus().equals("BOOKED")){
+                response++;
+            }
+        }
+        return  response;
+    }
 }
 
 

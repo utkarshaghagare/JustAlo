@@ -28,7 +28,7 @@ public class SecurityConfig {
             "/validate-otp",
             "/getfindTrip",
             "/getdetails",
-            "/getDriverTripDetails",
+//            "/getDriverTripDetails",
             "/rent/enquiry",
             "/AllRouts"
 
