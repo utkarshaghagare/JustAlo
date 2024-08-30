@@ -177,7 +177,7 @@ public ResponseEntity<Driver> UnblockDriver(@PathVariable("id") Long id){
                 .orElse(ResponseEntity.notFound().build());
     }
     @GetMapping("/getAllCities")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('Admin','Vendor')")
     public ResponseEntity<List<City>> getAllCities() {
         List<City> cities = cityRepository.findAll();
         return ResponseEntity.ok(cities);
