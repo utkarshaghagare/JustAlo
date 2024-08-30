@@ -144,7 +144,7 @@ public ResponseEntity<Driver> UnblockDriver(@PathVariable("id") Long id){
 //     }
 
 
-    @GetMapping("/AllRouts")
+    @GetMapping("/getAllRoutes")
  //   @PreAuthorize("hasRole('Admin','Vendor')")
     public List<Route> getallRouts(){
         return routeService.getAllRouts();
