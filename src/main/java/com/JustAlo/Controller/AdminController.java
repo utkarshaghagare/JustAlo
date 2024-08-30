@@ -50,6 +50,8 @@ public class AdminController {
     @Autowired
     private BusRepository busRepository;
 
+    @Autowired
+    private  RentService rentService;
 
 
     @PostMapping({"/registerAdmin"})
@@ -135,11 +137,18 @@ public ResponseEntity<Driver> UnblockDriver(@PathVariable("id") Long id){
         return new ResponseEntity<>(savedRoute, HttpStatus.CREATED);
     }
 
-     @GetMapping("/getAllRoute")
-     @PreAuthorize("hasRole('Admin','Vendor')")
-     public List<Route> getAllRouts(){
-        return  routeService.getAllRouts();
-     }
+//     @GetMapping("/getAllRoute")
+//     @PreAuthorize("hasRole('Admin','Vendor')")
+//     public List<Route> getAllRouts(){
+//        return  routeService.getAllRouts();
+//     }
+
+
+    @GetMapping("/AllRouts")
+    @PreAuthorize("hasRole('Admin','vendor')")
+    public List<Route> getallRouts(){
+        return routeService.getAllRouts();
+    }
 
     @GetMapping("/AllDriverByPerticularVendor/{id}")
     @PreAuthorize("hasRole('Admin')")
@@ -199,5 +208,12 @@ public ResponseEntity<Driver>verifiredDriverList(@PathVariable("id") Long id) {
     public ResponseEntity<Bus> verifyBus(@PathVariable("id") Long id) {
        return   busService.verifyBus(id);
 
+    }
+
+    @GetMapping("/getRentdetails")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<List<Rent>> getRentdetails() {
+        List<Rent> rents = rentService.getRentdetails();
+        return ResponseEntity.ok(rents);
     }
 }

@@ -1,5 +1,6 @@
 package com.JustAlo.Service;
 
+import com.JustAlo.Entity.Rent;
 import com.JustAlo.Entity.Route;
 import com.JustAlo.Repo.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,8 @@ public class RouteService {
     }
 
     public List<Route> getAllRouts() {
-
         return  routeRepository.findAll();
     }
+
+
 }

@@ -165,7 +165,7 @@ public class UserController {
     }
 
     @PostMapping("/findTrip")
-    @PreAuthorize("hasRole('Vendor','User')")
+  //  @PreAuthorize("hasRole('Vendor','User')")
     public List<Trip> findTrip1(@RequestBody TripRequest tripRequest){
         return tripService.findTrip(tripRequest.getStart() ,tripRequest.getDestination(),tripRequest.getDate());
     }
@@ -280,16 +280,12 @@ public class UserController {
         return tripService.getTickets(userDao.findByEmail(JwtAuthenticationFilter.CURRENT_USER).getId(),"CANCELLED");
     }
 
-
-
     //Mark all has roleUser
-
 
     @Autowired
     private RentService rentService;
 
     @PostMapping("/rent/enquiry")
-   // @PreAuthorize("hasRole('Vendor')")
     public Rent addRentWithVehicles(@RequestBody RentRequest rentRequest) {
         return rentService.addRentWithVehicles(rentRequest.rent, rentRequest.vehicles);
     }

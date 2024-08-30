@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "http://localhost:3000")
 
 @RestController
 @RequestMapping
@@ -210,11 +209,11 @@ public class VendorController {
     }
 
 
-    @GetMapping("/CancelTicketCountByTrip/{id}")
+    @GetMapping("/CancelTicketCountByTrip/{tripid}")
     @PreAuthorize("hasAnyRole('Vendor', 'Admin')")
-    public ResponseEntity<Long> CancelTicketCountByTrip(@PathVariable("id") Long id) {
+    public ResponseEntity<Long> CancelTicketCountByTrip(@PathVariable("tripid") Long tripid) {
         // Fetch the trip by ID and handle the case where it might not be found
-        Trip trip = tripRepository.findById(id).orElse(null);
+        Trip trip = tripRepository.findById(tripid).orElse(null);
         if (trip == null) {
             // Return 404 NOT FOUND if the trip is not found
             return ResponseEntity.notFound().build();
@@ -232,6 +231,27 @@ public class VendorController {
         return ResponseEntity.ok(cancelledCount);
     }
 
+    @GetMapping("/BookedTicketCountByTrip/{tripid}")
+    @PreAuthorize("hasAnyRole('Vendor', 'Admin')")
+    public ResponseEntity<Long> BookedTicketCountByTrip(@PathVariable("tripid") Long tripid) {
+        // Fetch the trip by ID and handle the case where it might not be found
+        Trip trip = tripRepository.findById(tripid).orElse(null);
+        if (trip == null) {
+            // Return 404 NOT FOUND if the trip is not found
+            return ResponseEntity.notFound().build();
+        }
+
+        // Fetch all bookings for the found trip
+        List<Booking> bookings = bookingRepository.findAllByTrip(trip);
+
+        // Count bookings with status "CANCELLED"
+        long cancelledCount = bookings.stream()
+                .filter(b -> "BOOKED".equals(b.getStatus()))
+                .count();
+
+        // Return the count wrapped in a ResponseEntity
+        return ResponseEntity.ok(cancelledCount);
+    }
     @GetMapping("Vendor/ChangeDriver/{tripid}/{driverid}")
     @PreAuthorize("hasRole('Vendor')")
     public Trip changeDriver(@PathVariable("tripid") Long tripid, @PathVariable("driverid") Long driverid) throws Exception {

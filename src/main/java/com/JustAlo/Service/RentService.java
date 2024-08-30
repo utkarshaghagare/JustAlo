@@ -6,6 +6,7 @@ import com.JustAlo.Entity.Vehicle;
 import com.JustAlo.Repo.RentRepository;
 import com.JustAlo.Repo.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,4 +31,10 @@ public class RentService {
         // Persist the rent entity along with associated vehicles
         return rentRepository.save(rent);
     }
+
+
+    public List<Rent> getRentdetails() {
+        return rentRepository.findAll();
+    }
+
 }
