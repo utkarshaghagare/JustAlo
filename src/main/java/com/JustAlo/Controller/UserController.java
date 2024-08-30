@@ -171,7 +171,7 @@ public class UserController {
     }
 
     @GetMapping("/findStops/{id}")
-    @PreAuthorize("hasRole('Vendor','User')")
+    @PreAuthorize("hasAnyRole('Vendor','User')")
     public List<OrdinaryTrip> findStops(@PathVariable long id){
         return tripService.findStops(id);
     }
@@ -187,7 +187,7 @@ public class UserController {
         return tripService.findRecentTrips();
     }
     @GetMapping("/findTripsfromOrigin")
-    @PreAuthorize("hasRole('Vendor','User')")
+    @PreAuthorize("hasAnyRole('Vendor','User')")
     public List<Trip> findTripsFromOrigin(@RequestBody UserLocation u ){
         return tripService.findTripsFromOrigin(u.longitude,u.latitude);
     }

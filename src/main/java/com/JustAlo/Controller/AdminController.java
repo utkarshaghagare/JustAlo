@@ -158,7 +158,7 @@ public ResponseEntity<Driver> UnblockDriver(@PathVariable("id") Long id){
     }
 
     @GetMapping("/getAllBusByPerticularVendor/{id}")
-    @PreAuthorize("hasRole('Admin','Vendor')")
+    @PreAuthorize("hasAnyRole('Vendor', 'Admin')")
     public List<Bus> getAllBusByPerticularVendor(@PathVariable("id") Long id) {
         return busService.getAllBusByPerticularVendor(id);
     }
@@ -177,7 +177,7 @@ public ResponseEntity<Driver> UnblockDriver(@PathVariable("id") Long id){
                 .orElse(ResponseEntity.notFound().build());
     }
     @GetMapping("/getAllCities")
-    @PreAuthorize("hasRole('Admin','Vendor')")
+    @PreAuthorize("hasAnyRole('Vendor', 'Admin')")
     public ResponseEntity<List<City>> getAllCities() {
         List<City> cities = cityRepository.findAll();
         return ResponseEntity.ok(cities);

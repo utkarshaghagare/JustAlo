@@ -136,7 +136,7 @@ public class VendorController {
 
     }
     @GetMapping("/tripsByVendor/{id}")
-    @PreAuthorize("hasRole('Vendor','Admin')")
+    @PreAuthorize("hasAnyRole('Vendor', 'Admin')")
     public ResponseEntity<List<Trip>> getTripsByVendor(@PathVariable("id") Long id) {
         List<Trip> trips = tripRepository.findTripsByVendorId(id);
         if (trips.isEmpty()) {
@@ -148,7 +148,7 @@ public class VendorController {
 
 
     @GetMapping("/TodayTripsByVendor/{id}")
-    @PreAuthorize("hasRole('Vendor','Admin')")
+    @PreAuthorize("hasAnyRole('Vendor', 'Admin')")
     public ResponseEntity<List<Trip>> getTodayTripsByVendor(@PathVariable("id") Long id) {
         List<Trip> trips = tripRepository.findTripsByVendorId(id);
         if (trips.isEmpty()) {
@@ -166,7 +166,7 @@ public class VendorController {
 
     //Not Tested
     @GetMapping("/BookingByTrip/{id}")
-    @PreAuthorize("hasRole('Vendor','Admin')")
+    @PreAuthorize("hasAnyRole('Vendor', 'Admin')")
     public ResponseEntity<List<Booking>> getBookingByTrip(@PathVariable("id") Long id) {
         List<Booking> bookings = bookingRepository.findAllByTrip(tripRepository.findById(id).orElse(null));
         if (bookings.isEmpty()) {
@@ -177,7 +177,7 @@ public class VendorController {
         }
     }
     @GetMapping("/BookingChartByTrip/{id}")
-    @PreAuthorize("hasRole('Vendor','Admin')")
+    @PreAuthorize("hasAnyRole('Vendor', 'Admin')")
     public ResponseEntity<List<Booking>> getBookingChartByTrip(@PathVariable("id") Long id) {
         List<Booking> bookings = bookingRepository.findAllByTrip(tripRepository.findById(id).orElse(null));
         if (bookings.isEmpty()) {
