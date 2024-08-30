@@ -176,8 +176,9 @@ public class DriverController {
 
     @GetMapping("/getDriverTripDetails")
     @PreAuthorize("hasRole('Driver')")
-    public List<TripDTO> getDriverTripDetails(){
-        return driverService.getDriverTripDetails();
+    public ResponseEntity<List<TripDTO>>  getDriverTripDetails(){
+        List<TripDTO>d=  driverService.getDriverTripDetails();
+        return ResponseEntity.ok(d);
     }
 
     @PutMapping("/startTrip/{id}")

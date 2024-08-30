@@ -354,7 +354,7 @@ public class BookingService {
         int response=0;
         List<Booking> bookings= bookingRepository.findAllByTrip(t);
         for(Booking b: bookings){
-            if(b.getStatus().equals("BOOKED")){
+            if("BOOKED".equals(b.getStatus())){
                 response++;
             }
         }

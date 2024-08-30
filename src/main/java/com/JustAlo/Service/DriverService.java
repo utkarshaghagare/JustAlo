@@ -103,44 +103,87 @@ public class DriverService {
     }
 
 
-    public List<TripDTO> getDriverTripDetails() {
+//    public List<TripDTO> getDriverTripDetails() {
+//
+//        String email = JwtAuthenticationFilter.CURRENT_USER;
+//
+//        // Find the driver by the current user ID
+//        Driver driver = driverDao.findByEmail(email).get();
+//
+//        // Fetch trips associated with the current driver
+//        List<Trip> trips = tripRepository.findByDriverId(driver.getId());
+//
+//        LocalDate today = LocalDate.now();
+//        LocalDate upcomingDate = today.plusDays(2); // Next 5 days
+//        List<Trip> upcomingTrips = trips.stream()
+//                .filter(trip -> !trip.getDate().isBefore(today) && !trip.getDate().isAfter(upcomingDate)) // Within today and next 5 days
+//                .collect(Collectors.toList());
+//       for(Trip trip: upcomingTrips){
+//           trip.getRoute().getOrigin();
+//           trip.getRoute().getDestination();
+//           trip.getDate();
+//           trip.getEndtime();
+//           trip.getTime();
+//       }
+//       List<TripDTO>  response= new ArrayList<>();
+//        int stopcount;
+//       for(Trip t: upcomingTrips){
+//           if(t.getType().equals("Ordinary")){
+//              stopcount= tripService.findStops(t.getId()).size();
+//           }
+//           else{
+//               stopcount=2;
+//           }
+//           response.add(new TripDTO(t.getDate(),t.getTime(),t.getEndtime(),bookingService.getpassengercount(t),stopcount,t.getRoute().getOrigin(),t.getRoute().getDestination(),t.getStatus()));
+//       }
+//        return response;
+//
+//
+//    }
 
+    public List<TripDTO> getDriverTripDetails() {
         String email = JwtAuthenticationFilter.CURRENT_USER;
 
-        // Find the driver by the current user ID
-        Driver driver = driverDao.findByEmail(email).get();
+        // Find the driver by the current user email
+        Optional<Driver> driverOpt = driverDao.findByEmail(email);
+        if (!driverOpt.isPresent()) {
+            // Handle the case where the driver is not found
+            throw new RuntimeException("Driver not found for the email: " + email);
+        }
+        Driver driver = driverOpt.get();
 
         // Fetch trips associated with the current driver
         List<Trip> trips = tripRepository.findByDriverId(driver.getId());
-
         LocalDate today = LocalDate.now();
-        LocalDate upcomingDate = today.plusDays(2); // Next 5 days
+        LocalDate upcomingDate = today.plusDays(2); // Next 2 days
+
         List<Trip> upcomingTrips = trips.stream()
-                .filter(trip -> !trip.getDate().isBefore(today) && !trip.getDate().isAfter(upcomingDate)) // Within today and next 5 days
+                .filter(trip -> !trip.getDate().isBefore(today) && !trip.getDate().isAfter(upcomingDate))
                 .collect(Collectors.toList());
-       for(Trip trip: upcomingTrips){
-           trip.getRoute().getOrigin();
-           trip.getRoute().getDestination();
-           trip.getDate();
-           trip.getEndtime();
-           trip.getTime();
-       }
-       List<TripDTO>  response= new ArrayList<>();
-        int stopcount;
-       for(Trip t: upcomingTrips){
-           if(t.getType().equals("Ordinary")){
-              stopcount= tripService.findStops(t.getId()).size();
-           }
-           else{
-               stopcount=2;
-           }
-           response.add(new TripDTO(t.getDate(),t.getTime(),t.getEndtime(),bookingService.getpassengercount(t),stopcount,t.getRoute().getOrigin(),t.getRoute().getDestination(),t.getStatus()));
-       }
+
+        List<TripDTO> response = new ArrayList<>();
+        for (Trip trip : upcomingTrips) {
+            int stopCount;
+            if ("Ordinary".equals(trip.getType())) {
+                stopCount = tripService.findStops(trip.getId()).size();
+            } else {
+                stopCount = 2; // Assuming express trips have 2 stops
+            }
+            TripDTO tripDTO = new TripDTO(
+                    trip.getId(),
+                    trip.getDate(),
+                    trip.getTime(),
+                    trip.getEndtime(),
+                    bookingService.getpassengercount(trip),
+                    stopCount,
+                    trip.getRoute().getOrigin(),
+                    trip.getRoute().getDestination(),
+                    trip.getStatus()
+            );
+            response.add(tripDTO);
+        }
         return response;
-
-
     }
-
 
     public List<Driver> getAllDriverByPerticularVendor(Long id) {
         return driverDao.findByVendorId(id);
