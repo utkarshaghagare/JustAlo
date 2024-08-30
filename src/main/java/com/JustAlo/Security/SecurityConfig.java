@@ -29,7 +29,8 @@ public class SecurityConfig {
             "/getfindTrip",
             "/getdetails",
             "/getDriverTripDetails",
-            "/rent/enquiry"
+            "/rent/enquiry",
+            "/AllRouts"
 
 //            "/buses/**",
 //            "/addDriver",
