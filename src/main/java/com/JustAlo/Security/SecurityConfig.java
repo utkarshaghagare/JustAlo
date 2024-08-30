@@ -23,6 +23,10 @@ public class SecurityConfig {
             "/send-otp",
             "/validate-otp",
             "/getfindTrip",
+            "/getdetails",
+            "/getDriverTripDetails",
+            "/rent/enquiry"
+
 //            "/buses/**",
 //            "/addDriver",
 //            "/trips/**",

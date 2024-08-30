@@ -334,6 +334,15 @@ public List<Trip> findTrip(String start, String destination, Date date) {
         return ordinaryTripRepository.findAllByTripId(id);
     }
 
+    public Trip changeDriver(long id, long driverid) throws Exception {
+        Trip t= tripRepository.findById(id).orElse(null);
+        if(t!=null){
+            t.setDriver(driverService.getVerifiedDriverById(driverid));
+            return tripRepository.save(t);
+        }
+        throw new Exception("Trip not found");
+    }
+
 //    public ResponseEntity<Trip> getTripByPerticularVender(Long id) {
 //
 //        return tripRepository.TripByPerticularVender(id);

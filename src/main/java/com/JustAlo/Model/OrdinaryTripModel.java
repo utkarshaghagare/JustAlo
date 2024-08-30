@@ -2,6 +2,7 @@ package com.JustAlo.Model;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.util.List;
 
 public class OrdinaryTripModel {
@@ -9,7 +10,7 @@ public class OrdinaryTripModel {
     public Long driver_id;
     public Long route_id;
     public List<Stop> stops;
-    public Date date;
+    public LocalDate date;
     public Time time;
     public Time endtime;
 }

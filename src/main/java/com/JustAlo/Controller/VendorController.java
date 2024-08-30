@@ -124,11 +124,18 @@ public class VendorController {
 
     @GetMapping("/verifiedAndAvailableDriver")
     @PreAuthorize("hasRole('Vendor')")
-    public List<Driver> getAllVerifiedBuses() {
+    public List<Driver> getAllVerifiedDriver() {
         List<Driver> drivers = driverService.getAllVerifiedAvailableDrivers();
         return drivers;
     }
+    @GetMapping("/verifiedAndAvailableBus")
+    @PreAuthorize("hasRole('Vendor')")
+    public List<Bus> getAllVerifiedBuses(){
+        List<Bus> bus =busService.getAllVerifiedBuses();
+        return bus;
 
+
+    }
     @GetMapping("/tripsByVendor/{id}")
     @PreAuthorize("hasRole('Vendor','Admin')")
     public ResponseEntity<List<Trip>> getTripsByVendor(@PathVariable("id") Long id) {
@@ -203,5 +210,32 @@ public class VendorController {
     }
 
 
+    @GetMapping("/CancelTicketCountByTrip/{id}")
+    @PreAuthorize("hasAnyRole('Vendor', 'Admin')")
+    public ResponseEntity<Long> CancelTicketCountByTrip(@PathVariable("id") Long id) {
+        // Fetch the trip by ID and handle the case where it might not be found
+        Trip trip = tripRepository.findById(id).orElse(null);
+        if (trip == null) {
+            // Return 404 NOT FOUND if the trip is not found
+            return ResponseEntity.notFound().build();
+        }
+
+        // Fetch all bookings for the found trip
+        List<Booking> bookings = bookingRepository.findAllByTrip(trip);
+
+        // Count bookings with status "CANCELLED"
+        long cancelledCount = bookings.stream()
+                .filter(b -> "CANCELLED".equals(b.getStatus()))
+                .count();
+
+        // Return the count wrapped in a ResponseEntity
+        return ResponseEntity.ok(cancelledCount);
+    }
+
+    @GetMapping("Vendor/ChangeDriver/{tripid}/{driverid}")
+    @PreAuthorize("hasRole('Vendor')")
+    public Trip changeDriver(@PathVariable("tripid") Long tripid, @PathVariable("driverid") Long driverid) throws Exception {
+        return tripService.changeDriver(tripid,driverid);
+    }
 
 }

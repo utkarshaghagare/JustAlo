@@ -289,7 +289,7 @@ public class UserController {
     private RentService rentService;
 
     @PostMapping("/rent/enquiry")
-    @PreAuthorize("hasRole('Vendor')")
+   // @PreAuthorize("hasRole('Vendor')")
     public Rent addRentWithVehicles(@RequestBody RentRequest rentRequest) {
         return rentService.addRentWithVehicles(rentRequest.rent, rentRequest.vehicles);
     }

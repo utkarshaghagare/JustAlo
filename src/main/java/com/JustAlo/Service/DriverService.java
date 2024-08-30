@@ -17,7 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DriverService {
@@ -104,14 +106,20 @@ public class DriverService {
 
         // Fetch trips associated with the current driver
         List<Trip> trips = tripRepository.findByDriverId(driver.getId());
-       for(Trip trip: trips){
+
+        LocalDate today = LocalDate.now();
+        LocalDate upcomingDate = today.plusDays(5); // Next 5 days
+        List<Trip> upcomingTrips = trips.stream()
+                .filter(trip -> !trip.getDate().isBefore(today) && !trip.getDate().isAfter(upcomingDate)) // Within today and next 5 days
+                .collect(Collectors.toList());
+       for(Trip trip: upcomingTrips){
            trip.getRoute().getOrigin();
            trip.getRoute().getDestination();
            trip.getDate();
            trip.getEndtime();
            trip.getTime();
        }
-        return trips;
+        return upcomingTrips;
 
 
     }

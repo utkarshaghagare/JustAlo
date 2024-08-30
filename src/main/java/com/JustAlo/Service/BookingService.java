@@ -292,8 +292,8 @@ public class BookingService {
             }
         }
 
-        ticketBooking.setRazorpay_booking_id(razorpayOrderId);
-        paymentService.saveTransaction(razorpayOrderId, amount, "INR", "created", null);
+//        ticketBooking.setRazorpay_booking_id(razorpayOrderId);
+//       paymentService.saveTransaction(razorpayOrderId, amount, "INR", "created", null);
 
 
 

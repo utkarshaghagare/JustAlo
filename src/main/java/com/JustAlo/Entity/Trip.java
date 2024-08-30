@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -36,7 +37,7 @@ public class Trip {
     private String type;
 
     private Double amount;
-    private Date date;
+    private LocalDate date;
     private Time time;
     private Time endtime;
 

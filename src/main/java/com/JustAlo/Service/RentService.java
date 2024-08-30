@@ -24,7 +24,6 @@ public class RentService {
         for (Vehicle vehicle : vehicles) {
             vehicleRepository.save(vehicle);
         }
-
         // Associate the vehicles with the rent
         rent.setVehicles(vehicles);
 

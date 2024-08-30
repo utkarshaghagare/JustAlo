@@ -135,7 +135,11 @@ public ResponseEntity<Driver> UnblockDriver(@PathVariable("id") Long id){
         return new ResponseEntity<>(savedRoute, HttpStatus.CREATED);
     }
 
-
+     @GetMapping("/getAllRoute")
+     @PreAuthorize("hasRole('Admin','Vendor')")
+     public List<Route> getAllRouts(){
+        return  routeService.getAllRouts();
+     }
 
     @GetMapping("/AllDriverByPerticularVendor/{id}")
     @PreAuthorize("hasRole('Admin')")

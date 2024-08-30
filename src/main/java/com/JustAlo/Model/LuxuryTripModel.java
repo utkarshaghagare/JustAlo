@@ -4,6 +4,7 @@ import com.JustAlo.Entity.Points;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.util.List;
 
 public class LuxuryTripModel {
@@ -12,7 +13,7 @@ public class LuxuryTripModel {
     public Long route_id;
     public List<String> pickupPoints;
     public List<String> dropDownPoints;
-    public Date date;
+    public LocalDate date;
     public Time time;
     public Time endtime;
     public Double amount;
