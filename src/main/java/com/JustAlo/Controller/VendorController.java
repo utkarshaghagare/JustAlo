@@ -3,6 +3,8 @@ package com.JustAlo.Controller;
 
 import com.JustAlo.Entity.*;
 import com.JustAlo.Model.BusStatus;
+import com.JustAlo.Model.ToDayBookingDTO;
+import com.JustAlo.Model.TripDTO;
 import com.JustAlo.Model.VendorModel;
 import com.JustAlo.Repo.BookingRepository;
 import com.JustAlo.Repo.TripRepository;
@@ -257,5 +259,13 @@ public class VendorController {
     public Trip changeDriver(@PathVariable("tripid") Long tripid, @PathVariable("driverid") Long driverid) throws Exception {
         return tripService.changeDriver(tripid,driverid);
     }
+
+    @GetMapping("/toDayBookingHistry")
+    @PreAuthorize("hasRole('Vendor')")
+    public ResponseEntity<List<ToDayBookingDTO>>  toDayBookingHistry(){
+        List<ToDayBookingDTO>d=  tripService.toDayBookingHistry();
+        return ResponseEntity.ok(d);
+    }
+
 
 }

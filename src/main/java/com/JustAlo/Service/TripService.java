@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class TripService {
@@ -49,7 +46,11 @@ public class TripService {
     private UserDao userDao;
 
     @Autowired
+    private VendorDao vendorDao;
+    @Autowired
     private PointsRepository pointsRepository;
+    @Autowired
+    private DriverDao driverDao;
 
     public List<Trip> findAll() {
         return tripRepository.findAll();
@@ -186,7 +187,10 @@ public class TripService {
 
 //check
 public List<Trip> findTrip(String start, String destination, Date date) {
-    List<Trip> TripsByDate = tripRepository.findAllByDate(date);
+    LocalDate localDate = date.toLocalDate();
+
+    List<Trip> TripsByDate = tripRepository.findAllByDate(date.toLocalDate());
+  // List<Trip> t= tripRepository.f
 
     List<Trip> Trips = new ArrayList<>(); // Initialize as an empty list
     if (TripsByDate != null) { // Check if TripsByDate is not null
@@ -214,6 +218,54 @@ public List<Trip> findTrip(String start, String destination, Date date) {
     }
     return Trips;
 }
+
+
+//Ankit find trip code
+
+//    public List<Trip> findTrip(String start, String destination, Date date) {
+//        LocalDate localDate = date.toLocalDate();
+//        System.out.println("Searching for trips on date: " + date);
+//
+//        List<Trip> tripsByDate = tripRepository.findAllByDate(localDate);
+//        System.out.println("Found trips by date: " + tripsByDate);
+//
+//        List<Trip> trips = new ArrayList<>();
+//
+//        if (tripsByDate != null) {
+//            for (Trip t : tripsByDate) {
+//                Route route = t.getRoute();
+//                if (route != null &&
+//                        route.getOrigin().equals(start) &&
+//                        route.getDestination().equals(destination) &&
+//                        t.getTime().toLocalTime().isAfter(LocalTime.now().plusMinutes(15))) {
+//
+//                    trips.add(t);
+//                } else if (t.getType().equals("Ordinary")) {
+//                    List<OrdinaryTrip> stops = ordinaryTripRepository.findAllByTripId(t.getId());
+//                    List<String> tripStops = new ArrayList<>();
+//
+//                    for (OrdinaryTrip o : stops) {
+//                        tripStops.add(o.getStopname());
+//                    }
+//
+//                    int startIndex = tripStops.indexOf(start);
+//                    int destinationIndex = tripStops.indexOf(destination);
+//
+//                    if (startIndex != -1 && destinationIndex != -1 &&
+//                            startIndex < destinationIndex &&
+//                            t.getTime().toLocalTime().isAfter(LocalTime.now().plusMinutes(15))) {
+//
+//                        trips.add(t);
+//                    }
+//                }
+//            }
+//        }
+//
+//        System.out.println("Returning trips: " + trips);
+//        return trips;
+//    }
+//
+
     public Seats findSeat(String start, String destination,Long trip_id) {
         Trip trip= findById(trip_id);
         if(trip!=null){
@@ -342,6 +394,38 @@ public List<Trip> findTrip(String start, String destination, Date date) {
         }
         throw new Exception("Trip not found");
     }
+
+
+    public List<ToDayBookingDTO> toDayBookingHistry() {
+        String email = JwtAuthenticationFilter.CURRENT_USER;
+
+        // Find the vendor by the current user email
+        Vendor vendor = vendorDao.findByEmail(email);
+        if (vendor == null) {
+            throw new RuntimeException("Vendor not found for the email: " + email);
+        }
+
+        // Fetch today's trips associated with the current vendor using java.sql.Date
+        java.sql.Date today = new java.sql.Date(System.currentTimeMillis());
+        List<Trip> todayTrips = tripRepository.findByDriverIdAndDate(vendor.getId(), today);
+
+        List<ToDayBookingDTO> response = new ArrayList<>();
+        for (Trip trip : todayTrips) {
+            String organizationName = vendor.getOrganization_name() != null ? vendor.getOrganization_name() : "N/A";
+
+            ToDayBookingDTO bookingDTO = new ToDayBookingDTO(
+                    trip.getDriver().getDriver_name(),
+                    trip.getTime(),
+                    trip.getRoute().getOrigin(),
+                    trip.getRoute().getDestination(),
+                    organizationName
+            );
+            response.add(bookingDTO);
+        }
+        return response;
+    }
+
+
 
 //    public ResponseEntity<Trip> getTripByPerticularVender(Long id) {
 //

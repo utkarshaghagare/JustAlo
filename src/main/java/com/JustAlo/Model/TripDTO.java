@@ -23,7 +23,19 @@ public class TripDTO {
     // Default constructor
     public TripDTO() {}
 
-    // Parameterized constructor
+//    public TripDTO(Long trip, Date date, Time time, Time endtime, Integer passenger, Integer stops, String origin, String destination, String status) {
+//        this.trip = trip;
+//        this.date = date;
+//        this.time = time;
+//        this.endtime = endtime;
+//        this.passenger = passenger;
+//        this.stops = stops;
+//        this.origin = origin;
+//        this.destination = destination;
+//        this.status = status;
+//    }
+    //
+   //  Parameterized constructor
     public TripDTO(Long trip,LocalDate date, Time time, Time endtime, Integer passenger, Integer stops, String origin, String destination, String status) {
         this.trip=trip;
         this.date = date;

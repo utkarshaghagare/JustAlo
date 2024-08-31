@@ -140,50 +140,93 @@ public class DriverService {
 //
 //
 //    }
+//
+//    public List<TripDTO> getDriverTripDetails() {
+//        String email = JwtAuthenticationFilter.CURRENT_USER;
+//
+//        // Find the driver by the current user email
+//        Optional<Driver> driverOpt = driverDao.findByEmail(email);
+//        if (!driverOpt.isPresent()) {
+//            // Handle the case where the driver is not found
+//            throw new RuntimeException("Driver not found for the email: " + email);
+//        }
+//        Driver driver = driverOpt.get();
+//
+//        // Fetch trips associated with the current driver
+//        List<Trip> trips = tripRepository.findByDriverId(driver.getId());
+//        LocalDate today = LocalDate.now();
+//        LocalDate upcomingDate = today.plusDays(2); // Next 2 days
+//
+//        List<Trip> upcomingTrips = trips.stream()
+//                .filter(trip -> !trip.getDate().isBefore(today) && !trip.getDate().isAfter(upcomingDate))
+//                .collect(Collectors.toList());
+//
+//        List<TripDTO> response = new ArrayList<>();
+//        for (Trip trip : upcomingTrips) {
+//            int stopCount;
+//            if ("Ordinary".equals(trip.getType())) {
+//                stopCount = tripService.findStops(trip.getId()).size();
+//            } else {
+//                stopCount = 2; // Assuming express trips have 2 stops
+//            }
+//            TripDTO tripDTO = new TripDTO(
+//                    trip.getId(),
+//                    trip.getDate(),
+//                    trip.getTime(),
+//                    trip.getEndtime(),
+//                    bookingService.getpassengercount(trip),
+//                    stopCount,
+//                    trip.getRoute().getOrigin(),
+//                    trip.getRoute().getDestination(),
+//                    trip.getStatus()
+//            );
+//            response.add(tripDTO);
+//        }
+//        return response;
+//    }
 
-    public List<TripDTO> getDriverTripDetails() {
-        String email = JwtAuthenticationFilter.CURRENT_USER;
-
-        // Find the driver by the current user email
-        Optional<Driver> driverOpt = driverDao.findByEmail(email);
-        if (!driverOpt.isPresent()) {
-            // Handle the case where the driver is not found
-            throw new RuntimeException("Driver not found for the email: " + email);
-        }
-        Driver driver = driverOpt.get();
-
-        // Fetch trips associated with the current driver
-        List<Trip> trips = tripRepository.findByDriverId(driver.getId());
-        LocalDate today = LocalDate.now();
-        LocalDate upcomingDate = today.plusDays(2); // Next 2 days
-
-        List<Trip> upcomingTrips = trips.stream()
-                .filter(trip -> !trip.getDate().isBefore(today) && !trip.getDate().isAfter(upcomingDate))
-                .collect(Collectors.toList());
-
-        List<TripDTO> response = new ArrayList<>();
-        for (Trip trip : upcomingTrips) {
-            int stopCount;
-            if ("Ordinary".equals(trip.getType())) {
-                stopCount = tripService.findStops(trip.getId()).size();
-            } else {
-                stopCount = 2; // Assuming express trips have 2 stops
-            }
-            TripDTO tripDTO = new TripDTO(
-                    trip.getId(),
-                    trip.getDate(),
-                    trip.getTime(),
-                    trip.getEndtime(),
-                    bookingService.getpassengercount(trip),
-                    stopCount,
-                    trip.getRoute().getOrigin(),
-                    trip.getRoute().getDestination(),
-                    trip.getStatus()
-            );
-            response.add(tripDTO);
-        }
-        return response;
-    }
+//public List<TripDTO> getDriverTripDetails() {
+//    String email = JwtAuthenticationFilter.CURRENT_USER;
+//
+//    // Find the driver by the current user email
+//    Optional<Driver> driverOpt = driverDao.findByEmail(email);
+//    if (!driverOpt.isPresent()) {
+//        throw new RuntimeException("Driver not found for the email: " + email);
+//    }
+//    Driver driver = driverOpt.get();
+//
+//    // Fetch trips associated with the current driver
+//    List<Trip> trips = tripRepository.findByDriverId(driver.getId());
+//    java.sql.Date today = new java.sql.Date(System.currentTimeMillis());
+//    java.sql.Date upcomingDate = new java.sql.Date(today.getTime() + (2 * 24 * 60 * 60 * 1000)); // Next 2 days
+//
+//    List<Trip> upcomingTrips = trips.stream()
+//            .filter(trip -> !trip.getDate().before(today) && !trip.getDate().after(upcomingDate))
+//            .collect(Collectors.toList());
+//
+//    List<TripDTO> response = new ArrayList<>();
+//    for (Trip trip : upcomingTrips) {
+//        int stopCount;
+//        if ("Ordinary".equals(trip.getType())) {
+//            stopCount = tripService.findStops(trip.getId()).size();
+//        } else {
+//            stopCount = 2; // Assuming express trips have 2 stops
+//        }
+//        TripDTO tripDTO = new TripDTO(
+//                trip.getId(),
+//                trip.getDate(),
+//                trip.getTime(),
+//                trip.getEndtime(),
+//                bookingService.getpassengercount(trip),
+//                stopCount,
+//                trip.getRoute().getOrigin(),
+//                trip.getRoute().getDestination(),
+//                trip.getStatus()
+//        );
+//        response.add(tripDTO);
+//    }
+//    return response;
+//}
 
     public List<Driver> getAllDriverByPerticularVendor(Long id) {
         return driverDao.findByVendorId(id);

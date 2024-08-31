@@ -212,7 +212,7 @@ public class UserController {
         return tripService.getPassengers();
     }
     @PostMapping("/BookSeat")
-    @PreAuthorize("hasRole('Vendor')")
+    @PreAuthorize("hasRole('User')")
     public String bookSeat(@RequestBody TicketBooking ticketBooking) throws Exception {
         return tripService.bookSeat(ticketBooking);
     }

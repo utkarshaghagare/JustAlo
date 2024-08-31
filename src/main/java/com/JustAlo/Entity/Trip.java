@@ -37,6 +37,7 @@ public class Trip {
     private String type;
 
     private Double amount;
+    @Column(name = "date")
     private LocalDate date;
     private Time time;
     private Time endtime;
