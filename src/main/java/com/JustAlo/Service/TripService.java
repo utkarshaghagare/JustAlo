@@ -361,8 +361,8 @@ public List<Trip> findTrip(String start, String destination, Date date) {
 
     public List<Trip> findTripsFromOrigin(String longitude, String latitude) {
         // Retrieve all trips with a date of today or later
-        Date today = Date.valueOf(LocalDate.now());
-        List<Trip> allTrips = tripRepository.findTripsFromToday(today);
+       // Date today = Date.valueOf(LocalDate.now());
+        List<Trip> allTrips = tripRepository.findTripsFromToday(LocalDate.now());
 
         List<Trip> response = new ArrayList<>(5);
 

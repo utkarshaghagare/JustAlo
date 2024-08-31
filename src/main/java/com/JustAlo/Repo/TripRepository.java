@@ -21,8 +21,8 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
 
     List<Trip> findByDriverId(Long id);
 
-    @Query("SELECT t FROM Trip t WHERE t.date >= :today")
-    List<Trip> findTripsFromToday(@Param("today") Date today);
+    @Query(value = "SELECT * FROM trip WHERE date >= :today", nativeQuery = true)
+    List<Trip> findTripsFromToday(@Param("today") LocalDate today);
     @Query(value = "SELECT * FROM trip WHERE vendor_id = :id", nativeQuery = true)
     List<Trip> findTripsByVendorId(@Param("id") Long id);
 
