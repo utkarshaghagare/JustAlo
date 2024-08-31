@@ -8,6 +8,7 @@ import com.JustAlo.Model.TripDTO;
 import com.JustAlo.Model.VendorModel;
 import com.JustAlo.Repo.BookingRepository;
 import com.JustAlo.Repo.TripRepository;
+import com.JustAlo.Security.JwtAuthenticationFilter;
 import com.JustAlo.Service.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,7 +139,7 @@ public class VendorController {
 
     }
     @GetMapping("/tripsByVendor/{id}")
-    @PreAuthorize("hasAnyRole('Vendor', 'Admin')")
+    @PreAuthorize("hasAnyRole('Admin')")
     public ResponseEntity<List<Trip>> getTripsByVendor(@PathVariable("id") Long id) {
         List<Trip> trips = tripRepository.findTripsByVendorId(id);
         if (trips.isEmpty()) {
@@ -268,4 +269,25 @@ public class VendorController {
     }
 
 
+    @GetMapping("/getAllBusByPerticularVendor")
+    @PreAuthorize("hasRole('Vendor')")
+    public List<Bus> getAllBusByPerticularVendor() {
+        return busService.getAllBusByPerticularVendor(vendorService.findByUsername(JwtAuthenticationFilter.CURRENT_USER).getId());
+    }
+    @GetMapping("/AllDriverByPerticularVendor")
+    @PreAuthorize("hasRole('Driver')")
+    public  List<Driver> getAllDriverByPerticularVendor(){
+        return driverService.getAllDriverByPerticularVendor(vendorService.findByUsername(JwtAuthenticationFilter.CURRENT_USER).getId());
+
+    }
+    @GetMapping("/tripsByVendor")
+    @PreAuthorize("hasRole('Vendor')")
+    public ResponseEntity<List<Trip>> getTripsByVendor() {
+        List<Trip> trips = tripRepository.findTripsByVendorId(vendorService.findByUsername(JwtAuthenticationFilter.CURRENT_USER).getId());
+        if (trips.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(trips);
+        }
+    }
 }
