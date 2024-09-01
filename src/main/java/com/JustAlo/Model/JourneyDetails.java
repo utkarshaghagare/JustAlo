@@ -11,11 +11,14 @@ public class JourneyDetails {
     private int out;       // Represents the number of passengers who alighted
     private int remaining; // Represents the number of passengers still on the journey
 
+    private int bookedSeatsCount;
+
     // Constructor
-    public JourneyDetails(int in, int out, int remaining) {
+    public JourneyDetails(int in, int out, int remaining,int bookedSeatsCount) {
         this.in = in;
         this.out = out;
         this.remaining = remaining;
+        this.bookedSeatsCount=bookedSeatsCount;
     }
 
 
@@ -44,6 +47,14 @@ public class JourneyDetails {
 
     public void setRemaining(int remaining) {
         this.remaining = remaining;
+    }
+
+    public int getBookedSeatsCount() {
+        return bookedSeatsCount;
+    }
+
+    public void setBookedSeatsCount(int bookedSeatsCount) {
+        this.bookedSeatsCount = bookedSeatsCount;
     }
 
     @Override

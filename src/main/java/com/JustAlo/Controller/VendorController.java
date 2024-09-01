@@ -261,12 +261,12 @@ public class VendorController {
         return tripService.changeDriver(tripid,driverid);
     }
 
-    @GetMapping("/toDayBookingHistry")
-    @PreAuthorize("hasRole('Vendor')")
-    public ResponseEntity<List<ToDayBookingDTO>>  toDayBookingHistry(){
-        List<ToDayBookingDTO>d=  tripService.toDayBookingHistry();
-        return ResponseEntity.ok(d);
-    }
+//    @GetMapping("/toDayBookingHistry")
+//    @PreAuthorize("hasRole('Vendor')")
+//    public ResponseEntity<List<ToDayBookingDTO>>  toDayBookingHistry(){
+//        List<ToDayBookingDTO>d=  tripService.toDayBookingHistry();
+//        return ResponseEntity.ok(d);
+//    }
 
 
     @GetMapping("/getAllBusByPerticularVendor")

@@ -169,7 +169,7 @@ public ResponseEntity<Driver> UnblockDriver(@PathVariable("id") Long id){
         City savedCity = cityRepository.save(city);
         return ResponseEntity.ok(savedCity);
     }
-    @GetMapping("getCityBy/{id}")
+    @GetMapping("/getCityBy/{id}")
     @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<City> getCityById(@PathVariable Long id) {
         return cityRepository.findById(id)

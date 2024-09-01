@@ -336,7 +336,7 @@ public class BookingService {
 
     public JourneyDetails getdetails(Trip trip, String stopName, Integer remaining) {
         List<Booking> bookings= bookingRepository.findAllByTrip(trip);
-        int in = 0, out = 0;
+        int in = 0, out = 0,bookedSeatsCount=0;
         for (Booking b: bookings){
             if(b.getStarting_stop()==stopName){
                 in++;
@@ -346,7 +346,7 @@ public class BookingService {
         }
         remaining+=in;
         remaining-=out;
-        return new JourneyDetails(in,out,remaining);
+        return new JourneyDetails(in,out,remaining,bookedSeatsCount);
 
     }
 

@@ -196,8 +196,14 @@ public List<Trip> findTrip(String start, String destination, Date date) {
     if (TripsByDate != null) { // Check if TripsByDate is not null
         for (Trip t : TripsByDate) {
             Route route = t.getRoute();
-            if (route != null && route.getOrigin().equals(start) && route.getDestination().equals(destination)&& t.getTime().toLocalTime().isAfter(LocalTime.now().plusMinutes(15))) {
-                Trips.add(t);
+            if (route != null && route.getOrigin().equals(start) && route.getDestination().equals(destination)) {
+                if(date.after(Date.valueOf(LocalDate.now()))){
+                    Trips.add(t);
+                }
+                else if(t.getTime().toLocalTime().isAfter(LocalTime.now().plusMinutes(15))){
+                    Trips.add(t);
+                }
+
             }
             else if(t.getType().equals("Ordinary")){
                 List<OrdinaryTrip> stops= ordinaryTripRepository.findAllByTripId(t.getId());
@@ -209,9 +215,15 @@ public List<Trip> findTrip(String start, String destination, Date date) {
                 int startIndex = trip_stops.indexOf(start);
                 int destinationIndex = trip_stops.indexOf(destination);
 
-                if (startIndex != -1 && destinationIndex != -1 && startIndex < destinationIndex && t.getTime().toLocalTime().isAfter(LocalTime.now().plusMinutes(15))) {
+                if (startIndex != -1 && destinationIndex != -1 && startIndex < destinationIndex ) {
+                    if(date.after(Date.valueOf(LocalDate.now()))){
+                        Trips.add(t);
+                    }
+                    else if(t.getTime().toLocalTime().isAfter(LocalTime.now().plusMinutes(15))){
+                        Trips.add(t);
+                    }
                     // Add trip to list if both stops exist and start comes before destination
-                    Trips.add(t);
+                  //  Trips.add(t);
                 }
             }
         }
@@ -304,15 +316,67 @@ public List<Trip> findTrip(String start, String destination, Date date) {
 
             }
         List<JourneyDetails> journeyDetailsList=new ArrayList<>();
+
+        int bookedSeatsCount = (int) bookingRepository.countBookedSeatsByTripId(id);
+        if ("Luxury".equals(trip.getType())) {
+            System.out.println("Booked Seats Count for Luxury Trip: " + bookedSeatsCount);
+            // You can add additional handling for Luxury trips here if needed
+        } else {
+            System.out.println("Booked Seats Count for Ordinary Trip: " + bookedSeatsCount);
+        }
+
        List<OrdinaryTrip> stop = ordinaryTripRepository.findAllByTripId(trip.getId());
         int rem=0;
         for (OrdinaryTrip o:stop) {
             JourneyDetails j= bookingService.getdetails(trip,o.getStopname(),rem);
             rem= j.getRemaining();
+            j.setBookedSeatsCount(bookedSeatsCount); // Set booked seats count in JourneyDetails
             journeyDetailsList.add(j);
         }
         return journeyDetailsList;
     }
+
+//    public List<JourneyDetails> getdetails(long id) {
+//
+//        Trip trip = tripRepository.findById(id).orElse(null);
+//        if (trip == null) {
+//            return null;
+//        }
+//
+//        List<JourneyDetails> journeyDetailsList = new ArrayList<>();
+//
+//        // Handle OrdinaryTrip
+//        List<OrdinaryTrip> ordinaryStops = ordinaryTripRepository.findAllByTripId(trip.getId());
+//        int rem = 0;
+//        for (OrdinaryTrip o : ordinaryStops) {
+//            JourneyDetails j = bookingService.getdetails(trip, o.getStopname(), rem);
+//            rem = j.getRemaining();
+//            journeyDetailsList.add(j);
+//        }
+//
+//        // Handle LuxuryTrip
+//
+//
+//
+//        if (pickupPoints != null && !pickupPoints.isEmpty()) {
+//            for (String pickup : pickupPoints) {
+//                JourneyDetails j = bookingService.getdetails(trip, pickup, rem);
+//                rem = j.getRemaining();
+//                journeyDetailsList.add(j);
+//            }
+//        }
+//
+//        if (dropDownPoints != null && !dropDownPoints.isEmpty()) {
+//            for (String dropDown : dropDownPoints) {
+//                JourneyDetails j = bookingService.getdetails(trip, dropDown, rem);
+//                rem = j.getRemaining();
+//                journeyDetailsList.add(j);
+//            }
+//        }
+//
+//
+//        return journeyDetailsList;
+//    }
 
     public Trip startTrip(long id) {
         // Fetch the trip by ID, handle the case where the trip is not found
@@ -320,6 +384,7 @@ public List<Trip> findTrip(String start, String destination, Date date) {
 
         // Check the current status and update accordingly
         if (trip.getStatus() == null) {
+
             trip.setStatus("RUNNING");
         } else if (trip.getStatus().equals("RUNNING")) {
             trip.setStatus("COMPLETED");
@@ -396,35 +461,35 @@ public List<Trip> findTrip(String start, String destination, Date date) {
     }
 
 
-    public List<ToDayBookingDTO> toDayBookingHistry() {
-        String email = JwtAuthenticationFilter.CURRENT_USER;
-
-        // Find the vendor by the current user email
-        Vendor vendor = vendorDao.findByEmail(email);
-        if (vendor == null) {
-            throw new RuntimeException("Vendor not found for the email: " + email);
-        }
-
-        // Fetch today's trips associated with the current vendor using java.sql.Date
-        java.sql.Date today = new java.sql.Date(System.currentTimeMillis());
-        List<Trip> todayTrips = tripRepository.findByDriverIdAndDate(vendor.getId(), today);
-
-        List<ToDayBookingDTO> response = new ArrayList<>();
-        for (Trip trip : todayTrips) {
-            String organizationName = vendor.getOrganization_name() != null ? vendor.getOrganization_name() : "N/A";
-
-            ToDayBookingDTO bookingDTO = new ToDayBookingDTO(
-                    trip.getDriver().getDriver_name(),
-                    trip.getTime(),
-                    trip.getRoute().getOrigin(),
-                    trip.getRoute().getDestination(),
-                    organizationName
-            );
-            response.add(bookingDTO);
-        }
-        return response;
-    }
-
+//    public List<ToDayBookingDTO> toDayBookingHistry() {
+//        String email = JwtAuthenticationFilter.CURRENT_USER;
+//
+//        // Find the vendor by the current user email
+//        Vendor vendor = vendorDao.findByEmail(email);
+//        if (vendor == null) {
+//            throw new RuntimeException("Vendor not found for the email: " + email);
+//        }
+//
+//        // Fetch today's trips associated with the current vendor using java.sql.Date
+//        java.sql.Date today = new java.sql.Date(System.currentTimeMillis());
+//        List<Trip> todayTrips = tripRepository.findByDriverIdAndDate(vendor.getId(), today);
+//
+//        List<ToDayBookingDTO> response = new ArrayList<>();
+//        for (Trip trip : todayTrips) {
+//            String organizationName = vendor.getOrganization_name() != null ? vendor.getOrganization_name() : "N/A";
+//
+//            ToDayBookingDTO bookingDTO = new ToDayBookingDTO(
+//                    trip.getDriver().getDriver_name(),
+//                    trip.getTime(),
+//                    trip.getRoute().getOrigin(),
+//                    trip.getRoute().getDestination(),
+//                    organizationName
+//            );
+//            response.add(bookingDTO);
+//        }
+//        return response;
+//    }
+//
 
 
 //    public ResponseEntity<Trip> getTripByPerticularVender(Long id) {
