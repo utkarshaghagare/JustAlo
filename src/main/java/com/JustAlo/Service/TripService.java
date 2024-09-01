@@ -461,35 +461,40 @@ public List<Trip> findTrip(String start, String destination, Date date) {
     }
 
 
-//    public List<ToDayBookingDTO> toDayBookingHistry() {
-//        String email = JwtAuthenticationFilter.CURRENT_USER;
-//
-//        // Find the vendor by the current user email
-//        Vendor vendor = vendorDao.findByEmail(email);
-//        if (vendor == null) {
-//            throw new RuntimeException("Vendor not found for the email: " + email);
-//        }
-//
-//        // Fetch today's trips associated with the current vendor using java.sql.Date
-//        java.sql.Date today = new java.sql.Date(System.currentTimeMillis());
-//        List<Trip> todayTrips = tripRepository.findByDriverIdAndDate(vendor.getId(), today);
-//
-//        List<ToDayBookingDTO> response = new ArrayList<>();
-//        for (Trip trip : todayTrips) {
-//            String organizationName = vendor.getOrganization_name() != null ? vendor.getOrganization_name() : "N/A";
-//
-//            ToDayBookingDTO bookingDTO = new ToDayBookingDTO(
-//                    trip.getDriver().getDriver_name(),
-//                    trip.getTime(),
-//                    trip.getRoute().getOrigin(),
-//                    trip.getRoute().getDestination(),
-//                    organizationName
-//            );
-//            response.add(bookingDTO);
-//        }
-//        return response;
-//    }
-//
+    public List<ToDayBookingDTO> toDayBookingHistry() {
+        String email = JwtAuthenticationFilter.CURRENT_USER;
+
+        // Find the vendor by the current user email
+        Vendor vendor = vendorDao.findByEmail(email);
+        if (vendor == null) {
+            throw new RuntimeException("Vendor not found for the email: " + email);
+        }
+
+        // Get today's date and the date three days from today
+        LocalDate today = LocalDate.now();
+        LocalDate threeDaysLater = today.plusDays(2);
+
+        // Fetch trips for the next three days associated with the current vendor
+        List<Trip> upcomingTrips = tripRepository.findByVendorIdAndDateBetween(vendor.getId(), today, threeDaysLater);
+
+        List<ToDayBookingDTO> response = new ArrayList<>();
+        for (Trip trip : upcomingTrips) {
+            String organizationName = vendor.getOrganization_name() != null ? vendor.getOrganization_name() : "N/A";
+
+            ToDayBookingDTO bookingDTO = new ToDayBookingDTO(
+                    trip.getBus().getBus_number(),
+                    trip.getDriver().getDriver_name(),
+                    trip.getTime(),
+                    trip.getRoute().getOrigin(),
+                    trip.getRoute().getDestination(),
+                    organizationName
+            );
+            response.add(bookingDTO);
+        }
+        return response;
+    }
+
+
 
 
 //    public ResponseEntity<Trip> getTripByPerticularVender(Long id) {

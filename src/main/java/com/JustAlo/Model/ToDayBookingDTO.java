@@ -12,6 +12,7 @@ import java.sql.Time;
 @AllArgsConstructor
 public class ToDayBookingDTO {
 
+    public String busNumber;
     public String driver_name;
     public Time time;
 

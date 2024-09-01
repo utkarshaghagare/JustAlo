@@ -33,5 +33,11 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
     List<Trip> findByDriverIdAndDate(Long driverId, Date date);
 
 
+    List<Trip> findByVendorIdAndDate(Long id, Date today);
+
+
+
+    @Query("SELECT t FROM Trip t WHERE t.vendor.id = :vendorId AND t.date BETWEEN :startDate AND :endDate")
+    List<Trip> findByVendorIdAndDateBetween(@Param("vendorId") Long vendorId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
 }

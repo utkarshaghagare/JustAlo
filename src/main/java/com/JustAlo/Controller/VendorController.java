@@ -47,6 +47,9 @@ public class VendorController {
     @Autowired
     private BookingRepository bookingRepository;
 
+
+    @Autowired
+    private PaymentService paymentService;
     @PostConstruct
     public void initRoleAndVendor() {
     	userService.initRoleAndUser();
@@ -205,7 +208,7 @@ public class VendorController {
         tripService.cancelTicket(id);
     }
     //Yet to be tested
-    @GetMapping("Vendor/Tickets/cancelled")
+    @GetMapping("/Vendor/Tickets/cancelled")
     @PreAuthorize("hasRole('Vendor')")
     public List<Booking> getCancelledTickets() throws Exception {
         return tripService.getTickets(0L, "CANCELLED");
@@ -261,13 +264,12 @@ public class VendorController {
         return tripService.changeDriver(tripid,driverid);
     }
 
-//    @GetMapping("/toDayBookingHistry")
-//    @PreAuthorize("hasRole('Vendor')")
-//    public ResponseEntity<List<ToDayBookingDTO>>  toDayBookingHistry(){
-//        List<ToDayBookingDTO>d=  tripService.toDayBookingHistry();
-//        return ResponseEntity.ok(d);
-//    }
-
+    @GetMapping("/toDayBookingHistry")
+    @PreAuthorize("hasRole('Vendor')")
+    public ResponseEntity<List<ToDayBookingDTO>> toDayBookingHistry() {
+        List<ToDayBookingDTO> bookings = tripService.toDayBookingHistry();
+        return ResponseEntity.ok(bookings);
+    }
 
     @GetMapping("/getAllBusByPerticularVendor")
     @PreAuthorize("hasRole('Vendor')")
@@ -289,5 +291,10 @@ public class VendorController {
         } else {
             return ResponseEntity.ok(trips);
         }
+    }
+    @GetMapping("/getpaymentinformation")
+    @PreAuthorize("hasRole('Vendor')")
+    public ResponseEntity<List<Transaction>> getAllDetails() {
+        return paymentService.getAllDetails();
     }
 }

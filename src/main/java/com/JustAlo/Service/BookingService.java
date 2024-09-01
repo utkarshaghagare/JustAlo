@@ -177,113 +177,252 @@ public class BookingService {
 //return "Booked";
 //    }
 
-    public String bookSeat(TicketBooking ticketBooking, Trip trip) throws Exception {
-        List<Integer> availableSeats=findSeats(ticketBooking.getStart(),ticketBooking.getEnd(),trip).available;
 
-        double amount=0;
+
+
+
+
+
+
+//----------------------------bookSeat code ------------------
+//    public String bookSeat(TicketBooking ticketBooking, Trip trip) throws Exception {
+//        List<Integer> availableSeats=findSeats(ticketBooking.getStart(),ticketBooking.getEnd(),trip).available;
+//
+//        double amount=0;
+//        String razorpayOrderId = null;
+//
+//
+//        //   Order order= paymentService.bookedTicket( totalamount);
+//        for (Passenger_details passenger : ticketBooking.getPassengers()) {
+//
+//            if(availableSeats.contains(passenger.getSeat_no())){
+//                if("Ordinary".equals(trip.getType())){
+//                    List<String> allavailableStops = bookingRepository.findAllAvailableStop(trip,passenger.getSeat_no());
+//                    List<String> requestedStops = ordinaryTripRepository.findStopsBetween(trip,ordinaryTripRepository.findStopnumberByStopname(trip,ticketBooking.getStart()),ordinaryTripRepository.findStopnumberByStopname(trip, ticketBooking.getEnd())-1);
+//
+//                    allavailableStops.removeAll(requestedStops);
+//                    List<String> stop = new ArrayList<>(allavailableStops);
+////                    Booking booking= new Booking(trip, passenger.getSeat_no(),stop );
+////                    booking.setTrip(trip);
+////                    booking.setSeatno(passenger.getSeat_no());
+////                    booking.setStarting_stop(ticketBooking.getStart());
+////                    booking.setEnding_stop(ticketBooking.getEnd());
+////                    User user= userDao.getById(ticketBooking.getUser_id());
+////                    booking.setPassenger(passengerRepository.findById(passenger.getId()).orElse(passengerRepository.save(new Passenger(passenger.getName(),passenger.getAge(),user.getId()))));
+////                    booking.setAmount(setamount(trip, ticketBooking.getStart(), ticketBooking.getEnd()));
+////                    booking.setDate(Date.valueOf(LocalDate.now()));
+////                    booking.setStatus("PENDING");  // Set status as pending until payment is confirmed
+//                 //   booking.setRazorpay_booking_id(orderId);  // Save Razorpay order ID
+//
+//                  //  bookingRepository.save(booking);
+//
+//                    List<Booking> prev_bookings= bookingRepository.findByTripAndSeatnumber(trip, passenger.getSeat_no());
+//                    int i=0;
+//                    for(Booking prev_booking: prev_bookings){
+//                        if(prev_booking.getPassenger()==null){
+//                            prev_booking.setTrip(trip);
+//                            // prev_booking.setSeatno(passenger.getSeat_no());
+//                            prev_booking.setStarting_stop(ticketBooking.getStart());
+//                            prev_booking.setEnding_stop(ticketBooking.getEnd());
+//                            User user1= userDao.getById(ticketBooking.getUser_id());
+//                            prev_booking.setPassenger(passengerRepository.findById(passenger.getId()).orElse(passengerRepository.save(new Passenger(passenger.getName(),passenger.getAge(),user1.getId()))));
+//                            prev_booking.setAmount(setamount(trip,ticketBooking.getStart(),ticketBooking.getEnd()));
+//                           prev_booking.setDate(Date.valueOf(LocalDate.now()));
+//                            prev_booking.setAvailableStops(stop);
+//                            prev_booking.setStatus("BOOKED");
+//                            bookingRepository.save(prev_booking);
+//                            amount+=setamount(trip,ticketBooking.getStart(),ticketBooking.getEnd());
+//                            i++;
+//                        }
+//                        else{
+//                            if(i==0){
+//                                Booking booking = new Booking(trip,passenger.getSeat_no(),stop);
+//                                booking.setStarting_stop(ticketBooking.getStart());
+//                                booking.setEnding_stop(ticketBooking.getEnd());
+//                                User user1= userDao.getById(ticketBooking.getUser_id());
+//                                booking.setPassenger(passengerRepository.findById(passenger.getId()).orElse(passengerRepository.save(new Passenger(passenger.getName(),passenger.getAge(),user1.getId()))));
+//                                booking.setAmount(setamount(trip,ticketBooking.getStart(),ticketBooking.getEnd()));
+//                                booking.setDate(Date.valueOf(LocalDate.now()));
+//                                booking.setStatus("BOOKED");
+//                                bookingRepository.save(prev_booking);
+//                                amount+=setamount(trip,ticketBooking.getStart(),ticketBooking.getEnd());
+//                                i++;
+//                            }
+//                            prev_booking.setAvailableStops(stop);
+//                            bookingRepository.save(prev_booking);
+//                        }
+//                    }
+//                }
+//                else{
+//                    Booking prev_bookings= bookingRepository.findByTripAndSeat(trip, passenger.getSeat_no());
+//
+//                    if(prev_bookings.getPassenger()==null){
+//                        prev_bookings.setTrip(trip);
+//                        prev_bookings.setSeatno(passenger.getSeat_no());
+//                        prev_bookings.setStarting_stop(ticketBooking.getStart());
+//                        prev_bookings.setEnding_stop(ticketBooking.getEnd());
+//                        User user= userDao.getById(ticketBooking.getUser_id());
+//                        prev_bookings.setPassenger(passengerRepository.findById(passenger.getId()).orElse(passengerRepository.save(new Passenger(passenger.getName(),passenger.getAge(),user.getId()))));
+//                        prev_bookings.setAmount(trip.getAmount());
+//                        prev_bookings.setDate(Date.valueOf(LocalDate.now()));
+//                        prev_bookings.setStatus("BOOKED");
+//
+//
+//                     //   prev_bookings.setRazorpay_booking_id(orderId); // Save Razorpay order ID
+//
+//                        bookingRepository.save(prev_bookings);
+//                        amount= ticketBooking.getAmount();
+//                    }
+//                    else{
+//                        throw new Exception("Seat"+passenger.getSeat_no()+" is All ready book");
+//                    }
+//                }
+//
+//
+//            }
+//            else {
+//                throw new Exception("SEAT " + passenger.getSeat_no() + " UNAVAILABLE");
+//            }
+//        }
+////       double totalAmount = amount;
+//
+//        // Create Razorpay order after calculating totalAmount
+//        //double amount;
+//        Order order = paymentService.bookedTicket(amount);
+//        razorpayOrderId = order.get("id");
+//
+//        // Update razorpay_booking_id in each booking
+//        for (Passenger_details passenger : ticketBooking.getPassengers()) {
+//            Booking booking = bookingRepository.findByTripAndSeat(trip, passenger.getSeat_no());
+//            if (booking != null && booking.getPassenger() != null) {
+//                booking.setRazorpay_booking_id(razorpayOrderId);
+//                bookingRepository.save(booking);
+//            }
+//        }
+//
+////        ticketBooking.setRazorpay_booking_id(razorpayOrderId);
+////       paymentService.saveTransaction(razorpayOrderId, amount, "INR", "created", null);
+//
+//
+//
+//        return "BOOKED";
+//                //order.get(orderId);
+//    }
+//
+//    //working check
+//    private Double setamount(Trip trip, String start, String end) {
+//        Double startAmount = ordinaryTripRepository.findAmountByStopName(start, trip);
+//
+//        // Fetch the amount for the end stop
+//        Double endAmount = ordinaryTripRepository.findAmountByStopName(end, trip);
+//
+//        // Check if both amounts are non-null (to avoid NullPointerException)
+//        if (startAmount != null && endAmount != null) {
+//            // Subtract the start stop amount from the end stop amount to get the total amount
+//            return endAmount - startAmount;
+//        } else {
+//            // Handle the case where one or both amounts are null (e.g., return 0 or throw an exception)
+//            return 0.0; // or throw new IllegalArgumentException("Start or end stop amount not found");
+//        }
+//        //return ordinaryTripRepository.findAmountByStopName(end,trip)-ordinaryTripRepository.findAmountByStopName(start,trip);
+//    }
+
+    public String bookSeat(TicketBooking ticketBooking, Trip trip) throws Exception {
+        List<Integer> availableSeats = findSeats(ticketBooking.getStart(), ticketBooking.getEnd(), trip).available;
+        double totalAmount = 0;
         String razorpayOrderId = null;
 
-
-        //   Order order= paymentService.bookedTicket( totalamount);
         for (Passenger_details passenger : ticketBooking.getPassengers()) {
+            int seatNumber = passenger.getSeat_no();
 
-            if(availableSeats.contains(passenger.getSeat_no())){
-                if("Ordinary".equals(trip.getType())){
-                    List<String> allavailableStops = bookingRepository.findAllAvailableStop(trip,passenger.getSeat_no());
-                    List<String> requestedStops = ordinaryTripRepository.findStopsBetween(trip,ordinaryTripRepository.findStopnumberByStopname(trip,ticketBooking.getStart()),ordinaryTripRepository.findStopnumberByStopname(trip, ticketBooking.getEnd())-1);
+            if (availableSeats.contains(seatNumber)) {
+                Booking booking;
+                if ("Ordinary".equals(trip.getType())) {
+                    // Logic for Ordinary trip
+                    List<String> allAvailableStops = bookingRepository.findAllAvailableStop(trip, seatNumber);
+                    List<String> requestedStops = ordinaryTripRepository.findStopsBetween(
+                            trip,
+                            ordinaryTripRepository.findStopnumberByStopname(trip, ticketBooking.getStart()),
+                            ordinaryTripRepository.findStopnumberByStopname(trip, ticketBooking.getEnd()) - 1
+                    );
 
-                    allavailableStops.removeAll(requestedStops);
-                    List<String> stop = new ArrayList<>(allavailableStops);
-//                    Booking booking= new Booking(trip, passenger.getSeat_no(),stop );
-//                    booking.setTrip(trip);
-//                    booking.setSeatno(passenger.getSeat_no());
-//                    booking.setStarting_stop(ticketBooking.getStart());
-//                    booking.setEnding_stop(ticketBooking.getEnd());
-//                    User user= userDao.getById(ticketBooking.getUser_id());
-//                    booking.setPassenger(passengerRepository.findById(passenger.getId()).orElse(passengerRepository.save(new Passenger(passenger.getName(),passenger.getAge(),user.getId()))));
-//                    booking.setAmount(setamount(trip, ticketBooking.getStart(), ticketBooking.getEnd()));
-//                    booking.setDate(Date.valueOf(LocalDate.now()));
-//                    booking.setStatus("PENDING");  // Set status as pending until payment is confirmed
-                 //   booking.setRazorpay_booking_id(orderId);  // Save Razorpay order ID
+                    allAvailableStops.removeAll(requestedStops);
+                    List<String> stop = new ArrayList<>(allAvailableStops);
 
-                  //  bookingRepository.save(booking);
-
-                    List<Booking> prev_bookings= bookingRepository.findByTripAndSeatnumber(trip, passenger.getSeat_no());
-                    int i=0;
-                    for(Booking prev_booking: prev_bookings){
-                        if(prev_booking.getPassenger()==null){
-                            prev_booking.setTrip(trip);
-                            // prev_booking.setSeatno(passenger.getSeat_no());
-                            prev_booking.setStarting_stop(ticketBooking.getStart());
-                            prev_booking.setEnding_stop(ticketBooking.getEnd());
-                            User user1= userDao.getById(ticketBooking.getUser_id());
-                            prev_booking.setPassenger(passengerRepository.findById(passenger.getId()).orElse(passengerRepository.save(new Passenger(passenger.getName(),passenger.getAge(),user1.getId()))));
-                            prev_booking.setAmount(setamount(trip,ticketBooking.getStart(),ticketBooking.getEnd()));
-                           prev_booking.setDate(Date.valueOf(LocalDate.now()));
-                            prev_booking.setAvailableStops(stop);
-                            prev_booking.setStatus("BOOKED");
-                            bookingRepository.save(prev_booking);
-                            amount+=setamount(trip,ticketBooking.getStart(),ticketBooking.getEnd());
+                    List<Booking> prevBookings = bookingRepository.findByTripAndSeatnumber(trip, seatNumber);
+                    int i = 0;
+                    for (Booking prevBooking : prevBookings) {
+                        if (prevBooking.getPassenger() == null) {
+                            prevBooking.setTrip(trip);
+                            prevBooking.setStarting_stop(ticketBooking.getStart());
+                            prevBooking.setEnding_stop(ticketBooking.getEnd());
+                            User user = userDao.getById(ticketBooking.getUser_id());
+                            prevBooking.setPassenger(
+                                    passengerRepository.findById(passenger.getId())
+                                            .orElse(passengerRepository.save(new Passenger(passenger.getName(), passenger.getAge(), user.getId()))));
+                            prevBooking.setAmount(setAmount(trip, ticketBooking.getStart(), ticketBooking.getEnd()));
+                            prevBooking.setDate(Date.valueOf(LocalDate.now()));
+                            prevBooking.setAvailableStops(stop);
+                            prevBooking.setStatus("BOOKED");
+                            bookingRepository.save(prevBooking);
+                            totalAmount += setAmount(trip, ticketBooking.getStart(), ticketBooking.getEnd());
                             i++;
-                        }
-                        else{
-                            if(i==0){
-                                Booking booking = new Booking(trip,passenger.getSeat_no(),stop);
+                        } else {
+                            if (i == 0) {
+                                booking = new Booking(trip, seatNumber, stop);
                                 booking.setStarting_stop(ticketBooking.getStart());
                                 booking.setEnding_stop(ticketBooking.getEnd());
-                                User user1= userDao.getById(ticketBooking.getUser_id());
-                                booking.setPassenger(passengerRepository.findById(passenger.getId()).orElse(passengerRepository.save(new Passenger(passenger.getName(),passenger.getAge(),user1.getId()))));
-                                booking.setAmount(setamount(trip,ticketBooking.getStart(),ticketBooking.getEnd()));
+                                User user = userDao.getById(ticketBooking.getUser_id());
+                                booking.setPassenger(
+                                        passengerRepository.findById(passenger.getId())
+                                                .orElse(passengerRepository.save(new Passenger(passenger.getName(), passenger.getAge(), user.getId()))));
+                                booking.setAmount(setAmount(trip, ticketBooking.getStart(), ticketBooking.getEnd()));
                                 booking.setDate(Date.valueOf(LocalDate.now()));
                                 booking.setStatus("BOOKED");
-                                bookingRepository.save(prev_booking);
-                                amount+=setamount(trip,ticketBooking.getStart(),ticketBooking.getEnd());
+                                bookingRepository.save(booking);
+                                totalAmount += setAmount(trip, ticketBooking.getStart(), ticketBooking.getEnd());
                                 i++;
                             }
-                            prev_booking.setAvailableStops(stop);
-                            bookingRepository.save(prev_booking);
+                            prevBooking.setAvailableStops(stop);
+                            bookingRepository.save(prevBooking);
                         }
                     }
-                }
-                else{
-                    Booking prev_bookings= bookingRepository.findByTripAndSeat(trip, passenger.getSeat_no());
+                } else if ("Luxury".equals(trip.getType())) {
+                    // Logic for Luxury trip
+                    Booking luxuryBooking = bookingRepository.findByTripAndSeat(trip, seatNumber);
 
-                    if(prev_bookings.getPassenger()==null){
-                        prev_bookings.setTrip(trip);
-                        prev_bookings.setSeatno(passenger.getSeat_no());
-                        prev_bookings.setStarting_stop(ticketBooking.getStart());
-                        prev_bookings.setEnding_stop(ticketBooking.getEnd());
-                        User user= userDao.getById(ticketBooking.getUser_id());
-                        prev_bookings.setPassenger(passengerRepository.findById(passenger.getId()).orElse(passengerRepository.save(new Passenger(passenger.getName(),passenger.getAge(),user.getId()))));
-                        prev_bookings.setAmount(trip.getAmount());
-                        prev_bookings.setDate(Date.valueOf(LocalDate.now()));
-                        prev_bookings.setStatus("BOOKED");
+                    if (luxuryBooking.getPassenger() == null) {
+                        luxuryBooking.setTrip(trip);
+                        luxuryBooking.setSeatno(seatNumber);
+                        luxuryBooking.setStarting_stop(ticketBooking.getStart());
+                        luxuryBooking.setEnding_stop(ticketBooking.getEnd());
+                        User user = userDao.getById(ticketBooking.getUser_id());
+                        luxuryBooking.setPassenger(
+                                passengerRepository.findById(passenger.getId())
+                                        .orElse(passengerRepository.save(new Passenger(passenger.getName(), passenger.getAge(), user.getId()))));
+                        luxuryBooking.setAmount(trip.getAmount());
+                        luxuryBooking.setDate(Date.valueOf(LocalDate.now()));
+                        luxuryBooking.setStatus("BOOKED");
 
-
-                     //   prev_bookings.setRazorpay_booking_id(orderId); // Save Razorpay order ID
-
-                        bookingRepository.save(prev_bookings);
-                        amount= ticketBooking.getAmount();
-                    }
-                    else{
-                        throw new Exception("Seat"+passenger.getSeat_no()+" is All ready book");
+                        bookingRepository.save(luxuryBooking);
+                        totalAmount += luxuryBooking.getAmount();
+                    } else {
+                        throw new Exception("Seat " + seatNumber + " is already booked.");
                     }
                 }
-
-
-            }
-            else {
-                throw new Exception("SEAT " + passenger.getSeat_no() + " UNAVAILABLE");
+            } else {
+                throw new Exception("Seat " + seatNumber + " is unavailable.");
             }
         }
-//       double totalAmount = amount;
 
-        // Create Razorpay order after calculating totalAmount
-        //double amount;
-        Order order = paymentService.bookedTicket(amount);
+        // Create Razorpay order after calculating total amount
+        Order order = paymentService.bookedTicket(totalAmount);
         razorpayOrderId = order.get("id");
 
-        // Update razorpay_booking_id in each booking
+        User user = userDao.findByEmail(JwtAuthenticationFilter.CURRENT_USER);
+        Transaction transaction = paymentService.saveTransaction(razorpayOrderId, totalAmount,  "INR", "created", user);
+
+        // Update Razorpay booking ID in each booking
         for (Passenger_details passenger : ticketBooking.getPassengers()) {
             Booking booking = bookingRepository.findByTripAndSeat(trip, passenger.getSeat_no());
             if (booking != null && booking.getPassenger() != null) {
@@ -292,21 +431,14 @@ public class BookingService {
             }
         }
 
-//        ticketBooking.setRazorpay_booking_id(razorpayOrderId);
-//       paymentService.saveTransaction(razorpayOrderId, amount, "INR", "created", null);
-
-
-
         return "BOOKED";
-                //order.get(orderId);
     }
 
-    //working check
-    private Double setamount(Trip trip, String start, String end) {
-        return ordinaryTripRepository.findAmountByStopName(end,trip)-ordinaryTripRepository.findAmountByStopName(start,trip);
+    // Helper method to calculate the amount based on the difference between last and first stop
+    private Double setAmount(Trip trip, String start, String end) {
+        return ordinaryTripRepository.findAmountByStopName(end, trip) -
+                ordinaryTripRepository.findAmountByStopName(start, trip);
     }
-
-//
 
 
     public void cancelTicket(Long id) {
