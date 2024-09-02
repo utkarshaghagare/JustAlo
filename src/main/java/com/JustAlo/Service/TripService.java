@@ -3,6 +3,7 @@ package com.JustAlo.Service;
 import com.JustAlo.Entity.*;
 import com.JustAlo.Entity.Points;
 import com.JustAlo.Model.*;
+import com.JustAlo.Model.enums.DriverStatus;
 import com.JustAlo.Repo.*;
 //import com.JustAlo.Repo.ScheduledTripRepository;
 import com.JustAlo.Security.JwtAuthenticationFilter;
@@ -378,18 +379,61 @@ public List<Trip> findTrip(String start, String destination, Date date) {
 //        return journeyDetailsList;
 //    }
 
-    public Trip startTrip(long id) {
+//    public Trip startTrip(long id) {
+//        // Fetch the trip by ID, handle the case where the trip is not found
+//        Trip trip = tripRepository.findById(id).orElseThrow(() -> new RuntimeException("Trip not found with id: " + id));
+//
+//        // Check the current status and update accordingly
+//        if (trip.getStatus() == null) {
+//
+//            trip.setStatus("RUNNING");
+//        } else if (trip.getStatus().equals("RUNNING")) {
+//            trip.setStatus("COMPLETED");
+//            busService.turnOffBus(trip.getBus().getId(),BusStatus.AVAILABLE);
+//            driverService.UnblockDriver(trip.getDriver().getId());
+//        }
+//
+//        // Save the updated trip back to the repository
+//        return tripRepository.save(trip);
+//    }
+
+
+    public Trip startTrip(long id, Double latitude, Double longitude) {
         // Fetch the trip by ID, handle the case where the trip is not found
         Trip trip = tripRepository.findById(id).orElseThrow(() -> new RuntimeException("Trip not found with id: " + id));
 
         // Check the current status and update accordingly
-        if (trip.getStatus() == null) {
-
+        if (trip.getStatus() == null || trip.getStatus().equals("PENDING")) {
+            // Start the trip
             trip.setStatus("RUNNING");
+
+            // Update driver's location and status
+            Driver driver = trip.getDriver();
+            if (driver != null) {
+                driver.setStatus(DriverStatus.BUSY);
+                driver.setLatitude(latitude);
+                driver.setLongitude(longitude);
+                driverService.updateDriver(driver); // Save the updated driver details
+            }
+
+            // Update the bus status if necessary
+            busService.turnOffBus(trip.getBus().getId(), BusStatus.ON_TRIP);
+
         } else if (trip.getStatus().equals("RUNNING")) {
+            // Complete the trip
             trip.setStatus("COMPLETED");
-            busService.turnOffBus(trip.getBus().getId(),BusStatus.AVAILABLE);
-            driverService.UnblockDriver(trip.getDriver().getId());
+
+            // Make the bus available again
+            busService.turnOffBus(trip.getBus().getId(), BusStatus.AVAILABLE);
+
+            // Unblock the driver and update location after the trip is completed
+            Driver driver = trip.getDriver();
+            if (driver != null) {
+                driver.setStatus(DriverStatus.ACTIVE);
+                driver.setLatitude(latitude);
+                driver.setLongitude(longitude);
+                driverService.UnblockDriver(driver.getId());
+            }
         }
 
         // Save the updated trip back to the repository

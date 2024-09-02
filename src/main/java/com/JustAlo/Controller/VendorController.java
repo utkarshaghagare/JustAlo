@@ -6,6 +6,7 @@ import com.JustAlo.Model.BusStatus;
 import com.JustAlo.Model.ToDayBookingDTO;
 import com.JustAlo.Model.TripDTO;
 import com.JustAlo.Model.VendorModel;
+import com.JustAlo.Model.enums.DriverStatus;
 import com.JustAlo.Repo.BookingRepository;
 import com.JustAlo.Repo.TripRepository;
 import com.JustAlo.Security.JwtAuthenticationFilter;
@@ -125,6 +126,18 @@ public class VendorController {
     @PreAuthorize("hasRole('Vendor')")
     public String turnONBus(@PathVariable("id") Long id){
         return busService.turnOffBus(id, BusStatus.AVAILABLE);
+    }
+
+    @GetMapping({"/turnOffDriver/{id}"})
+    @PreAuthorize("hasRole('Vendor')")
+    public String turnOffDriver(@PathVariable("id") Long id){
+        return  driverService.turnOffDriver(id, DriverStatus.UNAVAILABLE);
+    }
+
+    @GetMapping({"/turnONDriver/{id}"})
+    @PreAuthorize("hasRole('Vendor')")
+    public String turnONDriver(@PathVariable("id") Long id){
+        return  driverService.turnONDriver(id, DriverStatus.ACTIVE);
     }
 
     @GetMapping("/verifiedAndAvailableDriver")

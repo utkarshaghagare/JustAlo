@@ -183,8 +183,12 @@ public class DriverController {
 
     @PutMapping("/startTrip/{id}")
     @PreAuthorize("hasRole('Driver')")
-    public Trip startTrip(@PathVariable("id") long id){
-        return  tripService.startTrip(id);
+    public ResponseEntity<Trip> startTrip(
+            @PathVariable("id") long id,
+            @RequestParam("latitude") Double latitude,
+            @RequestParam("longitude") Double longitude) {
 
+        Trip updatedTrip = tripService.startTrip(id, latitude, longitude);
+        return ResponseEntity.ok(updatedTrip);
     }
 }

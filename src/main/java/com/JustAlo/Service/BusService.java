@@ -176,5 +176,17 @@ public class BusService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    public ResponseEntity<Bus> unverifiredBus(Long id) {
+        Optional<Bus> optionalBus = busRepository.findById(id);
+        if (optionalBus.isPresent()) {
+            Bus bus = optionalBus.get();
+            bus.setVerified(false);
+            busRepository.save(bus);
+            return new ResponseEntity<>(bus, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
+}
 

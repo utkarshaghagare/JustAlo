@@ -83,6 +83,10 @@ public class BookingService {
             }
         }
         Seats seats= new Seats(availableSeats,your,vendor);
+        seats.setTotal_seats(trip.getBus().getTotal_seats());
+        seats.setLast_row_seats(trip.getBus().getLast_row_seats());
+        seats.setLayout(trip.getBus().getLayout());
+        seats.setNo_of_row(trip.getBus().getNo_of_row());
         return seats;
     }
 
@@ -478,7 +482,7 @@ public class BookingService {
         }
         remaining+=in;
         remaining-=out;
-        return new JourneyDetails(in,out,remaining,bookedSeatsCount);
+        return new JourneyDetails(stopName,in,out,remaining,bookedSeatsCount);
 
     }
 

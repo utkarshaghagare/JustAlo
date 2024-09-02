@@ -280,6 +280,27 @@ public List<TripDTO> getDriverTripDetails() {
         }
     }
 
+    public String turnOffDriver(Long id, DriverStatus d) {
+        Driver driver= getDriverById(id).orElse(null);
+        if(driver!=null){
+            driver.setStatus(d);
+            driverDao.save(driver);
+        }
+        return "driver Turned off";
+    }
+
+    public String turnONDriver(Long id, DriverStatus d) {
+        Driver driver= getDriverById(id).orElse(null);
+        if(driver!=null){
+            driver.setStatus(d);
+            driverDao.save(driver);
+        }
+        return "driver Turned ON";
+    }
+
+    public void updateDriver(Driver driver) {
+        driverDao.save(driver);
+    }
 //    public ResponseEntity<Driver> getunverifiredDriverList() {
 //        return driverDao.unverifiredDriverList();
 //    }

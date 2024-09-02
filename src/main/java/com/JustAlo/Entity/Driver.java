@@ -36,6 +36,10 @@ public class Driver {
 
     @Enumerated(EnumType.STRING)
     public DriverStatus status;
+
+    private Double latitude;
+    private Double longitude;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "USER_ROLE", joinColumns = {
             @JoinColumn(name = "USER_ID", referencedColumnName = "email")

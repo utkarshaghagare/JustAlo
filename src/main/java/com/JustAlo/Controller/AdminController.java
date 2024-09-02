@@ -116,7 +116,7 @@ public ResponseEntity<Driver> UnblockDriver(@PathVariable("id") Long id){
 }
 
     @PostMapping("/addRoute")
-    @PreAuthorize("hasRole('Admin','Vendor')")
+    @PreAuthorize("hasAnyRole('Admin','Vendor')")
     public ResponseEntity<Route> addRoute(@RequestBody Route route) {
         // Find the city by name (assuming the route contains city names for start and end points)
         City startCity = cityRepository.findByCityname(route.getOrigin());
@@ -183,9 +183,9 @@ public ResponseEntity<Driver> UnblockDriver(@PathVariable("id") Long id){
         return ResponseEntity.ok(cities);
     }
 
-@GetMapping("/unverifieddriver")
+@PutMapping("/unverifieddriver/{id}")
 @PreAuthorize("hasRole('Admin')")
-public ResponseEntity<List<Driver>> unverifiredDriverList() {
+public ResponseEntity<List<Driver>> unverifiredDriverList(@PathVariable("id") Long id) {
     List<Driver> drivers = driverRepository.findUnverifiedDrivers();
     return new ResponseEntity<>(drivers, HttpStatus.OK);
 }
@@ -195,11 +195,10 @@ public ResponseEntity<List<Driver>> unverifiredDriverList() {
 public ResponseEntity<Driver>verifiredDriverList(@PathVariable("id") Long id) {
      return driverService.verifiredDriverList(id);
 }
-    @GetMapping("/unverifiedBus")
+    @PutMapping("/unverifiedBus/{id}")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<List<Bus>> unverifiredBusList() {
-        List<Bus> bus = busRepository.findUnverifiedBus();
-        return new ResponseEntity<>(bus, HttpStatus.OK);
+    public ResponseEntity<Bus> unverifiredBusList(@PathVariable("id") Long id) {
+        return  busService.unverifiredBus(id);
     }
 
 

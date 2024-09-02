@@ -14,7 +14,8 @@ public class JourneyDetails {
     private int bookedSeatsCount;
 
     // Constructor
-    public JourneyDetails(int in, int out, int remaining,int bookedSeatsCount) {
+    public JourneyDetails(String stopName, int in, int out, int remaining, int bookedSeatsCount) {
+        this.stopname=stopName;
         this.in = in;
         this.out = out;
         this.remaining = remaining;
