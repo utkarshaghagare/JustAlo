@@ -183,12 +183,12 @@ public ResponseEntity<Driver> UnblockDriver(@PathVariable("id") Long id){
         return ResponseEntity.ok(cities);
     }
 
-@PutMapping("/unverifieddriver/{id}")
-@PreAuthorize("hasRole('Admin')")
-public ResponseEntity<List<Driver>> unverifiredDriverList(@PathVariable("id") Long id) {
-    List<Driver> drivers = driverRepository.findUnverifiedDrivers();
-    return new ResponseEntity<>(drivers, HttpStatus.OK);
-}
+    @PutMapping("/unverifieddriver/{id}")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<Driver> unverifiedDriver(@PathVariable("id") Long id) {
+        return driverService.unverifiedDriver(id);
+    }
+
 
 @PutMapping("/verifieddriver/{id}")
 @PreAuthorize("hasRole('Admin')")

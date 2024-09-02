@@ -301,6 +301,20 @@ public List<TripDTO> getDriverTripDetails() {
     public void updateDriver(Driver driver) {
         driverDao.save(driver);
     }
+
+    public ResponseEntity<Driver>unverifiedDriver(Long id) {
+        Optional<Driver> optionalDriver = driverDao.findById(id);
+        if (optionalDriver.isPresent()) {
+            Driver driver = optionalDriver.get();
+            driver.setVerification_status(false);
+            driverDao.save(driver);
+            return new ResponseEntity<>(driver, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
 //    public ResponseEntity<Driver> getunverifiredDriverList() {
 //        return driverDao.unverifiredDriverList();
 //    }
