@@ -303,7 +303,7 @@ public class VendorController {
         }
     }
     @GetMapping("/getpaymentinformation")
-    @PreAuthorize("hasRole('Vendor')")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<List<TransactionDTO>> getAllDetails() {
         return paymentService.getAllDetails();
     }
