@@ -4,6 +4,7 @@ import com.JustAlo.Configuration.AmazonS3Config;
 import com.JustAlo.Entity.Driver;
 import com.JustAlo.Entity.Role;
 import com.JustAlo.Entity.Trip;
+import com.JustAlo.Model.AlertRequest;
 import com.JustAlo.Model.DriverModel;
 
 import com.JustAlo.Model.JourneyDetails;
@@ -12,6 +13,7 @@ import com.JustAlo.Model.enums.DriverStatus;
 import com.JustAlo.Repo.DriverDao;
 import com.JustAlo.Repo.RoleDao;
 import com.JustAlo.Security.JwtAuthenticationFilter;
+import com.JustAlo.Service.AlertService;
 import com.JustAlo.Service.DriverService;
 import com.JustAlo.Service.TripService;
 import com.JustAlo.Service.VendorService;
@@ -62,6 +64,9 @@ public class DriverController {
 
     @Autowired
     private VendorService vendorService;
+
+    @Autowired
+    private AlertService alertService;
 
     public String getEncodedPassword(String password) {
         return passwordEncoder.encode(password);
@@ -190,5 +195,12 @@ public class DriverController {
 
         Trip updatedTrip = tripService.startTrip(id, latitude, longitude);
         return ResponseEntity.ok(updatedTrip);
+    }
+
+    @PostMapping("/sendAlert")
+    @PreAuthorize("hasRole('Driver')")
+    public ResponseEntity<String> sendAlert(@RequestBody AlertRequest alertRequest) {
+        alertService.sendAlertToVendor(alertRequest);
+        return new ResponseEntity<>("Alert sent to vendor successfully", HttpStatus.OK);
     }
 }

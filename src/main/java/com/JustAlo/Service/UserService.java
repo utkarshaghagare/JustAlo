@@ -43,47 +43,6 @@ public class UserService {
 	@Autowired
 	private JwtHelper jwtHelper;
 	    public void initRoleAndUser() {
-//
-//	        Role adminRole = new Role();
-//	        adminRole.setRoleName("Admin");
-//	        adminRole.setRoleDescription("Admin role");
-//			boolean a= roleDao.existsById("Admin");
-//			if(!a){
-//				roleDao.save(adminRole);
-//			}
-//
-//
-//	        Role userRole = new Role();
-//	        userRole.setRoleName("User");
-//	        userRole.setRoleDescription("Default role for newly created User");
-//	        roleDao.save(userRole);
-//
-//			Role vendorRole = new Role();
-//			vendorRole.setRoleName("Vendor");
-//			vendorRole.setRoleDescription("Default role for newly created vendor");
-//			roleDao.save(vendorRole);
-//
-//			Role driverRole = new Role();
-//			driverRole.setRoleName("Driver");
-//			driverRole.setRoleDescription("Default role for newly created Driver");
-//			roleDao.save(driverRole);
-//
-//			// Create Super Admin user
-//			String superAdminEmail = "superadmin@example.com"; // Hardcoded super admin email
-//			if (userDao.findByEmail(superAdminEmail) == null) {
-//				Admin superAdmin = new Admin();
-//				superAdmin.setName("Super Admin");
-//				superAdmin.setEmail(superAdminEmail);
-//				superAdmin.setPassword(getEncodedPassword("superadminpassword")); // Hardcoded super admin password
-//
-//				// Assign the "Admin" role to the super admin
-//				Set<Role> superAdminRoles = new HashSet<>();
-//				superAdminRoles.add(adminRole);
-//				superAdmin.setRole(superAdminRoles);
-//
-//				adminDao.save(superAdmin);
-//			}
-//
 
 
 			// Create roles
@@ -116,26 +75,7 @@ public class UserService {
 			}
 
 
-			// Create Super Admin user
-//			String superAdminEmail = "superadmin@example.com"; // Hardcoded super admin email
-//			if (adminDao.findByEmail(superAdminEmail) == null) {
-//				Role superAdminRole = new Role();
-//				superAdminRole.setRoleName("SuperAdmin");
-//				superAdminRole.setRoleDescription("Dedult role super admin");
-//				  roleDao.save(superAdminRole); // Hardcoded super admin password
-//				Admin superAdmin = new Admin();
-//
-//				Role role = roleDao.findById("SuperAdmin")
-//						.orElseThrow(() -> new RuntimeException("Role not found"));
-//				Set<Role> superadminRoles = new HashSet<>();
-//				superadminRoles.add(role);
-//				superAdmin.setRole(superadminRoles);
-//                superAdmin.setEmail(superAdminEmail);
-//				superAdmin.setPassword(getEncodedPassword("superadminpassword"));
-//				adminDao.save(superAdmin);
 
-
-//			}
 
 	    }
 

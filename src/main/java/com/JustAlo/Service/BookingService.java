@@ -336,6 +336,10 @@ public class BookingService {
         double totalAmount = 0;
         String razorpayOrderId = null;
 
+        // Retrieve the current user from the security context
+        String email = JwtAuthenticationFilter.CURRENT_USER;
+        User currentUser = userDao.findByEmail(email);
+
         for (Passenger_details passenger : ticketBooking.getPassengers()) {
             int seatNumber = passenger.getSeat_no();
 
@@ -360,10 +364,9 @@ public class BookingService {
                             prevBooking.setTrip(trip);
                             prevBooking.setStarting_stop(ticketBooking.getStart());
                             prevBooking.setEnding_stop(ticketBooking.getEnd());
-                            User user = userDao.getById(ticketBooking.getUser_id());
                             prevBooking.setPassenger(
                                     passengerRepository.findById(passenger.getId())
-                                            .orElse(passengerRepository.save(new Passenger(passenger.getName(), passenger.getAge(), user.getId()))));
+                                            .orElse(passengerRepository.save(new Passenger(passenger.getName(), passenger.getAge(), currentUser.getId()))));
                             prevBooking.setAmount(setAmount(trip, ticketBooking.getStart(), ticketBooking.getEnd()));
                             prevBooking.setDate(Date.valueOf(LocalDate.now()));
                             prevBooking.setAvailableStops(stop);
@@ -376,10 +379,9 @@ public class BookingService {
                                 booking = new Booking(trip, seatNumber, stop);
                                 booking.setStarting_stop(ticketBooking.getStart());
                                 booking.setEnding_stop(ticketBooking.getEnd());
-                                User user = userDao.getById(ticketBooking.getUser_id());
                                 booking.setPassenger(
                                         passengerRepository.findById(passenger.getId())
-                                                .orElse(passengerRepository.save(new Passenger(passenger.getName(), passenger.getAge(), user.getId()))));
+                                                .orElse(passengerRepository.save(new Passenger(passenger.getName(), passenger.getAge(), currentUser.getId()))));
                                 booking.setAmount(setAmount(trip, ticketBooking.getStart(), ticketBooking.getEnd()));
                                 booking.setDate(Date.valueOf(LocalDate.now()));
                                 booking.setStatus("BOOKED");
@@ -400,10 +402,9 @@ public class BookingService {
                         luxuryBooking.setSeatno(seatNumber);
                         luxuryBooking.setStarting_stop(ticketBooking.getStart());
                         luxuryBooking.setEnding_stop(ticketBooking.getEnd());
-                        User user = userDao.getById(ticketBooking.getUser_id());
                         luxuryBooking.setPassenger(
                                 passengerRepository.findById(passenger.getId())
-                                        .orElse(passengerRepository.save(new Passenger(passenger.getName(), passenger.getAge(), user.getId()))));
+                                        .orElse(passengerRepository.save(new Passenger(passenger.getName(), passenger.getAge(), currentUser.getId()))));
                         luxuryBooking.setAmount(trip.getAmount());
                         luxuryBooking.setDate(Date.valueOf(LocalDate.now()));
                         luxuryBooking.setStatus("BOOKED");
@@ -419,6 +420,7 @@ public class BookingService {
             }
         }
 
+        // Create Razorpay order after calculating total amount
         // Create Razorpay order after calculating total amount
         Order order = paymentService.bookedTicket(totalAmount);
         razorpayOrderId = order.get("id");
@@ -437,6 +439,7 @@ public class BookingService {
 
         return "BOOKED";
     }
+
 
     // Helper method to calculate the amount based on the difference between last and first stop
     private Double setAmount(Trip trip, String start, String end) {
