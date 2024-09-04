@@ -179,11 +179,30 @@ public class TripService {
        return null;
     }
 
-    public void deleteById(Long id) {
-        ordinaryTripRepository.deleteAllByTrip(tripRepository.findById(id).orElse(null));
-        //luxuryTripRepository.delete
-        tripRepository.deleteById(id);
-        //check if Luxury spots are deleted aswell
+    public void deleteById(Long id) throws Exception {
+        Trip trip = tripRepository.findById(id).orElse(null);
+
+        if (trip != null) {
+            List<Booking> bookings= bookingRepository.findAllByTrip(trip);
+            for(Booking b: bookings){
+                if("BOOKED".equals(b.getStatus())){
+                    throw new
+                            Exception("Booked Seats for trips!");
+                }
+                bookingRepository.deleteById(b.getId());
+            }
+            // Delete Points associated with OrdinaryTrip first
+            List<OrdinaryTrip> ordinaryTrips = ordinaryTripRepository.findAllByTrip(trip);
+            for (OrdinaryTrip ordinaryTrip : ordinaryTrips) {
+                pointsRepository.deleteAll(ordinaryTrip.getPoints());
+            }
+
+            // Delete OrdinaryTrips
+            ordinaryTripRepository.deleteAll(ordinaryTrips);
+
+            // Proceed to delete Trip
+            tripRepository.deleteById(id);
+        }
     }
 
 //check

@@ -83,7 +83,7 @@ public class TripController {
 //DELETING
     @DeleteMapping("deleteTrip/{id}")
     @PreAuthorize("hasRole('Vendor')")
-    public ResponseEntity<Void> deleteTrip(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTrip(@PathVariable Long id) throws Exception {
         tripService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
