@@ -30,7 +30,8 @@ public class SecurityConfig {
             "/getdetails",
 //            "/getDriverTripDetails",
             "/rent/enquiry",
-            "/AllRouts"
+            "/AllRouts",
+       "/available_seats/{id}"
 
 //            "/buses/**",
 //            "/addDriver",
