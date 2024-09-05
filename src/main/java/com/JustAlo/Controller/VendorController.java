@@ -287,7 +287,7 @@ public class VendorController {
         return busService.getAllBusByPerticularVendor(vendorService.findByUsername(JwtAuthenticationFilter.CURRENT_USER).getId());
     }
     @GetMapping("/AllDriverByPerticularVendor")
-    @PreAuthorize("hasRole('Driver')")
+    @PreAuthorize("hasRole('Vendor')")
     public  List<Driver> getAllDriverByPerticularVendor(){
         return driverService.getAllDriverByPerticularVendor(vendorService.findByUsername(JwtAuthenticationFilter.CURRENT_USER).getId());
 
