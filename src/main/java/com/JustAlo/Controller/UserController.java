@@ -195,8 +195,8 @@ public class UserController {
 
     //select start point end point
     //working
-    @PostMapping("/available_seats/{id}")
-    @PreAuthorize("hasRole('User')")
+    @GetMapping("/available_seats/{id}")
+   // @PreAuthorize("hasRole('User')")
     public Seats findSeat(@RequestBody TripRequest tripRequest, @PathVariable long id){
         return tripService.findSeat(tripRequest.getStart() ,tripRequest.getDestination(),id);
     }
