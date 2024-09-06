@@ -60,7 +60,7 @@ public class AdminController {
     }
 
     @GetMapping("/AllVendor")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','Vendor')")
     public List<Vendor> getAllVendor(){
         return vendorService.getAllVendor();
     }
