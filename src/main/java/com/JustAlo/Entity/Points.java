@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Time;
+
 @Entity
 @Getter
 @Setter
@@ -18,5 +20,7 @@ public class Points {
     public String longitute;
 
     public String latitute;
+
+    public Time time;
 
 }

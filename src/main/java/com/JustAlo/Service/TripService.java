@@ -126,6 +126,8 @@ public class TripService {
         trip.setPickupPoints(tripModel.pickupPoints);
         trip.setDropDownPoints(tripModel.dropDownPoints);
 //check
+        pointsRepository.saveAll(tripModel.pickupPoints);
+        pointsRepository.saveAll(tripModel.dropDownPoints);
         LuxuryTrip savedTrip=luxuryTripRepository.save(trip);
         makeBooking(savedTrip.getBus().getTotal_seats(),savedTrip);
         return savedTrip;

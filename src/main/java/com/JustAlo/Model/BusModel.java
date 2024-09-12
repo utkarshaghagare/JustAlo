@@ -24,7 +24,8 @@ public class BusModel {
     private String fromDate; // Assuming you will handle the date format appropriately
     private String toDate;   // Assuming you will handle the date format appropriately
     private MultipartFile insuranceImg; // This would be the URL or path to the image
-//    private Boolean verified;
+    private MultipartFile bus_image;
+   private String amenities;
 
     // Add constructors, if needed
     // public BusModel() {}

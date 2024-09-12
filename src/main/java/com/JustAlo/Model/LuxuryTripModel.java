@@ -11,8 +11,8 @@ public class LuxuryTripModel {
     public Long bus_id;
     public Long driver_id;
     public Long route_id;
-    public List<String> pickupPoints;
-    public List<String> dropDownPoints;
+    public List<com.JustAlo.Entity.Points> pickupPoints;
+    public List<Points> dropDownPoints;
     public LocalDate date;
     public Time time;
     public Time endtime;

@@ -23,12 +23,13 @@ public class Bus {
 
     public String bus_number;
     public int total_seats;
-//    public String type;
+   public String amenities;
     public Boolean ac;
 
     @Enumerated(EnumType.STRING)
     public BusStatus status;
 
+    public String bus_image;
     public String layout;
     public Boolean verified;
     public String chassis_num;

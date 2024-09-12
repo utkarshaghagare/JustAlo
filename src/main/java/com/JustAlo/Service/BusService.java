@@ -47,6 +47,7 @@ public class BusService {
         try {
             // Upload documents to DigitalOcean Spaces
             String insuranceImgUrl = uploadFileToSpace(bus.getInsuranceImg());
+            String bus_image= uploadFileToSpace(bus.getBus_image());
             b.setVendor(vendorService.findByUsername(JwtAuthenticationFilter.CURRENT_USER));
             b.setBus_number(bus.getBusNumber());
             b.setTotal_seats(bus.getTotalSeats());
@@ -61,6 +62,8 @@ public class BusService {
             b.setFromDate(dateFormat.parse(bus.getFromDate()));
             b.setToDate(dateFormat.parse(bus.getToDate()));
             b.setInsurance_img(insuranceImgUrl);
+            b.setBus_image(bus_image);
+            b.setAmenities(bus.getAmenities());
             b.setVerified(false);
 
             return busRepository.save(b);

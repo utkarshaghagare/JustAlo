@@ -25,9 +25,9 @@ public class BusController {
            // @RequestParam("id")  id,
             @RequestParam("busNumber") String busNumber,
             @RequestParam("totalSeats") int totalSeats,
-//            @RequestParam("type") String type,
+            @RequestParam("amenities") String amenities,
             @RequestParam("ac") Boolean ac,
-//            @RequestParam("status") String status,
+            @RequestParam("busImg") MultipartFile bus_image,
             @RequestParam("layout") String layout,
             @RequestParam("chassisNum") String chassisNum,
             @RequestParam("noOfRow") int noOfRow,
@@ -42,9 +42,9 @@ public class BusController {
       //  busModel.setId(id);
         busModel.setBusNumber(busNumber);
         busModel.setTotalSeats(totalSeats);
-//        busModel.setType(type);
+        busModel.setAmenities(amenities);
         busModel.setAc(ac);
-        //busModel.setStatus(status);
+        busModel.setBus_image(bus_image);
         busModel.setLayout(layout);
         busModel.setChassisNum(chassisNum);
         busModel.setNoOfRow(noOfRow);
