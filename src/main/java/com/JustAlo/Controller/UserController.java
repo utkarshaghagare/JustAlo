@@ -150,7 +150,7 @@ public class UserController {
 //    }
 
     @GetMapping("/getAllUser")
-    @PreAuthorize("hasRole('User')")
+    @PreAuthorize("hasRole('Admin')")
     public List<User> getAllUser(){
         return userService.getAllUser();
 
@@ -196,7 +196,7 @@ public class UserController {
     //select start point end point
     //working
     @GetMapping("/available_seats/{id}")
-    @PreAuthorize("hasRole('Vendor')")
+   // @PreAuthorize("hasRole('User')")
     public Seats findSeat(@RequestBody TripRequest tripRequest, @PathVariable long id){
         return tripService.findSeat(tripRequest.getStart() ,tripRequest.getDestination(),id);
     }

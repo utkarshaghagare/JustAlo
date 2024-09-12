@@ -2,10 +2,7 @@ package com.JustAlo.Controller;
 
 
 import com.JustAlo.Entity.*;
-import com.JustAlo.Model.BusStatus;
-import com.JustAlo.Model.ToDayBookingDTO;
-import com.JustAlo.Model.TripDTO;
-import com.JustAlo.Model.VendorModel;
+import com.JustAlo.Model.*;
 import com.JustAlo.Model.enums.DriverStatus;
 import com.JustAlo.Repo.BookingRepository;
 import com.JustAlo.Repo.TripRepository;
@@ -290,7 +287,7 @@ public class VendorController {
         return busService.getAllBusByPerticularVendor(vendorService.findByUsername(JwtAuthenticationFilter.CURRENT_USER).getId());
     }
     @GetMapping("/AllDriverByPerticularVendor")
-    @PreAuthorize("hasRole('Driver')")
+    @PreAuthorize("hasRole('Vendor')")
     public  List<Driver> getAllDriverByPerticularVendor(){
         return driverService.getAllDriverByPerticularVendor(vendorService.findByUsername(JwtAuthenticationFilter.CURRENT_USER).getId());
 
@@ -306,8 +303,9 @@ public class VendorController {
         }
     }
     @GetMapping("/getpaymentinformation")
-    @PreAuthorize("hasRole('Vendor')")
-    public ResponseEntity<List<Transaction>> getAllDetails() {
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<List<TransactionDTO>> getAllDetails() {
         return paymentService.getAllDetails();
     }
+
 }

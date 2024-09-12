@@ -4,6 +4,7 @@ import com.JustAlo.Configuration.RazorpayConfig;
 import com.JustAlo.Entity.Booking;
 import com.JustAlo.Entity.Transaction;
 import com.JustAlo.Entity.User;
+import com.JustAlo.Model.TransactionDTO;
 import com.JustAlo.Repo.TransactionRepository;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
@@ -20,6 +21,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.codec.digest.HmacUtils.hmacSha256;
 
@@ -58,8 +60,21 @@ public class PaymentService {
 
     }
 
-    public ResponseEntity<List<Transaction>> getAllDetails() {
+    public ResponseEntity<List<TransactionDTO>> getAllDetails() {
         List<Transaction> transactions = transactionRepository.findAll();
-        return ResponseEntity.ok(transactions);
+
+        // Convert List<Transaction> to List<TransactionDTO>
+        List<TransactionDTO> transactionDTOs = transactions.stream()
+                .map(transaction -> new TransactionDTO(
+                        transaction.getTransactionId(),
+                        transaction.getAmount(),
+                        transaction.getStatus(),
+                        transaction.getUser().getEmail(),  // Assuming `User` has an `email` field
+                        transaction.getTimestamp()
+                ))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(transactionDTOs);
     }
+
 }

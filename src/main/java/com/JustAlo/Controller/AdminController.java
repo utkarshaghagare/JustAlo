@@ -60,7 +60,7 @@ public class AdminController {
     }
 
     @GetMapping("/AllVendor")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','Vendor')")
     public List<Vendor> getAllVendor(){
         return vendorService.getAllVendor();
     }
@@ -214,5 +214,17 @@ public ResponseEntity<Driver>verifiredDriverList(@PathVariable("id") Long id) {
     public ResponseEntity<List<Rent>> getRentdetails() {
         List<Rent> rents = rentService.getRentdetails();
         return ResponseEntity.ok(rents);
+    }
+
+    @PostMapping("/paymentDetailsAdd")
+    @PreAuthorize("hasRole('Admin')")
+    public  ResponseEntity<PaymentDetailsAdd> addPaymenetDetailsAdd(@RequestBody PaymentDetailsAdd paymentDetailsAdd){
+        return  adminService.addPaymenetDetailsAdd(paymentDetailsAdd);
+    }
+    @GetMapping("/paymentDetails")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<List<PaymentDetailsAdd>> getAllPaymentDetails() {
+        List<PaymentDetailsAdd> paymentDetails = adminService.getAllPaymentDetails();
+        return ResponseEntity.ok(paymentDetails);
     }
 }
