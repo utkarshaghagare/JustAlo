@@ -31,11 +31,12 @@ public class SecurityConfig {
 //            "/getDriverTripDetails",
             "/rent/enquiry",
             "/AllRouts",
-       "/available_seats/{id}"
-
+       "/available_seats/{id}",
+            "/trackLocation",
 //            "/buses/**",
 //            "/addDriver",
-//            "/trips/**",
+           // ,"/trips/**",
+            "swagger-ui/index.html","/swagger-ui/**", "/v3/api-docs/**"
 //            "/available_seats/{id}",
 //            "/BookSeat",
 //            "/Tickets",

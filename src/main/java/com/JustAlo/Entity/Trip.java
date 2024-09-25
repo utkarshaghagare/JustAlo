@@ -44,5 +44,9 @@ public class Trip {
 
     private String status;
 
+    @OneToOne
+    @JoinColumn(name = "offer_id", referencedColumnName = "id")
+    private Offers offers;
+
 
 }

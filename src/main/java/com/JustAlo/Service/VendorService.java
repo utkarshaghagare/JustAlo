@@ -1,12 +1,15 @@
 package com.JustAlo.Service;
 
 
-import com.JustAlo.Entity.Role;
-import com.JustAlo.Entity.Vendor;
+import com.JustAlo.Entity.*;
 import com.JustAlo.Model.TicketBooking;
 import com.JustAlo.Model.VendorModel;
+import com.JustAlo.OffersRepository;
 import com.JustAlo.Repo.RoleDao;
+import com.JustAlo.Repo.TripRepository;
 import com.JustAlo.Repo.VendorDao;
+import com.JustAlo.RequestOffersRepository;
+import com.JustAlo.Security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,6 +47,12 @@ public class VendorService {
 
     @Autowired
     private BookingService bookingService;
+    @Autowired
+    private TripRepository tripRepository;
+    @Autowired
+    private RequestOffersRepository requestOffersRepository;
+    @Autowired
+    private OffersRepository offersRepository;
 
     //exception
     public Vendor registerVendor(VendorModel vendormodel) {
@@ -154,6 +163,18 @@ public class VendorService {
         return vendor;
     }
 
+    public Vendor markUnverified(Long id) throws Exception {
+        Optional<Vendor> optionalVendor = vendorDao.findById(id);
+        if (!optionalVendor.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Vendor with ID " + id + " not found");
+        }
+        Vendor vendor = optionalVendor.get();
+        vendor.setVerification_status(false);
+
+        vendorDao.save(vendor);
+        return vendor;
+    }
+
     public Vendor findByUsername(String currentUser) {
         return vendorDao.findByEmail(currentUser);
     }
@@ -165,6 +186,36 @@ public class VendorService {
     public List<Vendor> getAllVendor() {
 
         return vendorDao.findAll();
+    }
+
+    public RequestOffers makeOfferRequest(Long id, double percent) throws Exception {
+        Trip trip =tripRepository.findById(id).orElse(null);
+        if(trip!=null){
+            if(trip.getVendor().getEmail().equals(JwtAuthenticationFilter.CURRENT_USER) ){
+                return requestOffersRepository.save(new RequestOffers(trip,percent));
+            }
+            else throw new Exception("Trip is not scheduled by you ");
+            }
+        else throw new Exception("trip not found");
+    }
+
+    public List<RequestOffers> getOfferRequest() {
+        return requestOffersRepository.findAll();
+    }
+
+    public Offers makeOffer(List<RequestOffers> requestOffersList, MultipartFile image, double percent) throws IOException {
+        String banner =uploadFileToSpace(image);
+        List<Trip> trips= new ArrayList<>();
+        Offers savedoffer = offersRepository.save(new Offers(banner,percent));
+        for(RequestOffers r: requestOffersList){
+            trips.add(r.getTrip());
+            Trip trip=tripRepository.findById(r.getTrip().getId()).orElse(null);
+            if(trip!=null){
+                trip.setOffers(savedoffer);
+            }
+        }
+        savedoffer.setTrips(trips);
+        return offersRepository.save(savedoffer);
     }
 
 //    public String reserveSeat(Long id, List<Integer> seats) {

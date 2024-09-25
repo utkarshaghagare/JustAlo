@@ -98,6 +98,12 @@ public class VendorController {
         return vendorService.markVerified(id);
     }
 
+    @PostMapping("/markUnverified/{id}")
+    @PreAuthorize("hasRole('Admin')")
+    public Vendor markUnverified(@PathVariable("id") Long id) throws Exception {
+        return vendorService.markUnverified(id);
+    }
+
 //    @PostMapping("/BookSeat")
 //    @PreAuthorize("hasRole('Vendor')")
 //    public String bookSeat(@RequestBody TicketBooking ticketBooking) throws Exception {
@@ -308,4 +314,24 @@ public class VendorController {
         return paymentService.getAllDetails();
     }
 
+//Offer Section
+@PostMapping("/makeOfferRequest/{id}")
+@PreAuthorize("hasRole('Vendor')")
+public RequestOffers makeOfferRequest(@PathVariable("id") Long id, @RequestBody double percent) throws Exception {
+    return vendorService.makeOfferRequest(id,percent);
+}
+
+    @GetMapping("/makeOfferRequest")
+    @PreAuthorize("hasRole('Admin')")
+    public List<RequestOffers> getOfferRequest() throws Exception {
+        return vendorService.getOfferRequest();
+    }
+
+    @PostMapping("/makeOffer")
+    @PreAuthorize("hasRole('Admin')")
+    public Offers makeOffer(
+                                   @RequestParam("trips") List<RequestOffers> requestOffersList,
+                                   @RequestParam("banner") MultipartFile image,@RequestParam("percent") double percent) throws Exception {
+        return vendorService.makeOffer(requestOffersList,image,percent);
+    }
 }
