@@ -315,10 +315,10 @@ public class VendorController {
     }
 
 //Offer Section
-@PostMapping("/makeOfferRequest/{id}")
-@PreAuthorize("hasRole('Vendor')")
-public RequestOffers makeOfferRequest(@PathVariable("id") Long id, @RequestBody double percent) throws Exception {
-    return vendorService.makeOfferRequest(id,percent);
+@PostMapping("/makeOfferRequest")
+//@PreAuthorize("hasRole('Vendor')")
+public RequestOffers makeOfferRequest(@RequestBody offerInput input) throws Exception {
+    return vendorService.makeOfferRequest(input.id,input.percent);
 }
 
     @GetMapping("/makeOfferRequest")
@@ -334,4 +334,5 @@ public RequestOffers makeOfferRequest(@PathVariable("id") Long id, @RequestBody 
                                    @RequestParam("banner") MultipartFile image,@RequestParam("percent") double percent) throws Exception {
         return vendorService.makeOffer(requestOffersList,image,percent);
     }
+
 }
