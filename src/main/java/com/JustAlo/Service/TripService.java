@@ -53,6 +53,12 @@ public class TripService {
     @Autowired
     private DriverDao driverDao;
 
+    @Autowired
+    private CostingRepository costingRepository;
+
+    @Autowired
+    private StopPriceRepository stopPriceRepository;
+
     public List<Trip> findAll() {
         return tripRepository.findAll();
     }
@@ -67,7 +73,7 @@ public class TripService {
 
     public Trip save(OrdinaryTripModel tripModel) throws Exception {
         // Create and populate the Trip entity
-        Trip trip = new Trip();
+        StopPrice trip = new StopPrice();
         trip.setType("Ordinary");
         trip.setBus(busService.getVerfiedBusById(tripModel.bus_id));
         trip.setDriver(driverService.getVerifiedDriverById(tripModel.driver_id));
@@ -76,9 +82,11 @@ public class TripService {
         trip.setDate(tripModel.date);
         trip.setTime(tripModel.time);
         trip.setEndtime(tripModel.endtime);
+      //  costingRepository.saveAll(tripModel.stop_price);
+        trip.setPrices(costingRepository.saveAll(tripModel.stop_price));
 
         // Save the Trip entity to generate an ID
-        Trip savedTrip = tripRepository.save(trip);
+        Trip savedTrip = stopPriceRepository.save(trip);
 //check
         makeOrdinaryTrip(tripModel,savedTrip);
 

@@ -163,17 +163,17 @@ public class VendorService {
         return vendor;
     }
 
-    public Vendor markUnverified(Long id) throws Exception {
-        Optional<Vendor> optionalVendor = vendorDao.findById(id);
-        if (!optionalVendor.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Vendor with ID " + id + " not found");
-        }
-        Vendor vendor = optionalVendor.get();
-        vendor.setVerification_status(false);
-
-        vendorDao.save(vendor);
-        return vendor;
-    }
+//    public Vendor markUnverified(Long id) throws Exception {
+//        Optional<Vendor> optionalVendor = vendorDao.findById(id);
+//        if (!optionalVendor.isPresent()) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Vendor with ID " + id + " not found");
+//        }
+//        Vendor vendor = optionalVendor.get();
+//        vendor.setVerification_status(false);
+//
+//        vendorDao.save(vendor);
+//        return vendor;
+//    }
 
     public Vendor findByUsername(String currentUser) {
         return vendorDao.findByEmail(currentUser);
@@ -225,6 +225,17 @@ public class VendorService {
 //    public String bookSeat(TicketBooking ticketBooking) {
 //        return bookingService.bookSeat(ticketBooking,)
 //    }
+public Vendor markUnverified(Long id) throws Exception {
+    Optional<Vendor> optionalVendor = vendorDao.findById(id);
+    if (!optionalVendor.isPresent()) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Vendor with ID " + id + " not found");
+    }
+    Vendor vendor = optionalVendor.get();
+    vendor.setVerification_status(false);
+
+    vendorDao.save(vendor);
+    return vendor;
+}
 }
 
 

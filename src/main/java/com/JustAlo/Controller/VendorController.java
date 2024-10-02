@@ -316,7 +316,7 @@ public class VendorController {
 
 //Offer Section
 @PostMapping("/makeOfferRequest")
-//@PreAuthorize("hasRole('Vendor')")
+@PreAuthorize("hasRole('Vendor')")
 public RequestOffers makeOfferRequest(@RequestBody offerInput input) throws Exception {
     return vendorService.makeOfferRequest(input.id,input.percent);
 }
@@ -331,7 +331,8 @@ public RequestOffers makeOfferRequest(@RequestBody offerInput input) throws Exce
     @PreAuthorize("hasRole('Admin')")
     public Offers makeOffer(
                                    @RequestParam("trips") List<RequestOffers> requestOffersList,
-                                   @RequestParam("banner") MultipartFile image,@RequestParam("percent") double percent) throws Exception {
+                                   @RequestParam("banner") MultipartFile image,
+                                   @RequestParam("percent") double percent) throws Exception {
         return vendorService.makeOffer(requestOffersList,image,percent);
     }
 

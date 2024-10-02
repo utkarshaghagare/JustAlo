@@ -1,5 +1,7 @@
 package com.JustAlo.Model;
 
+import com.JustAlo.Entity.Costing;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
@@ -13,4 +15,6 @@ public class OrdinaryTripModel {
     public LocalDate date;
     public Time time;
     public Time endtime;
+
+    public List<Costing> stop_price;
 }
