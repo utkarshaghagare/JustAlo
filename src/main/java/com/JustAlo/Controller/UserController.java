@@ -13,6 +13,7 @@ import com.JustAlo.Security.JwtHelper;
 import com.JustAlo.Service.*;
 
 import com.razorpay.Order;
+import com.razorpay.RazorpayException;
 import jakarta.annotation.PostConstruct;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,8 @@ public class UserController {
 
     @Autowired
     private DriverDao driverDao;
+    @Autowired
+    private BookingService bookingService;
 
     @PostConstruct
     public void initRoleAndUser() {
@@ -171,7 +174,6 @@ public class UserController {
     }
 
     @GetMapping("/findStops/{id}")
-    @PreAuthorize("hasAnyRole('Vendor','User')")
     public List<OrdinaryTrip> findStops(@PathVariable long id){
         return tripService.findStops(id);
     }
@@ -206,19 +208,95 @@ public class UserController {
     //provide passanger details
     //save
     //yet to be tested
-        @GetMapping("/passengers")
+    @GetMapping("/passengers")
     @PreAuthorize("hasRole('User')")
     public List<Passenger> getPassenger() throws Exception {
         return tripService.getPassengers();
     }
-    @PostMapping("/BookSeat")
+//    @PostMapping("/BookSeat")
+//    @PreAuthorize("hasRole('User')")
+//    public String bookSeat(@RequestBody TicketBooking ticketBooking) throws Exception {
+//        return tripService.bookSeat(ticketBooking);
+//    }
+
+
+
+
+    @PostMapping("/create-order")
     @PreAuthorize("hasRole('User')")
-    public String bookSeat(@RequestBody TicketBooking ticketBooking) throws Exception {
-        return tripService.bookSeat(ticketBooking);
+    public ResponseEntity<?> createOrder(@RequestBody OrderRequest orderRequest) {
+        try {
+            Order order = paymentService.createOrder(orderRequest.getAmount(), orderRequest.getCurrency(),orderRequest.getUserID());
+            return ResponseEntity.ok(order.toString());
+        } catch (RazorpayException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating order: " + e.getMessage());
+        }
     }
 
 
+    @PostMapping("/verify-payment")
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<?> verifyPayment(@RequestBody PaymentVerificationRequest verificationRequest) {
+        try {
+            boolean isValid = paymentService.verifyPayment(verificationRequest.getTransactionId(),
+                    verificationRequest.getRazorpayPaymentId(),
+                    verificationRequest.getRazorpaySignature());
+            if (isValid) {
+                bookingService.updateBookingStatus(verificationRequest.getTransactionId(), "SUCCESS");
+                return ResponseEntity.ok("Payment successful");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Payment verification failed");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error verifying payment: " + e.getMessage());
+        }
+    }
 
+
+    @PostMapping("/book-seat")
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<?> bookSeat(@RequestBody TicketBooking ticketBooking) {
+        try {
+            // Retrieve the Trip object using the tripId
+            Trip trip = tripService.findById(ticketBooking.getTrip_id());
+
+            // Call the bookSeat method from BookingService
+            String bookingStatus = bookingService.bookSeat(ticketBooking, trip);
+
+            // After booking, create the Razorpay order and save the transaction
+            double totalAmount = bookingService.calculateTotalAmount(ticketBooking, trip);
+          //  Order order = paymentService.createOrder(totalAmount,"INR",currentUser);
+            String razorpayOrderId = ticketBooking.getRazorpay_booking_id();
+
+            // Retrieve the current user (Assuming JwtAuthenticationFilter.CURRENT_USER holds the email)
+            String email = JwtAuthenticationFilter.CURRENT_USER;
+            User currentUser = userDao.findByEmail(email);
+
+            // Save transaction details
+//            Transaction transaction = paymentService.saveTransaction(
+//                    razorpayOrderId,
+//                    totalAmount,
+//                    "INR",
+//                    "created",
+//                    currentUser
+//            );
+
+            // Update Razorpay booking ID for each booking
+            for (Passenger_details passenger : ticketBooking.getPassengers()) {
+                Booking booking = bookingService.updateBookingWithRazorpayId(
+                        trip,
+                        passenger.getSeat_no(),
+                        razorpayOrderId
+                );
+            }
+
+            return ResponseEntity.ok("Booking Status: " + bookingStatus);
+        } catch (Exception e) {
+            // Catch any exceptions and return the error message
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error booking seat: " + e.getMessage());
+        }
+    }
 
     //payment
 //    @PostMapping("/payment")
@@ -239,26 +317,26 @@ public class UserController {
 //        }
 //    }
 
-    @PostMapping("/payment")
-    @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> paymentAmount(@RequestParam double amount) {
-        try {
-            // Assuming the user ID is passed as a parameter
-            User user = userDao.findByEmail((JwtAuthenticationFilter.CURRENT_USER));
-
-            // Create a Razorpay order
-            Order order = paymentService.bookedTicket(amount);
-
-
-            // Save the transaction
-            Transaction transaction = paymentService.saveTransaction(order.get("id"), amount, "INR", "created", user);
-              transaction.getAmount();
-
-            return ResponseEntity.ok("Order created successfully with transaction ID: " + transaction.getId());
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Failed to create order: " + e.getMessage());
-        }
-    }
+//    @PostMapping("/payment")
+//    @PreAuthorize("hasRole('User')")
+//    public ResponseEntity<String> paymentAmount(@RequestParam double amount) {
+//        try {
+//            // Assuming the user ID is passed as a parameter
+//            User user = userDao.findByEmail((JwtAuthenticationFilter.CURRENT_USER));
+//
+//            // Create a Razorpay order
+//            Order order = paymentService.bookedTicket(amount);
+//
+//
+//            // Save the transaction
+//            Transaction transaction = paymentService.saveTransaction(order.get("id"), amount, "INR", "created", user);
+//              transaction.getAmount();
+//
+//            return ResponseEntity.ok("Order created successfully with transaction ID: " + transaction.getId());
+//        } catch (Exception e) {
+//            return ResponseEntity.status(500).body("Failed to create order: " + e.getMessage());
+//        }
+//    }
 
 
 //Tickets Section

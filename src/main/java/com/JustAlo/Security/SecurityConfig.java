@@ -36,7 +36,8 @@ public class SecurityConfig {
 //            "/buses/**",
 //            "/addDriver",
            // ,"/trips/**",
-            "swagger-ui/index.html","/swagger-ui/**", "/v3/api-docs/**"
+            "swagger-ui/index.html","/swagger-ui/**", "/v3/api-docs/**",
+            "/findStops/{id}"
 //            "/available_seats/{id}",
 //            "/BookSeat",
 //            "/Tickets",
