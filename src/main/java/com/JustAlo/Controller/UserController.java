@@ -222,35 +222,35 @@ public class UserController {
 
 
 
-    @PostMapping("/create-order")
-    @PreAuthorize("hasRole('User')")
-    public ResponseEntity<?> createOrder(@RequestBody OrderRequest orderRequest) {
-        try {
-            Order order = paymentService.createOrder(orderRequest.getAmount(), orderRequest.getCurrency(),orderRequest.getUserID());
-            return ResponseEntity.ok(order.toString());
-        } catch (RazorpayException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating order: " + e.getMessage());
-        }
-    }
+//    @PostMapping("/create-order")
+//    @PreAuthorize("hasRole('User')")
+//    public ResponseEntity<?> createOrder(@RequestBody OrderRequest orderRequest) {
+//        try {
+//            Order order = paymentService.createOrder(orderRequest.getAmount(), orderRequest.getCurrency(),orderRequest.getUserID());
+//            return ResponseEntity.ok(order.toString());
+//        } catch (RazorpayException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating order: " + e.getMessage());
+//        }
+//    }
 
-
-    @PostMapping("/verify-payment")
-    @PreAuthorize("hasRole('User')")
-    public ResponseEntity<?> verifyPayment(@RequestBody PaymentVerificationRequest verificationRequest) {
-        try {
-            boolean isValid = paymentService.verifyPayment(verificationRequest.getTransactionId(),
-                    verificationRequest.getRazorpayPaymentId(),
-                    verificationRequest.getRazorpaySignature());
-            if (isValid) {
-                bookingService.updateBookingStatus(verificationRequest.getTransactionId(), "SUCCESS");
-                return ResponseEntity.ok("Payment successful");
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Payment verification failed");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error verifying payment: " + e.getMessage());
-        }
-    }
+//
+//    @PostMapping("/verify-payment")
+//    @PreAuthorize("hasRole('User')")
+//    public ResponseEntity<?> verifyPayment(@RequestBody PaymentVerificationRequest verificationRequest) {
+//        try {
+//            boolean isValid = paymentService.verifyPayment(verificationRequest.getTransactionId(),
+//                    verificationRequest.getRazorpayPaymentId(),
+//                    verificationRequest.getRazorpaySignature());
+//            if (isValid) {
+//                bookingService.updateBookingStatus(verificationRequest.getTransactionId(), "SUCCESS");
+//                return ResponseEntity.ok("Payment successful");
+//            } else {
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Payment verification failed");
+//            }
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error verifying payment: " + e.getMessage());
+//        }
+//    }
 
 
     @PostMapping("/book-seat")
