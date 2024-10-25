@@ -36,7 +36,8 @@ public class Booking {
     private String starting_stop;
 
     private String ending_stop;
-    private String razorpay_booking_id;
+    @Column(name = "razorpay_booking_id")
+    private String transactionId;
 
 
     private String status;

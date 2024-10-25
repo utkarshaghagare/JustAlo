@@ -422,24 +422,23 @@ public class BookingService {
 
         // Create Razorpay order after calculating total amount
         // Create Razorpay order after calculating total amount
-        Order order = paymentService.bookedTicket(totalAmount);
-        razorpayOrderId = order.get("id");
-
-        User user = userDao.findByEmail(JwtAuthenticationFilter.CURRENT_USER);
-        Transaction transaction = paymentService.saveTransaction(razorpayOrderId, totalAmount,  "INR", "created", user);
-
-        // Update Razorpay booking ID in each booking
-        for (Passenger_details passenger : ticketBooking.getPassengers()) {
-            Booking booking = bookingRepository.findByTripAndSeat(trip, passenger.getSeat_no());
-            if (booking != null && booking.getPassenger() != null) {
-                booking.setRazorpay_booking_id(razorpayOrderId);
-                bookingRepository.save(booking);
-            }
-        }
+//        Order order = paymentService.bookedTicket(totalAmount);
+//        razorpayOrderId = order.get("id");
+//
+//        User user = userDao.findByEmail(JwtAuthenticationFilter.CURRENT_USER);
+//        Transaction transaction = paymentService.saveTransaction(razorpayOrderId, totalAmount,  "INR", "created", user);
+//
+//        // Update Razorpay booking ID in each booking
+//        for (Passenger_details passenger : ticketBooking.getPassengers()) {
+//            Booking booking = bookingRepository.findByTripAndSeat(trip, passenger.getSeat_no());
+//            if (booking != null && booking.getPassenger() != null) {
+//                booking.setRazorpay_booking_id(razorpayOrderId);
+//                bookingRepository.save(booking);
+//            }
+//        }
 
         return "BOOKED";
     }
-
 
     // Helper method to calculate the amount based on the difference between last and first stop
     private Double setAmount(Trip trip, String start, String end) {
@@ -447,6 +446,13 @@ public class BookingService {
                 ordinaryTripRepository.findAmountByStopName(start, trip);
     }
 
+    public double calculateTotalAmount(TicketBooking ticketBooking, Trip trip) {
+        double totalAmount = 0;
+        for (Passenger_details passenger : ticketBooking.getPassengers()) {
+            totalAmount += setAmount(trip, ticketBooking.getStart(), ticketBooking.getEnd());
+        }
+        return totalAmount;
+    }
 
     public void cancelTicket(Long id) {
         Booking booking = bookingRepository.findById(id).orElse(null);
@@ -499,7 +505,27 @@ public class BookingService {
         }
         return  response;
     }
+
+    public void updateBookingStatus(String transactionId, String success) {
+        Booking booking = bookingRepository.findByTransactionId(transactionId);
+        if (booking != null) {
+            booking.setStatus("SUCCESS");
+            bookingRepository.save(booking);
+        }
+    }
+
+    public Booking updateBookingWithRazorpayId(Trip trip, int seatNumber, String razorpayOrderId) throws Exception {
+        Booking booking = bookingRepository.findByTripAndSeat(trip, seatNumber);
+        if (booking != null && booking.getPassenger() != null) {
+            booking.setTransactionId(razorpayOrderId);
+            return bookingRepository.save(booking);
+        } else {
+            throw new Exception("Booking not found for seat number " + seatNumber);
+        }
+    }
+
 }
+
 
 
 
