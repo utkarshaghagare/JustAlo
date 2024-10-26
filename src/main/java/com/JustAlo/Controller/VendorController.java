@@ -20,6 +20,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -336,4 +337,23 @@ public RequestOffers makeOfferRequest(@RequestBody offerInput input) throws Exce
         return vendorService.makeOffer(requestOffersList,image,percent);
     }
 
+    @Autowired
+    BookingService bookingService;
+    //Api for vendor to book seat of trip which is scheduled by only them
+    @PostMapping("/vendor/bookSeat")
+    @PreAuthorize("hasRole('Vendor')")
+    public String bookSeat( @RequestBody TicketBooking ticketBooking) throws Exception {
+        Optional<Trip> trip= tripRepository.findById(ticketBooking.getTrip_id());
+        Vendor vendor=vendorService.findByUsername(JwtAuthenticationFilter.CURRENT_USER);
+        if(trip== null ){
+            throw new Exception("Trip not found");
+        }
+        else if (trip.get().getVendor()!= vendor ){
+            throw new Exception("Trip is not scheduled by you");
+        }
+        else{
+            return bookingService.bookSeat(ticketBooking,trip.get(),null);
+        }
+
+    }
 }

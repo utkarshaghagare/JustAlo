@@ -331,14 +331,20 @@ public class BookingService {
 //        //return ordinaryTripRepository.findAmountByStopName(end,trip)-ordinaryTripRepository.findAmountByStopName(start,trip);
 //    }
 
-    public String bookSeat(TicketBooking ticketBooking, Trip trip) throws Exception {
+    public String bookSeat(TicketBooking ticketBooking, Trip trip, User user) throws Exception {
         List<Integer> availableSeats = findSeats(ticketBooking.getStart(), ticketBooking.getEnd(), trip).available;
         double totalAmount = 0;
         String razorpayOrderId = null;
+        Long user_id;
+if(user==null){
+    user_id = 0L;
 
+}
+else{
+    user_id=user.getId();
+}
         // Retrieve the current user from the security context
-        String email = JwtAuthenticationFilter.CURRENT_USER;
-        User currentUser = userDao.findByEmail(email);
+
 
         for (Passenger_details passenger : ticketBooking.getPassengers()) {
             int seatNumber = passenger.getSeat_no();
@@ -366,7 +372,7 @@ public class BookingService {
                             prevBooking.setEnding_stop(ticketBooking.getEnd());
                             prevBooking.setPassenger(
                                     passengerRepository.findById(passenger.getId())
-                                            .orElse(passengerRepository.save(new Passenger(passenger.getName(), passenger.getAge(), currentUser.getId()))));
+                                            .orElse(passengerRepository.save(new Passenger(passenger.getName(), passenger.getAge(),user_id))));
                             prevBooking.setAmount(setAmount(trip, ticketBooking.getStart(), ticketBooking.getEnd()));
                             prevBooking.setDate(Date.valueOf(LocalDate.now()));
                             prevBooking.setAvailableStops(stop);
@@ -381,7 +387,7 @@ public class BookingService {
                                 booking.setEnding_stop(ticketBooking.getEnd());
                                 booking.setPassenger(
                                         passengerRepository.findById(passenger.getId())
-                                                .orElse(passengerRepository.save(new Passenger(passenger.getName(), passenger.getAge(), currentUser.getId()))));
+                                                .orElse(passengerRepository.save(new Passenger(passenger.getName(), passenger.getAge(), user_id))));
                                 booking.setAmount(setAmount(trip, ticketBooking.getStart(), ticketBooking.getEnd()));
                                 booking.setDate(Date.valueOf(LocalDate.now()));
                                 booking.setStatus("BOOKED");
@@ -404,7 +410,7 @@ public class BookingService {
                         luxuryBooking.setEnding_stop(ticketBooking.getEnd());
                         luxuryBooking.setPassenger(
                                 passengerRepository.findById(passenger.getId())
-                                        .orElse(passengerRepository.save(new Passenger(passenger.getName(), passenger.getAge(), currentUser.getId()))));
+                                        .orElse(passengerRepository.save(new Passenger(passenger.getName(), passenger.getAge(), user_id))));
                         luxuryBooking.setAmount(trip.getAmount());
                         luxuryBooking.setDate(Date.valueOf(LocalDate.now()));
                         luxuryBooking.setStatus("BOOKED");

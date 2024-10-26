@@ -260,8 +260,10 @@ public class UserController {
             // Retrieve the Trip object using the tripId
             Trip trip = tripService.findById(ticketBooking.getTrip_id());
 
+            String email = JwtAuthenticationFilter.CURRENT_USER;
+            User currentUser = userDao.findByEmail(email);
             // Call the bookSeat method from BookingService
-            String bookingStatus = bookingService.bookSeat(ticketBooking, trip);
+            String bookingStatus = bookingService.bookSeat(ticketBooking, trip,currentUser);
 
             // After booking, create the Razorpay order and save the transaction
             double totalAmount = bookingService.calculateTotalAmount(ticketBooking, trip);
@@ -269,8 +271,7 @@ public class UserController {
             String razorpayOrderId = ticketBooking.getRazorpay_booking_id();
 
             // Retrieve the current user (Assuming JwtAuthenticationFilter.CURRENT_USER holds the email)
-            String email = JwtAuthenticationFilter.CURRENT_USER;
-            User currentUser = userDao.findByEmail(email);
+
 
             // Save transaction details
 //            Transaction transaction = paymentService.saveTransaction(

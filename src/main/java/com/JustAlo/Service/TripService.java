@@ -321,7 +321,9 @@ public List<Trip> findTrip(String start, String destination, Date date) {
     public String bookSeat(TicketBooking ticketBooking) throws Exception {
         Trip trip= findById(ticketBooking.getTrip_id());
         if(trip!=null){
-            return bookingService.bookSeat(ticketBooking,trip);
+            String email = JwtAuthenticationFilter.CURRENT_USER;
+            User currentUser = userDao.findByEmail(email);
+            return bookingService.bookSeat(ticketBooking,trip,currentUser);
         }
         return null;
     }
